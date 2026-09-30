@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>四聲聲調接水果 - 龍虎榜版</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Microsoft JhengHei", "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #e0f2fe 0%, #fce7f3 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+    }
+
+    .game-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 600px;
+      border-radius: 24px;
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* 上方狀態列 */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      background: #f8fafc;
+      border-bottom: 2px solid #e2e8f0;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .player-tag {
+      width: 100%;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #0284c7;
+      background: #e0f2fe;
+      padding: 4px 10px;
+      border-radius: 8px;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .stat-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .stat-value {
+      font-size: 1.25rem;
+      color: #2563eb;
+    }
+
+    .mute-btn {
+      background: #e2e8f0;
+      border: none;
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      color: #475569;
+      transition: background 0.2s;
+    }
+
+    .mute-btn:hover {
+      background: #cbd5e1;
+    }
+
+    /* 目標聲調橫幅 */
+    .target-banner {
+      background: #3b82f6;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      font-size: 1.25rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      box-shadow: inset 0 -2px 5px rgba(0,0,0,0.1);
+    }
+
+    .target-tone {
+      background: #fef08a;
+      color: #854d0e;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 1.35rem;
+      margin: 0 4px;
+      display: inline-block;
+    }
+
+    /* 遊戲畫布區域 */
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      background: linear-gradient(to bottom, #f0f9ff, #e0f2fe);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* 遮罩蓋板 (開始 / 結束) */
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 20px 16px;
+      text-align: center;
+      z-index: 10;
+      overflow-y: auto;
+    }
+
+    .overlay.hidden {
+      display: none;
+    }
+
+    .overlay h1 {
+      font-size: 1.8rem;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 380px;
+      margin-bottom: 12px;
+    }
+
+    .input-field {
+      flex: 1;
+      padding: 10px 14px;
+      font-size: 1rem;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      outline: none;
+      text-align: center;
+      font-weight: bold;
+      color: #1e293b;
+    }
+
+    .input-field:focus {
+      border-color: #2563eb;
+    }
+
+    /* 龍虎榜表格樣式 */
+    .leaderboard-card {
+      width: 100%;
+      max-width: 420px;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+    }
+
+    .leaderboard-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .leaderboard-table th {
+      background: #e2e8f0;
+      color: #475569;
+      padding: 6px 8px;
+      font-weight: bold;
+    }
+
+    .leaderboard-table td {
+      padding: 6px 8px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+      font-weight: 600;
+    }
+
+    .rank-1 { color: #d97706; font-weight: bold; }
+    .rank-2 { color: #64748b; font-weight: bold; }
+    .rank-3 { color: #b45309; font-weight: bold; }
+    .highlight-row { background: #fef08a !important; }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      transition: transform 0.1s ease, background-color 0.2s;
+    }
+
+    .btn-secondary {
+      background: #64748b;
+      box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .final-score {
+      font-size: 3rem;
+      font-weight: 900;
+      color: #2563eb;
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-card">
+    <!-- 頂部資訊欄 -->
+    <div class="header">
+      <div id="player-tag" class="player-tag">
+        <span>👤 玩家：未登記</span>
+        <span id="high-score-tag">最高分：0</span>
+      </div>
+      <div class="stat-box">⏳ 時間: <span id="time-display" class="stat-value">60</span> 秒</div>
+      <div class="stat-box">🏆 得分: <span id="score-display" class="stat-value">0</span></div>
+      <button id="mute-btn" class="mute-btn">🔊 音樂：開</button>
+    </div>
+
+    <!-- 目標聲調提醒 -->
+    <div class="target-banner">
+      請接 <span id="target-tone" class="target-tone">三聲 ( ˇ )</span> 的水果！
+    </div>
+
+    <!-- 畫布區域 -->
+    <div class="canvas-container">
+      <canvas id="gameCanvas" width="600" height="650"></canvas>
+
+      <!-- 開始畫面遮罩 -->
+      <div id="start-screen" class="overlay">
+        <h1>🍎 四聲聲調接水果 🧺</h1>
+        
+        <p style="color: #475569; font-weight: bold; margin-bottom: 8px;">請輸入你的資料開始挑戰：</p>
+        <div class="input-group">
+          <input type="text" id="class-input" class="input-field" placeholder="班別 (例: 2A)" maxlength="6">
+          <input type="text" id="name-input" class="input-field" placeholder="姓名 (例: 王小明)" maxlength="8">
+        </div>
+
+        <div class="leaderboard-card">
+          <div class="leaderboard-title">🏆 聲調大師龍虎榜 (Top 5)</div>
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th>名次</th>
+                <th>班別</th>
+                <th>姓名</th>
+                <th>最高分</th>
+              </tr>
+            </thead>
+            <tbody id="start-leaderboard-body">
+              <!-- 動態生成龍虎榜 -->
+            </tbody>
+          </table>
+        </div>
+
+        <button id="start-btn" class="btn">開始遊戲</button>
+      </div>
+
+      <!-- 結束畫面遮罩 -->
+      <div id="end-screen" class="overlay hidden">
+        <h1>⏰ 時間到！</h1>
+        <p id="end-player-name" style="font-weight: bold; color: #0284c7;"></p>
+        <div id="final-score" class="final-score">0</div>
+        <p id="eval-text" style="font-weight: bold; font-size: 1rem; color: #475569; margin-bottom: 12px;"></p>
+
+        <div class="leaderboard-card">
+          <div class="leaderboard-title">🏆 最新龍虎榜排名</div>
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th>名次</th>
+                <th>班別</th>
+                <th>姓名</th>
+                <th>最高分</th>
+              </tr>
+            </thead>
+            <tbody id="end-leaderboard-body">
+              <!-- 動態生成龍虎榜 -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="btn-group">
+          <button id="restart-btn" class="btn">再挑戰一次</button>
+          <button id="change-player-btn" class="btn btn-secondary">換人遊玩</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- 適合小二學生的國字與拼音資料集 ---
+    const WORD_DATA = {
+      1: [
+        { char: '媽', pinyin: 'mā' }, { char: '哥', pinyin: 'gē' },
+        { char: '吃', pinyin: 'chī' }, { char: '書', pinyin: 'shū' },
+        { char: '花', pinyin: 'huā' }, { char: '貓', pinyin: 'māo' },
+        { char: '天', pinyin: 'tiān' }, { char: '山', pinyin: 'shān' },
+        { char: '瓜', pinyin: 'guā' }, { char: '飛', pinyin: 'fēi' }
+      ],
+      2: [
+        { char: '魚', pinyin: 'yú' }, { char: '雲', pinyin: 'yún' },
+        { char: '羊', pinyin: 'yáng' }, { char: '河', pinyin: 'hé' },
+        { char: '猴', pinyin: 'hóu' }, { char: '來', pinyin: 'lái' },
+        { char: '田', pinyin: 'tián' }, { char: '爬', pinyin: 'pá' },
+        { char: '國', pinyin: 'guó' }, { char: '糖', pinyin: 'táng' }
+      ],
+      3: [
+        { char: '馬', pinyin: 'mǎ' }, { char: '狗', pinyin: 'gǒu' },
+        { char: '鳥', pinyin: 'niǎo' }, { char: '草', pinyin: 'cǎo' },
+        { char: '我', pinyin: 'wǒ' }, { char: '你', pinyin: 'nǐ' },
+        { char: '水', pinyin: 'shuǐ' }, { char: '好', pinyin: 'hǎo' },
+        { char: '手', pinyin: 'shǒu' }, { char: '筆', pinyin: 'bǐ' }
+      ],
+      4: [
+        { char: '爸', pinyin: 'bà' }, { char: '大', pinyin: 'dà' },
+        { char: '兔', pinyin: 'tù' }, { char: '樹', pinyin: 'shù' },
+        { char: '葉', pinyin: 'yè' }, { char: '電', pinyin: 'diàn' },
+        { char: '菜', pinyin: 'cài' }, { char: '妹', pinyin: 'mèi' },
+        { char: '愛', pinyin: 'ài' }, { char: '笑', pinyin: 'xiào' }
+      ]
+    };
+
+    const TONE_NAMES = {
+      1: '一聲 ( ˉ )',
+      2: '二聲 ( ˊ )',
+      3: '三聲 ( ˇ )',
+      4: '四聲 ( ˋ )'
+    };
+
+    const FRUIT_EMOJIS = ['🍎', '🍌', '🍊', '🍇', '🍉', '🍑', '🍓', '🍍'];
+
+    // --- Web Audio API 音效與背景音樂合成器 ---
+    let audioCtx = null;
+    let isMuted = false;
+    let bgmTimer = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playSound(type) {
+      if (isMuted) return;
+      initAudio();
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      const now = audioCtx.currentTime;
+
+      if (type === 'correct') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+        osc.start(now);
+        osc.stop(now + 0.15);
+      } else if (type === 'wrong') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(100, now + 0.2);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+        osc.start(now);
+        osc.stop(now + 0.2);
+      } else if (type === 'gameover') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.linearRampToValueAtTime(150, now + 0.5);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
+        osc.start(now);
+        osc.stop(now + 0.5);
+      }
+    }
+
+    const BGM_NOTES = [
+      261.63, 329.63, 392.00, 523.25,
+      329.63, 392.00, 440.00, 392.00,
+      293.66, 329.63, 392.00, 440.00,
+      329.63, 293.66, 261.63, 196.00
+    ];
+    let bgmNoteIndex = 0;
+
+    function playBGMStep() {
+      if (isMuted || gameState !== 'PLAYING' || !audioCtx) return;
+
+      const freq = BGM_NOTES[bgmNoteIndex];
+      bgmNoteIndex = (bgmNoteIndex + 1) % BGM_NOTES.length;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+      gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.22);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.23);
+    }
+
+    function startBGM() {
+      stopBGM();
+      bgmNoteIndex = 0;
+      bgmTimer = setInterval(playBGMStep, 260);
+    }
+
+    function stopBGM() {
+      if (bgmTimer) {
+        clearInterval(bgmTimer);
+        bgmTimer = null;
+      }
+    }
+
+    // --- 龍虎榜 LocalStorage 管理邏輯 ---
+    const STORAGE_KEY = 'pinyin_game_leaderboard_v1';
+
+    function getLeaderboard() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        return data ? JSON.parse(data) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function updateLeaderboard(className, studentName, newScore) {
+      let list = getLeaderboard();
+      // 同一姓名（及班別）進行辨識
+      const existingIndex = list.findIndex(
+        item => item.name.trim() === studentName.trim() && item.className.trim() === className.trim()
+      );
+
+      let isNewHighScore = false;
+
+      if (existingIndex !== -1) {
+        // 如果舊分數較低，則覆蓋為新高分
+        if (newScore > list[existingIndex].score) {
+          list[existingIndex].score = newScore;
+          isNewHighScore = true;
+        }
+      } else {
+        // 新加入同學紀錄
+        list.push({ className: className.trim(), name: studentName.trim(), score: newScore });
+        isNewHighScore = true;
+      }
+
+      // 依分數高低排序
+      list.sort((a, b) => b.score - a.score);
+
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      } catch (e) {
+        console.error('Save failed', e);
+      }
+
+      return isNewHighScore;
+    }
+
+    function renderLeaderboardTable(containerId, currentStudentKey = '') {
+      const tbody = document.getElementById(containerId);
+      const list = getLeaderboard();
+
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="color: #94a3b8;">尚無紀錄，快來挑戰！</td></tr>';
+        return;
+      }
+
+      let html = '';
+      const displayList = list.slice(0, 5); // 顯示前 5 名
+
+      displayList.forEach((item, index) => {
+        let rankStr = index + 1;
+        let rankClass = '';
+        if (index === 0) { rankStr = '🥇 1'; rankClass = 'rank-1'; }
+        else if (index === 1) { rankStr = '🥈 2'; rankClass = 'rank-2'; }
+        else if (index === 2) { rankStr = '🥉 3'; rankClass = 'rank-3'; }
+
+        const itemKey = `${item.className.trim()}_${item.name.trim()}`;
+        const isCurrent = itemKey === currentStudentKey ? 'highlight-row' : '';
+
+        html += `<tr class="${isCurrent}">
+          <td class="${rankClass}">${rankStr}</td>
+          <td>${item.className}</td>
+          <td>${item.name}</td>
+          <td style="color:#2563eb; font-weight:800;">${item.score}</td>
+        </tr>`;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    // --- 遊戲核心變數 ---
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const timeDisplay = document.getElementById('time-display');
+    const scoreDisplay = document.getElementById('score-display');
+    const targetToneDisplay = document.getElementById('target-tone');
+    const startScreen = document.getElementById('start-screen');
+    const endScreen = document.getElementById('end-screen');
+    const startBtn = document.getElementById('start-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const changePlayerBtn = document.getElementById('change-player-btn');
+    const muteBtn = document.getElementById('mute-btn');
+    const finalScoreDisplay = document.getElementById('final-score');
+    const evalTextDisplay = document.getElementById('eval-text');
+    const classInput = document.getElementById('class-input');
+    const nameInput = document.getElementById('name-input');
+    const playerTag = document.getElementById('player-tag');
+    const highScoreTag = document.getElementById('high-score-tag');
+    const endPlayerName = document.getElementById('end-player-name');
+
+    let gameState = 'START';
+    let score = 0;
+    let timeLeft = 60;
+    let currentTargetTone = 1;
+    let fruits = [];
+    let floatTexts = [];
+    let spawnTimer = 0;
+    let lastTime = 0;
+
+    let currentClass = '';
+    let currentName = '';
+
+    const basket = {
+      x: canvas.width / 2,
+      y: canvas.height - 60,
+      width: 90,
+      height: 40,
+      speed: 8
+    };
+
+    const keys = { Left: false, Right: false };
+
+    // 初始化龍虎榜顯示
+    renderLeaderboardTable('start-leaderboard-body');
+
+    // --- 事件監聽 ---
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.Left = true;
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.Right = true;
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.Left = false;
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.Right = false;
+    });
+
+    function handlePointerMove(e) {
+      if (gameState !== 'PLAYING') return;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      let clientX = e.clientX;
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+      }
+      const mouseX = (clientX - rect.left) * scaleX;
+      basket.x = Math.max(basket.width / 2, Math.min(canvas.width - basket.width / 2, mouseX));
+    }
+
+    canvas.addEventListener('mousemove', handlePointerMove);
+    canvas.addEventListener('touchmove', (e) => {
+      handlePointerMove(e);
+      e.preventDefault();
+    }, { passive: false });
+
+    muteBtn.addEventListener('click', () => {
+      isMuted = !isMuted;
+      muteBtn.textContent = isMuted ? '🔇 音樂：關' : '🔊 音樂：開';
+      if (isMuted) stopBGM();
+      else if (gameState === 'PLAYING') startBGM();
+    });
+
+    startBtn.addEventListener('click', () => {
+      const cls = classInput.value.trim();
+      const name = nameInput.value.trim();
+
+      if (!cls || !name) {
+        alert('請先輸入班別與姓名再開始遊戲喔！');
+        return;
+      }
+
+      currentClass = cls;
+      currentName = name;
+      startGame();
+    });
+
+    restartBtn.addEventListener('click', startGame);
+
+    changePlayerBtn.addEventListener('click', () => {
+      endScreen.classList.add('hidden');
+      startScreen.classList.remove('hidden');
+      renderLeaderboardTable('start-leaderboard-body');
+      gameState = 'START';
+    });
+
+    // --- 遊戲機制函式 ---
+    function setRandomTargetTone() {
+      const tones = [1, 2, 3, 4];
+      const availableTones = tones.filter(t => t !== currentTargetTone);
+      currentTargetTone = availableTones[Math.floor(Math.random() * availableTones.length)];
+      targetToneDisplay.textContent = TONE_NAMES[currentTargetTone];
+    }
+
+    function updatePlayerHeader() {
+      const list = getLeaderboard();
+      const userRecord = list.find(
+        item => item.name === currentName && item.className === currentClass
+      );
+      const personalHigh = userRecord ? userRecord.score : 0;
+
+      playerTag.children[0].textContent = `👤 玩家：${currentClass} ${currentName}`;
+      highScoreTag.textContent = `最高分：${personalHigh}`;
+    }
+
+    function spawnFruit() {
+      let tone;
+      if (Math.random() < 0.4) {
+        tone = currentTargetTone;
+      } else {
+        tone = Math.floor(Math.random() * 4) + 1;
+      }
+
+      const wordList = WORD_DATA[tone];
+      const item = wordList[Math.floor(Math.random() * wordList.length)];
+      const emoji = FRUIT_EMOJIS[Math.floor(Math.random() * FRUIT_EMOJIS.length)];
+
+      fruits.push({
+        x: Math.random() * (canvas.width - 90) + 45,
+        y: -30,
+        speed: 1.2 + Math.random() * 1.0,
+        tone: tone,
+        char: item.char,
+        pinyin: item.pinyin,
+        emoji: emoji,
+        radius: 30
+      });
+    }
+
+    function addFloatText(text, x, y, color) {
+      floatTexts.push({ text, x, y, color, alpha: 1.0, life: 40 });
+    }
+
+    function startGame() {
+      initAudio();
+      score = 0;
+      timeLeft = 60;
+      fruits = [];
+      floatTexts = [];
+      spawnTimer = 0;
+      scoreDisplay.textContent = score;
+      timeDisplay.textContent = timeLeft;
+
+      updatePlayerHeader();
+      setRandomTargetTone();
+
+      startScreen.classList.add('hidden');
+      endScreen.classList.add('hidden');
+      gameState = 'PLAYING';
+
+      startBGM();
+
+      lastTime = performance.now();
+      requestAnimationFrame(gameLoop);
+    }
+
+    function endGame() {
+      gameState = 'GAMEOVER';
+      stopBGM();
+      playSound('gameover');
+      finalScoreDisplay.textContent = score;
+      endPlayerName.textContent = `玩家：${currentClass} ${currentName}`;
+
+      // 更新龍虎榜紀錄（若創個人新高則自動更新）
+      const isNewHigh = updateLeaderboard(currentClass, currentName, score);
+
+      let evalMsg = '';
+      if (isNewHigh) {
+        evalMsg = '🎉 恭喜！創下你個人的最高分紀錄！';
+      } else if (score < 80) {
+        evalMsg = '再接再厲！多練習國字與聲調會更棒喔！💪';
+      } else {
+        evalMsg = '做得好！你對聲調非常敏銳！👍';
+      }
+
+      evalTextDisplay.textContent = evalMsg;
+
+      // 渲染最新龍虎榜
+      const currentKey = `${currentClass.trim()}_${currentName.trim()}`;
+      renderLeaderboardTable('end-leaderboard-body', currentKey);
+      updatePlayerHeader();
+
+      endScreen.classList.remove('hidden');
+    }
+
+    // --- 遊戲主要迴圈 ---
+    function gameLoop(now) {
+      if (gameState !== 'PLAYING') return;
+
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+
+      // 1. 更新倒數計時
+      timeLeft -= dt;
+      if (timeLeft <= 0) {
+        timeLeft = 0;
+        timeDisplay.textContent = 0;
+        endGame();
+        return;
+      }
+      timeDisplay.textContent = Math.ceil(timeLeft);
+
+      // 2. 移動籃子
+      if (keys.Left) basket.x -= basket.speed;
+      if (keys.Right) basket.x += basket.speed;
+      basket.x = Math.max(basket.width / 2, Math.min(canvas.width - basket.width / 2, basket.x));
+
+      // 3. 生成水果
+      spawnTimer += dt;
+      if (spawnTimer > 0.9) {
+        spawnFruit();
+        spawnTimer = 0;
+      }
+
+      // 4. 更新水果位置與碰撞檢測
+      for (let i = fruits.length - 1; i >= 0; i--) {
+        const f = fruits[i];
+        f.y += f.speed;
+
+        const dx = Math.abs(f.x - basket.x);
+        const dy = Math.abs(f.y - basket.y);
+
+        if (dx < basket.width / 2 + 12 && dy < basket.height / 2 + 15) {
+          if (f.tone === currentTargetTone) {
+            score += 10;
+            playSound('correct');
+            addFloatText('+10', f.x, f.y, '#16a34a');
+            setRandomTargetTone();
+          } else {
+            score = Math.max(0, score - 5);
+            playSound('wrong');
+            addFloatText('-5', f.x, f.y, '#dc2626');
+          }
+          scoreDisplay.textContent = score;
+          fruits.splice(i, 1);
+          continue;
+        }
+
+        if (f.y > canvas.height + 40) {
+          fruits.splice(i, 1);
+        }
+      }
+
+      // 5. 繪製畫面
+      render();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // --- 渲染畫面 ---
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 背景雲朵裝飾
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.beginPath();
+      ctx.arc(100, 100, 60, 0, Math.PI * 2);
+      ctx.arc(500, 180, 80, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 繪製水果與國字標籤
+      fruits.forEach(f => {
+        ctx.font = '42px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(f.emoji, f.x, f.y + 12);
+
+        const labelText = `${f.char} ${f.pinyin}`;
+        ctx.font = 'bold 19px "Microsoft JhengHei", "Segoe UI", sans-serif';
+        const textMetrics = ctx.measureText(labelText);
+        const pWidth = textMetrics.width + 18;
+        const pHeight = 30;
+        const pX = f.x - pWidth / 2;
+        const pY = f.y - 40;
+
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+        ctx.shadowBlur = 6;
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(pX, pY, pWidth, pHeight, 15);
+        } else {
+          ctx.rect(pX, pY, pWidth, pHeight);
+        }
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#0f172a';
+        ctx.fillText(labelText, f.x, pY + pHeight / 2);
+      });
+
+      // 繪製籃子
+      ctx.font = '60px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🧺', basket.x, basket.y);
+
+      // 飄浮分數文字
+      for (let i = floatTexts.length - 1; i >= 0; i--) {
+        const ft = floatTexts[i];
+        ctx.save();
+        ctx.globalAlpha = ft.alpha;
+        ctx.font = 'bold 28px sans-serif';
+        ctx.fillStyle = ft.color;
+        ctx.fillText(ft.text, ft.x, ft.y);
+        ctx.restore();
+
+        ft.y -= 1.5;
+        ft.alpha -= 0.025;
+        ft.life--;
+        if (ft.life <= 0) floatTexts.splice(i, 1);
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>
