@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>聲母大冒險：b p m f d t n l g k h</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Noto+Sans+TC:wght@500;700;900&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow: hidden;
+            background-color: #1a1a2e;
+        }
+
+        .font-fredoka {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        /* Responsive Canvas aspect ratio container */
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            max-width: 1200px;
+            max-height: 700px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #70e1ff, #cbf3f0);
+        }
+
+        /* Glassmorphism overlays */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border: 4px solid #4D96FF;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-bounce {
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        .btn-bounce:active {
+            transform: scale(0.95);
+        }
+
+        /* On-screen Controls Overlay */
+        .touch-btn {
+            background: rgba(255, 255, 255, 0.4);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px);
+        }
+        .touch-btn:active {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Custom animation for floating coins in UI */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float {
+            animation: float 2.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-slate-900 text-slate-800 p-0 sm:p-2">
+
+    <!-- Main Game Container -->
+    <div class="game-container rounded-none sm:rounded-2xl overflow-hidden flex flex-col">
+
+        <!-- Canvas -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- TOP HUD Overlay (Visible during game) -->
+        <div id="hudOverlay" class="hidden absolute top-0 left-0 right-0 p-3 flex justify-between items-center pointer-events-none z-10">
+            <!-- Left Stats -->
+            <div class="flex items-center space-x-2 sm:space-x-4 bg-white/90 backdrop-filter blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border-2 border-blue-400 shadow-md">
+                <div class="flex items-center space-x-1">
+                    <span class="text-xs sm:text-sm font-bold text-slate-600">👤</span>
+                    <span id="hudUser" class="text-xs sm:text-sm font-bold text-slate-800">3A (12)</span>
+                </div>
+                <div class="h-4 w-0.5 bg-slate-300"></div>
+                <div class="flex items-center space-x-1">
+                    <span class="text-xs sm:text-sm text-amber-500"><i class="fa-solid font-bold fa-trophy"></i></span>
+                    <span id="hudScore" class="text-sm sm:text-base font-black text-amber-600 font-fredoka">0</span>
+                </div>
+            </div>
+
+            <!-- Middle Target / Level Info -->
+            <div id="targetBox" class="pointer-events-auto flex items-center bg-yellow-300/95 border-3 border-yellow-500 px-3 py-1.5 sm:px-5 sm:py-2 rounded-2xl shadow-lg transition-transform transform hover:scale-105">
+                <div id="targetText" class="text-xs sm:text-lg font-black text-slate-900 flex items-center space-x-1">
+                    <!-- Dynamic Target Content -->
+                </div>
+                <button id="replaySpeechBtn" class="hidden ml-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center shadow-md active:scale-95 transition-all">
+                    <i class="fa-solid fa-volume-high text-xs sm:text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Right Stats & Audio -->
+            <div class="flex items-center space-x-2 sm:space-x-3 bg-white/90 backdrop-filter blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border-2 border-blue-400 shadow-md">
+                <div class="flex items-center space-x-1">
+                    <span class="text-xs sm:text-sm text-emerald-600 font-bold">🎯 進度:</span>
+                    <span id="hudProgress" class="text-xs sm:text-base font-bold text-emerald-700 font-fredoka">0/10</span>
+                </div>
+                <div class="h-4 w-0.5 bg-slate-300"></div>
+                <button id="toggleAudioBtn" class="pointer-events-auto text-slate-600 hover:text-slate-900 focus:outline-none">
+                    <i id="audioIcon" class="fa-solid fa-volume-high text-sm sm:text-base"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Touch Controls for Mobile (Visible during game) -->
+        <div id="touchControls" class="hidden absolute bottom-4 left-0 right-0 px-6 flex justify-between items-end pointer-events-none z-10">
+            <div class="flex space-x-3 pointer-events-auto">
+                <button id="btnLeft" class="touch-btn w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-2xl text-slate-800 active:bg-white/80 transition-all shadow-lg">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <button id="btnRight" class="touch-btn w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-2xl text-slate-800 active:bg-white/80 transition-all shadow-lg">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+            <div class="pointer-events-auto">
+                <button id="btnJump" class="touch-btn w-16 h-16 sm:w-20 sm:h-20 bg-yellow-400/80 border-yellow-200 rounded-full flex items-center justify-center text-2xl text-slate-900 active:bg-yellow-300 transition-all shadow-xl">
+                    <i class="fa-solid fa-arrow-up"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Start / Login Modal Screen -->
+        <div id="startScreen" class="absolute inset-0 flex items-center justify-center z-20 bg-slate-900/60 backdrop-blur-sm p-4">
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 max-w-md w-full text-center relative overflow-hidden">
+                <!-- Floating Graphic -->
+                <div class="text-5xl sm:text-6xl mb-2 animate-float">🪙</div>
+                <h1 class="text-2xl sm:text-3xl font-black text-blue-600 mb-1 tracking-wide">聲母大冒險</h1>
+                <p class="text-xs sm:text-sm font-bold text-slate-500 mb-6">b p m f d t n l g k h 語音冒險</p>
+
+                <!-- Input Form -->
+                <div class="space-y-4 mb-6 text-left">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">班別 (Class)</label>
+                        <input type="text" id="inputClass" placeholder="例如：3A" value="1A"
+                            class="w-full px-4 py-2.5 rounded-xl border-2 border-slate-300 focus:border-blue-500 focus:outline-none font-bold text-slate-800 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">學號 (Seat No.)</label>
+                        <input type="number" id="inputSeat" placeholder="例如：08" value="01"
+                            class="w-full px-4 py-2.5 rounded-xl border-2 border-slate-300 focus:border-blue-500 focus:outline-none font-bold text-slate-800 text-sm">
+                    </div>
+                </div>
+
+                <!-- Rules Accordion/Brief -->
+                <div class="bg-blue-50 rounded-2xl p-3 mb-6 text-left text-xs text-blue-900 border border-blue-200">
+                    <div class="font-bold text-blue-700 mb-1"><i class="fa-solid fa-circle-info mr-1"></i>遊戲簡介：</div>
+                    <ul class="list-disc list-inside space-y-0.5 text-slate-700">
+                        <li><strong>第一關：</strong>收集標有目標聲母（漢字+拼音）的金幣（10個過關）。</li>
+                        <li><strong>第二關：</strong>聽音辨聲母！僅顯示漢字，聽語音收集正確聲母金幣。</li>
+                    </ul>
+                </div>
+
+                <!-- Action Button -->
+                <button id="startGameBtn" class="w-full py-3.5 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-slate-900 font-black text-lg sm:text-xl rounded-2xl shadow-lg border-2 border-yellow-200 btn-bounce active:scale-95 transition-all flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-play"></i>
+                    <span>開始冒險</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Over / Victory Modal Screen -->
+        <div id="endScreen" class="hidden absolute inset-0 flex items-center justify-center z-20 bg-slate-900/75 backdrop-blur-md p-4">
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 max-w-lg w-full text-center relative max-h-[90vh] overflow-y-auto">
+                <div id="endEmoji" class="text-5xl sm:text-6xl mb-2">🏆</div>
+                <h2 id="endTitle" class="text-2xl sm:text-3xl font-black text-amber-500 mb-1">挑戰完成！</h2>
+                <p id="endSubtitle" class="text-xs sm:text-sm font-bold text-slate-600 mb-4">太棒了！你順利通關所有聲母考驗！</p>
+
+                <!-- Final Stats -->
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <div class="bg-amber-50 border-2 border-amber-200 p-3 rounded-2xl">
+                        <div class="text-xs font-bold text-amber-600">最終得分</div>
+                        <div id="finalScore" class="text-2xl sm:text-3xl font-black text-amber-600 font-fredoka">0</div>
+                    </div>
+                    <div class="bg-blue-50 border-2 border-blue-200 p-3 rounded-2xl">
+                        <div class="text-xs font-bold text-blue-600">玩家身份</div>
+                        <div id="finalPlayer" class="text-sm sm:text-base font-bold text-blue-800 mt-1">3A (08)</div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard Section -->
+                <div class="bg-white/80 rounded-2xl p-4 border-2 border-slate-200 mb-6 text-left">
+                    <div class="flex items-center justify-between mb-2 border-b border-slate-200 pb-2">
+                        <h3 class="font-black text-slate-800 text-sm sm:text-base flex items-center">
+                            <i class="fa-solid fa-trophy text-amber-400 mr-2"></i>🏆 班級最高分龍虎榜 (Top 5)
+                        </h3>
+                    </div>
+                    <div id="leaderboardList" class="space-y-1.5 text-xs sm:text-sm">
+                        <!-- Dynamic Leaderboard Items -->
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="grid grid-cols-3 gap-2">
+                    <button id="btnRetry" class="py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow border-b-4 border-emerald-700 btn-bounce">
+                        <i class="fa-solid fa-rotate-right mr-1"></i>再次挑戰
+                    </button>
+                    <button id="btnSwitchUser" class="py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow border-b-4 border-blue-700 btn-bounce">
+                        <i class="fa-solid fa-user-gear mr-1"></i>換人遊玩
+                    </button>
+                    <button id="btnHome" class="py-2.5 bg-slate-600 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow border-b-4 border-slate-800 btn-bounce">
+                        <i class="fa-solid fa-house mr-1"></i>主選單
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Word Database grouped by Initial Consonants (bpmfdtnlgh)
+        const INITIALS = ['b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h'];
+
+        const WORD_DATABASE = {
+            'b': [
+                { char: '包', pinyin: 'bāo' }, { char: '八', pinyin: 'bā' },
+                { char: '爸', pinyin: 'bà' }, { char: '筆', pinyin: 'bǐ' }, { char: '白', pinyin: 'bái' }
+            ],
+            'p': [
+                { char: '跑', pinyin: 'pǎo' }, { char: '旁', pinyin: 'páng' },
+                { char: '朋', pinyin: 'péng' }, { char: '皮', pinyin: 'pí' }, { char: '盤', pinyin: 'pán' }
+            ],
+            'm': [
+                { char: '貓', pinyin: 'māo' }, { char: '媽', pinyin: 'mā' },
+                { char: '木', pinyin: 'mù' }, { char: '馬', pinyin: 'mǎ' }, { char: '米', pinyin: 'mǐ' }
+            ],
+            'f': [
+                { char: '飛', pinyin: 'fēi' }, { char: '風', pinyin: 'fēng' },
+                { char: '房', pinyin: 'fáng' }, { char: '飯', pinyin: 'fàn' }, { char: '方', pinyin: 'fāng' }
+            ],
+            'd': [
+                { char: '大', pinyin: 'dà' }, { char: '刀', pinyin: 'dāo' },
+                { char: '東', pinyin: 'dōng' }, { char: '電', pinyin: 'diàn' }, { char: '地', pinyin: 'dì' }
+            ],
+            't': [
+                { char: '兔', pinyin: 'tù' }, { char: '天', pinyin: 'tiān' },
+                { char: '頭', pinyin: 'tóu' }, { char: '糖', pinyin: 'táng' }, { char: '跳', pinyin: 'tiào' }
+            ],
+            'n': [
+                { char: '牛', pinyin: 'niú' }, { char: '鳥', pinyin: 'niǎo' },
+                { char: '南', pinyin: 'nán' }, { char: '女', pinyin: 'nǚ' }, { char: '年', pinyin: 'nián' }
+            ],
+            'l': [
+                { char: '龍', pinyin: 'lóng' }, { char: '綠', pinyin: 'lǜ' },
+                { char: '路', pinyin: 'lù' }, { char: '老', pinyin: 'lǎo' }, { char: '藍', pinyin: 'lán' }
+            ],
+            'g': [
+                { char: '狗', pinyin: 'gǒu' }, { char: '高', pinyin: 'gāo' },
+                { char: '歌', pinyin: 'gē' }, { char: '光', pinyin: 'guāng' }, { char: '果', pinyin: 'guǒ' }
+            ],
+            'k': [
+                { char: '卡', pinyin: 'kǎ' }, { char: '開', pinyin: 'kāi' },
+                { char: '看', pinyin: 'kàn' }, { char: '口', pinyin: 'kǒu' }, { char: '褲', pinyin: 'kù' }
+            ],
+            'h': [
+                { char: '花', pinyin: 'huā' }, { char: '紅', pinyin: 'hóng' },
+                { char: '海', pinyin: 'hǎi' }, { char: '好', pinyin: 'hǎo' }, { char: '河', pinyin: 'hé' }
+            ]
+        };
+
+        class SoundFX {
+            constructor() {
+                this.ctx = null;
+                this.enabled = true;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            playJump() {
+                if (!this.enabled) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(400, this.ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.15);
+            }
+
+            playCoin() {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(987.77, now); // B5
+                osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(now + 0.25);
+            }
+
+            playWrong() {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.linearRampToValueAtTime(100, now + 0.2);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(now + 0.2);
+            }
+
+            playLevelUp() {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.2, now + idx * 0.08);
+                    gain.gain.linearRampToValueAtTime(0.01, now + idx * 0.08 + 0.2);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.2);
+                });
+            }
+        }
+
+        const audioManager = new SoundFX();
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // stop current sound
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-TW'; // Chinese Traditional / Mandarin
+                utterance.rate = 0.85; // slightly slower for students
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Game Configuration
+        let CANVAS_WIDTH = 1000;
+        let CANVAS_HEIGHT = 500;
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            CANVAS_WIDTH = canvas.width;
+            CANVAS_HEIGHT = canvas.height;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Game State Variables
+        let gameState = 'START'; // 'START', 'PLAYING', 'LEVEL_COMPLETE', 'GAMEOVER'
+        let currentLevel = 1;
+        let score = 0;
+        let collectedCount = 0;
+        const TARGET_GOAL = 10;
+        let targetInitial = 'b';
+        let targetWordObj = null; // Used in level 2 for specific target word
+
+        let playerClass = '';
+        let playerSeat = '';
+
+        // Player Physical Entity
+        const player = {
+            x: 100,
+            y: 300,
+            width: 44,
+            height: 54,
+            vx: 0,
+            vy: 0,
+            speed: 5.5,
+            jumpStrength: -12.5,
+            gravity: 0.55,
+            isGrounded: false,
+            facingRight: true,
+            frame: 0,
+            animTimer: 0
+        };
+
+        // Platforms & Coins
+        let cameraX = 0;
+        let worldWidth = 3500;
+        let platforms = [];
+        let coins = [];
+        let particles = [];
+        let floatingTexts = [];
+
+        // Keyboard Controls State
+        const keys = {
+            left: false,
+            right: false,
+            up: false
+        };
+
+        function generateLevelLayout() {
+            platforms = [];
+            coins = [];
+            worldWidth = 3600;
+
+            const groundY = CANVAS_HEIGHT - 60;
+            // Base Ground
+            platforms.push({ x: 0, y: groundY, width: worldWidth, height: 60, isGround: true });
+
+            // Floating Platforms
+            const platformConfigs = [
+                { x: 300, y: groundY - 90, w: 180 },
+                { x: 550, y: groundY - 170, w: 160 },
+                { x: 800, y: groundY - 100, w: 200 },
+                { x: 1100, y: groundY - 150, w: 180 },
+                { x: 1400, y: groundY - 110, w: 220 },
+                { x: 1700, y: groundY - 180, w: 160 },
+                { x: 2000, y: groundY - 100, w: 200 },
+                { x: 2300, y: groundY - 160, w: 180 },
+                { x: 2600, y: groundY - 110, w: 220 },
+                { x: 2900, y: groundY - 170, w: 180 },
+                { x: 3200, y: groundY - 100, w: 200 }
+            ];
+
+            platformConfigs.forEach(p => {
+                platforms.push({ x: p.x, y: p.y, width: p.w, height: 22, isGround: false });
+            });
+
+            // Pick initial for level 1 / word for level 2
+            pickNewTarget();
+
+            // Spawn Coins along world
+            const spawnXCoords = [];
+            for (let x = 250; x < worldWidth - 200; x += 150) {
+                spawnXCoords.push(x);
+            }
+
+            spawnXCoords.forEach(x => {
+                // Determine height
+                let y = groundY - 45;
+                if (Math.random() > 0.4) {
+                    y = groundY - 130 - Math.random() * 80;
+                }
+
+                // Decide if correct coin or wrong coin
+                const isCorrect = Math.random() < 0.45;
+                let coinData = {};
+
+                if (currentLevel === 1) {
+                    let initialChoice = isCorrect ? targetInitial : getRandomInitialExcept(targetInitial);
+                    const wordList = WORD_DATABASE[initialChoice];
+                    const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
+                    coinData = {
+                        initial: initialChoice,
+                        char: randomWord.char,
+                        pinyin: randomWord.pinyin
+                    };
+                } else {
+                    // Level 2: Target is specific speech target
+                    let initialChoice = isCorrect ? targetInitial : getRandomInitialExcept(targetInitial);
+                    const wordList = WORD_DATABASE[initialChoice];
+                    const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
+                    coinData = {
+                        initial: initialChoice,
+                        char: randomWord.char,
+                        pinyin: randomWord.pinyin
+                    };
+                }
+
+                coins.push({
+                    x: x,
+                    y: y,
+                    radius: 22,
+                    data: coinData,
+                    bounceOffset: Math.random() * Math.PI * 2,
+                    collected: false
+                });
+            });
+        }
+
+        function getRandomInitialExcept(exclude) {
+            const pool = INITIALS.filter(i => i !== exclude);
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        function pickNewTarget() {
+            if (currentLevel === 1) {
+                targetInitial = INITIALS[Math.floor(Math.random() * INITIALS.length)];
+            } else {
+                targetInitial = INITIALS[Math.floor(Math.random() * INITIALS.length)];
+                const wordList = WORD_DATABASE[targetInitial];
+                targetWordObj = wordList[Math.floor(Math.random() * wordList.length)];
+            }
+            updateHUDTargetUI();
+        }
+
+        function updateHUDTargetUI() {
+            const targetTextEl = document.getElementById('targetText');
+            const replayBtn = document.getElementById('replaySpeechBtn');
+
+            if (currentLevel === 1) {
+                targetTextEl.innerHTML = `請收集聲母是 <span class="text-2xl font-fredoka underline text-blue-700 ml-1 font-black">[ ${targetInitial} ]</span> 的金幣！`;
+                replayBtn.classList.add('hidden');
+            } else {
+                targetTextEl.innerHTML = `請聽聲音！收集聲母為 <span class="text-2xl font-fredoka text-blue-700 underline font-black">[ ${targetInitial} ]</span> 的漢字！`;
+                replayBtn.classList.remove('hidden');
+                // Speak target audio
+                speakTargetAudio();
+            }
+
+            document.getElementById('hudProgress').innerText = `${collectedCount}/${TARGET_GOAL}`;
+            document.getElementById('hudScore').innerText = score;
+        }
+
+        function speakTargetAudio() {
+            if (currentLevel === 2 && targetWordObj) {
+                speakText(`請找聲母是 ${targetInitial} 的字，例如：${targetWordObj.char}`);
+            }
+        }
+
+        document.getElementById('replaySpeechBtn').addEventListener('click', () => {
+            speakTargetAudio();
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
+            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') {
+                keys.up = true;
+                if (gameState === 'PLAYING' && player.isGrounded) {
+                    player.vy = player.jumpStrength;
+                    player.isGrounded = false;
+                    audioManager.playJump();
+                }
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
+            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') keys.up = false;
+        });
+
+        // Touch Control Listeners
+        const bindTouchBtn = (id, keyName) => {
+            const btn = document.getElementById(id);
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                keys[keyName] = true;
+                if (keyName === 'up' && gameState === 'PLAYING' && player.isGrounded) {
+                    player.vy = player.jumpStrength;
+                    player.isGrounded = false;
+                    audioManager.playJump();
+                }
+            }, { passive: false });
+            btn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                keys[keyName] = false;
+            }, { passive: false });
+        };
+
+        bindTouchBtn('btnLeft', 'left');
+        bindTouchBtn('btnRight', 'right');
+        bindTouchBtn('btnJump', 'up');
+
+        function updatePhysics() {
+            if (gameState !== 'PLAYING') return;
+
+            // Horizontal Movement
+            if (keys.left) {
+                player.vx = -player.speed;
+                player.facingRight = false;
+            } else if (keys.right) {
+                player.vx = player.speed;
+                player.facingRight = true;
+            } else {
+                player.vx *= 0.7; // friction
+            }
+
+            player.x += player.vx;
+
+            // World bounds check
+            if (player.x < 10) player.x = 10;
+            if (player.x > worldWidth - player.width) player.x = worldWidth - player.width;
+
+            // Gravity & Vertical Movement
+            player.vy += player.gravity;
+            player.y += player.vy;
+
+            // Platform Collisions
+            player.isGrounded = false;
+            const groundY = CANVAS_HEIGHT - 60;
+
+            platforms.forEach(p => {
+                if (
+                    player.x + player.width > p.x &&
+                    player.x < p.x + p.width &&
+                    player.y + player.height >= p.y &&
+                    player.y + player.height <= p.y + player.vy + 10 &&
+                    player.vy >= 0
+                ) {
+                    player.y = p.y - player.height;
+                    player.vy = 0;
+                    player.isGrounded = true;
+                }
+            });
+
+            // Camera Tracking
+            cameraX = player.x - CANVAS_WIDTH / 3;
+            if (cameraX < 0) cameraX = 0;
+            if (cameraX > worldWidth - CANVAS_WIDTH) cameraX = worldWidth - CANVAS_WIDTH;
+
+            // Coin Collision Check
+            coins.forEach(coin => {
+                if (coin.collected) return;
+
+                const coinScreenX = coin.x;
+                const coinScreenY = coin.y + Math.sin(Date.now() * 0.005 + coin.bounceOffset) * 6;
+
+                // Simple Circle-Box collision
+                const distX = Math.abs((player.x + player.width / 2) - coinScreenX);
+                const distY = Math.abs((player.y + player.height / 2) - coinScreenY);
+
+                if (distX < (player.width / 2 + coin.radius) && distY < (player.height / 2 + coin.radius)) {
+                    // Collision Happened!
+                    coin.collected = true;
+
+                    if (coin.data.initial === targetInitial) {
+                        // Correct Coin
+                        score += 100;
+                        collectedCount++;
+                        audioManager.playCoin();
+                        spawnParticles(coin.x, coin.y, '#f59e0b', 12);
+                        spawnFloatingText(coin.x, coin.y - 20, '+100 正確!', '#10b981');
+
+                        if (collectedCount >= TARGET_GOAL) {
+                            handleLevelPass();
+                        }
+                    } else {
+                        // Incorrect Coin
+                        score = Math.max(0, score - 30);
+                        audioManager.playWrong();
+                        spawnParticles(coin.x, coin.y, '#ef4444', 8);
+                        spawnFloatingText(coin.x, coin.y - 20, '-30 答錯嘍', '#ef4444');
+                    }
+
+                    document.getElementById('hudScore').innerText = score;
+                    document.getElementById('hudProgress').innerText = `${collectedCount}/${TARGET_GOAL}`;
+                }
+            });
+
+            // Update Particles & Floating Text
+            particles.forEach((pt, i) => {
+                pt.x += pt.vx;
+                pt.y += pt.vy;
+                pt.alpha -= 0.02;
+                if (pt.alpha <= 0) particles.splice(i, 1);
+            });
+
+            floatingTexts.forEach((ft, i) => {
+                ft.y -= 1;
+                ft.alpha -= 0.015;
+                if (ft.alpha <= 0) floatingTexts.splice(i, 1);
+            });
+        }
+
+        function handleLevelPass() {
+            audioManager.playLevelUp();
+            if (currentLevel === 1) {
+                currentLevel = 2;
+                collectedCount = 0;
+                spawnFloatingText(player.x, player.y - 50, '🎉 第一關完成！進入第二關！', '#3b82f6');
+                setTimeout(() => {
+                    generateLevelLayout();
+                    player.x = 100;
+                }, 1500);
+            } else {
+                // Game Completed!
+                gameState = 'GAMEOVER';
+                saveScoreToLeaderboard(playerClass, playerSeat, score);
+                showEndScreen();
+            }
+        }
+
+        function spawnParticles(x, y, color, count) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: x, y: y,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6,
+                    radius: Math.random() * 4 + 2,
+                    color: color,
+                    alpha: 1.0
+                });
+            }
+        }
+
+        function spawnFloatingText(x, y, text, color) {
+            floatingTexts.push({
+                x: x, y: y, text: text, color: color, alpha: 1.0
+            });
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+            ctx.save();
+            ctx.translate(-cameraX, 0);
+
+            // 1. Render Sky Parallax Clouds
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            for (let i = 0; i < 15; i++) {
+                const cloudX = (i * 300) - cameraX * 0.3;
+                ctx.beginPath();
+                ctx.arc(cloudX, 80 + (i % 3) * 20, 35, 0, Math.PI * 2);
+                ctx.arc(cloudX + 30, 70 + (i % 3) * 20, 45, 0, Math.PI * 2);
+                ctx.arc(cloudX + 60, 80 + (i % 3) * 20, 35, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 2. Render Platforms
+            platforms.forEach(p => {
+                if (p.isGround) {
+                    // Dirt/Grass Ground
+                    ctx.fillStyle = '#48bb78'; // grass top
+                    ctx.fillRect(p.x, p.y, p.width, 15);
+                    ctx.fillStyle = '#975a16'; // dirt body
+                    ctx.fillRect(p.x, p.y + 15, p.width, p.height - 15);
+                } else {
+                    // Floating Wooden Block
+                    ctx.fillStyle = '#ed8936';
+                    ctx.beginPath();
+                    ctx.roundRect(p.x, p.y, p.width, p.height, 8);
+                    ctx.fill();
+                    ctx.strokeStyle = '#c05621';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
+            });
+
+            // 3. Render Coins
+            coins.forEach(coin => {
+                if (coin.collected) return;
+
+                const floatY = coin.y + Math.sin(Date.now() * 0.005 + coin.bounceOffset) * 6;
+
+                // Golden Coin Circle
+                ctx.fillStyle = '#fbbf24';
+                ctx.beginPath();
+                ctx.arc(coin.x, floatY, coin.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#d97706';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Text Display on Coin
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                if (currentLevel === 1) {
+                    // Level 1: Chinese character + Pinyin
+                    ctx.fillStyle = '#78350f';
+                    ctx.font = 'bold 14px "Noto Sans TC", sans-serif';
+                    ctx.fillText(coin.data.char, coin.x, floatY - 5);
+
+                    ctx.fillStyle = '#1e3a8a';
+                    ctx.font = 'bold 11px Fredoka One, cursive';
+                    ctx.fillText(coin.data.pinyin, coin.x, floatY + 9);
+                } else {
+                    // Level 2: Only Chinese Character
+                    ctx.fillStyle = '#78350f';
+                    ctx.font = 'bold 18px "Noto Sans TC", sans-serif';
+                    ctx.fillText(coin.data.char, coin.x, floatY);
+                }
+            });
+
+            // 4. Render Player Character
+            ctx.save();
+            ctx.translate(player.x + player.width / 2, player.y + player.height / 2);
+            if (!player.facingRight) ctx.scale(-1, 1);
+
+            // Character Body (Cute Explorer Bear/Kid)
+            ctx.fillStyle = '#3b82f6'; // Shirt
+            ctx.beginPath();
+            ctx.roundRect(-18, -10, 36, 32, 6);
+            ctx.fill();
+
+            ctx.fillStyle = '#fde047'; // Head
+            ctx.beginPath();
+            ctx.arc(0, -20, 20, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Eyes
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            ctx.arc(8, -22, 3, 0, Math.PI * 2);
+            ctx.arc(16, -22, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Cap
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.arc(0, -25, 20, Math.PI, Math.PI * 2);
+            ctx.fill();
+            ctx.fillRect(0, -27, 24, 5);
+
+            ctx.restore();
+
+            // 5. Render Particles
+            particles.forEach(pt => {
+                ctx.fillStyle = pt.color;
+                ctx.globalAlpha = pt.alpha;
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1.0;
+
+            // 6. Render Floating Score Texts
+            floatingTexts.forEach(ft => {
+                ctx.fillStyle = ft.color;
+                ctx.globalAlpha = ft.alpha;
+                ctx.font = 'bold 16px "Noto Sans TC", sans-serif';
+                ctx.fillText(ft.text, ft.x, ft.y);
+            });
+            ctx.globalAlpha = 1.0;
+
+            ctx.restore();
+        }
+
+        function gameLoop() {
+            updatePhysics();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        const STORAGE_KEY = 'pinyin_adventure_scores';
+
+        function saveScoreToLeaderboard(cls, seat, sc) {
+            let scores = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            scores.push({
+                player: `${cls} 班 (${seat} 號)`,
+                score: sc,
+                date: new Date().toLocaleDateString()
+            });
+            // Sort Descending
+            scores.sort((a, b) => b.score - a.score);
+            // Keep Top 5
+            scores = scores.slice(0, 5);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
+        }
+
+        function renderLeaderboard() {
+            const listEl = document.getElementById('leaderboardList');
+            const scores = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+            if (scores.length === 0) {
+                listEl.innerHTML = `<div class="text-slate-400 text-center py-2">目前尚無紀錄</div>`;
+                return;
+            }
+
+            listEl.innerHTML = scores.map((item, idx) => `
+                <div class="flex justify-between items-center bg-slate-50 p-2 rounded-xl">
+                    <div class="flex items-center space-x-2">
+                        <span class="font-bold ${idx === 0 ? 'text-amber-500' : 'text-slate-500'} font-fredoka">#${idx + 1}</span>
+                        <span class="font-bold text-slate-700">${item.player}</span>
+                    </div>
+                    <span class="font-black text-amber-600 font-fredoka">${item.score} 分</span>
+                </div>
+            `).join('');
+        }
+
+        function showEndScreen() {
+            document.getElementById('endScreen').classList.remove('hidden');
+            document.getElementById('hudOverlay').classList.add('hidden');
+            document.getElementById('touchControls').classList.add('hidden');
+
+            document.getElementById('finalScore').innerText = score;
+            document.getElementById('finalPlayer').innerText = `${playerClass} (${playerSeat}號)`;
+            renderLeaderboard();
+        }
+
+        document.getElementById('startGameBtn').addEventListener('click', () => {
+            playerClass = document.getElementById('inputClass').value.trim() || '1A';
+            playerSeat = document.getElementById('inputSeat').value.trim() || '01';
+
+            document.getElementById('hudUser').innerText = `${playerClass} (${playerSeat}號)`;
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('hudOverlay').classList.remove('hidden');
+            document.getElementById('touchControls').classList.remove('hidden');
+
+            // Reset Game Variables
+            currentLevel = 1;
+            score = 0;
+            collectedCount = 0;
+            player.x = 100;
+            player.y = 300;
+
+            generateLevelLayout();
+            gameState = 'PLAYING';
+            audioManager.init();
+        });
+
+        document.getElementById('btnRetry').addEventListener('click', () => {
+            document.getElementById('endScreen').classList.add('hidden');
+            document.getElementById('hudOverlay').classList.remove('hidden');
+            document.getElementById('touchControls').classList.remove('hidden');
+
+            currentLevel = 1;
+            score = 0;
+            collectedCount = 0;
+            player.x = 100;
+            player.y = 300;
+
+            generateLevelLayout();
+            gameState = 'PLAYING';
+        });
+
+        document.getElementById('btnSwitchUser').addEventListener('click', () => {
+            document.getElementById('endScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        });
+
+        document.getElementById('btnHome').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+
+        document.getElementById('toggleAudioBtn').addEventListener('click', () => {
+            audioManager.enabled = !audioManager.enabled;
+            const icon = document.getElementById('audioIcon');
+            if (audioManager.enabled) {
+                icon.className = 'fa-solid fa-volume-high text-sm sm:text-base';
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-sm sm:text-base text-red-500';
+            }
+        });
+
+        // Initialize Loop
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>
