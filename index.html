@@ -30,6 +30,16 @@
             box-shadow: 0px 2px 0px rgba(0, 0, 0, 0.2), 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
 
+        /* Card Hover Depth Effect */
+        .card-depth {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(255, 255, 255, 0.8);
+        }
+        .card-depth:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.25), 0 0 0 5px rgba(255, 255, 255, 1);
+        }
+
         /* Floating Cloud Animations */
         @keyframes floatSlow {
             0%, 100% { transform: translateY(0px) translateX(0px); }
@@ -91,6 +101,23 @@
             width: 0;
         }
 
+        @media (max-width: 768px) {
+            .speech-bubble::after {
+                left: 50%;
+                top: -16px;
+                transform: translateX(-50%);
+                border-width: 0 10px 16px 10px;
+                border-color: transparent transparent #ffffff transparent;
+            }
+            .speech-bubble::before {
+                left: 50%;
+                top: -22px;
+                transform: translateX(-50%);
+                border-width: 0 12px 18px 12px;
+                border-color: transparent transparent #3b82f6 transparent;
+            }
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 10px;
@@ -137,13 +164,13 @@
         </div>
 
         <!-- Right Side Controls -->
-        <div class="flex items-center space-x-2 md:space-x-4">
+        <div class="flex items-center space-x-2 md:space-x-3">
             <!-- Student Profile Badge (Click to Edit) -->
             <button onclick="openProfileModal()" class="btn-bounce flex items-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-2xl shadow border-2 border-white">
                 <span class="text-xl mr-1.5">👧</span>
                 <div class="text-left leading-tight">
                     <div class="text-[10px] text-blue-200 font-bold uppercase">學生身份</div>
-                    <div id="userBadgeText" class="text-sm font-extrabold tracking-wide">2A 班 (點擊設定)</div>
+                    <div id="userBadgeText" class="text-xs md:text-sm font-extrabold tracking-wide">2A 班 (點擊設定)</div>
                 </div>
             </button>
 
@@ -152,8 +179,14 @@
                 <span class="text-xl mr-1.5 animate-bounce">⭐</span>
                 <div class="text-left leading-tight">
                     <div class="text-[10px] text-yellow-100 font-bold">打卡星</div>
-                    <div id="starCounter" class="text-sm font-black">5 顆星</div>
+                    <div id="starCounter" class="text-xs md:text-sm font-black">5 顆星</div>
                 </div>
+            </button>
+
+            <!-- Four Tone Reference Quick Modal Button -->
+            <button onclick="openToneModal()" class="btn-bounce bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-2xl border-2 border-white shadow text-sm font-black flex items-center gap-1" title="四聲對照表">
+                <span>👑</span>
+                <span class="hidden md:inline">四聲口訣</span>
             </button>
 
             <!-- Sound & Music Toggles -->
@@ -232,17 +265,17 @@
             <div class="flex-1 max-w-lg">
                 <div class="speech-bubble p-4 md:p-5 text-gray-800">
                     <h2 class="text-xl md:text-2xl font-black text-blue-600 mb-1 flex items-center">
-                        <span>👋 歡迎來到拼音大本營！</span>
+                        <span>👋 歡迎來到漢語拼音大冒險！</span>
                     </h2>
                     <p id="mascotText" class="text-base md:text-lg font-bold text-gray-700 leading-relaxed">
-                        「我是地鼠小哥！今天想挑戰哪一個拼音遊戲？快點擊下方卡片開啟冒險吧！」
+                        「我是地鼠小哥！快選一個拼音遊戲開始挑戰吧！打地鼠、投籃球還是接水果，任你挑選！」
                     </p>
                 </div>
                 <div class="mt-3 flex flex-wrap gap-2 justify-center md:justify-start">
-                    <button onclick="openLeaderboard()" class="btn-bounce bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-extrabold text-sm px-4 py-2 rounded-2xl shadow border-2 border-purple-200 flex items-center">
+                    <button onclick="openLeaderboard()" class="btn-bounce bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-extrabold text-sm px-4 py-2 rounded-2xl shadow border-2 border-purple-200 flex items-center gap-1">
                         🏆 班級龍虎榜
                     </button>
-                    <button onclick="playVoiceGreeting()" class="btn-bounce bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-sm px-4 py-2 rounded-2xl shadow border-2 border-emerald-200 flex items-center">
+                    <button onclick="playVoiceGreeting()" class="btn-bounce bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-sm px-4 py-2 rounded-2xl shadow border-2 border-emerald-200 flex items-center gap-1">
                         🔊 語音介紹
                     </button>
                 </div>
@@ -250,19 +283,20 @@
 
         </div>
 
-        <!-- Game Hub Selection Cards Grid -->
+        <!-- Game Hub Selection Cards Grid (3 Games) -->
         <div class="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6 my-2">
             
-            <!-- Game Card 1: Active Main Game (聲母打地鼠) -->
-            <div class="btn-bounce bg-gradient-to-b from-amber-100 via-white to-orange-50 rounded-3xl p-6 border-4 border-amber-400 shadow-xl flex flex-col justify-between relative overflow-hidden group">
+            <!-- Game Card 1: 聲母打地鼠大冒險 (game2.html) -->
+            <div class="card-depth bg-gradient-to-b from-amber-100 via-white to-orange-50 rounded-3xl p-6 border-4 border-amber-400 shadow-xl flex flex-col justify-between relative overflow-hidden group">
                 <!-- Top Badge -->
                 <div class="absolute top-3 right-3 bg-red-500 text-white font-black text-xs px-3 py-1 rounded-full border border-white shadow tracking-wide animate-pulse">
-                    🔥 最受歡迎
+                    🔥 熱門推薦
                 </div>
 
                 <div>
                     <div class="text-5xl mb-3 transform group-hover:scale-110 transition-transform">🔨</div>
                     <h3 class="text-2xl font-black text-amber-900 mb-1">聲母打地鼠</h3>
+                    <div class="text-xs font-black text-amber-600 mb-2">【聲母辨識大挑戰】</div>
                     <div class="flex flex-wrap gap-1 mb-3">
                         <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">b</span>
                         <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">p</span>
@@ -276,8 +310,8 @@
                         <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">k</span>
                         <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">h</span>
                     </div>
-                    <p class="text-sm font-bold text-gray-600 mb-4">
-                        聽語音辨識聲母，眼疾手快打地鼠！包含雙關卡挑戰與闖關倒數！
+                    <p class="text-sm font-bold text-gray-600 mb-4 leading-relaxed">
+                        專心聽語音發音，快速辨識聲母！反應要快、手眼要協調，快敲擊正確的地鼠！
                     </p>
                 </div>
 
@@ -287,77 +321,75 @@
                         <span id="card1HighScore" class="text-base text-red-600 font-black">0 分 🌟</span>
                     </div>
                     <a href="game2.html" onclick="playClickSound()" class="w-full btn-bounce bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-lg py-3 rounded-2xl shadow-lg border-2 border-yellow-200 flex justify-center items-center gap-2 group-hover:scale-105 transition-all">
-                        <span>開始挑戰</span>
+                        <span>🔨 開始打地鼠</span>
                         <span class="text-xl">🚀</span>
                     </a>
                 </div>
             </div>
 
-            <!-- Game Card 2: 韻母對對碰 (Preview / Interactive Modal) -->
-            <div class="btn-bounce bg-gradient-to-b from-sky-100 via-white to-blue-50 rounded-3xl p-6 border-4 border-sky-400 shadow-xl flex flex-col justify-between relative overflow-hidden group">
+            <!-- Game Card 2: 聲韻大投籃 (game1.html) -->
+            <div class="card-depth bg-gradient-to-b from-sky-100 via-white to-blue-50 rounded-3xl p-6 border-4 border-sky-400 shadow-xl flex flex-col justify-between relative overflow-hidden group">
                 <!-- Top Badge -->
                 <div class="absolute top-3 right-3 bg-sky-500 text-white font-black text-xs px-3 py-1 rounded-full border border-white shadow tracking-wide">
-                    🎯 迷你試玩
+                    🏀 體育競技
                 </div>
 
                 <div>
-                    <div class="text-5xl mb-3 transform group-hover:scale-110 transition-transform">🎯</div>
-                    <h3 class="text-2xl font-black text-sky-900 mb-1">韻母對對碰</h3>
+                    <div class="text-5xl mb-3 transform group-hover:scale-110 transition-transform">🏀</div>
+                    <h3 class="text-2xl font-black text-sky-900 mb-1">聲韻大投籃</h3>
+                    <div class="text-xs font-black text-sky-600 mb-2">【辨別聲母與韻母】</div>
                     <div class="flex flex-wrap gap-1 mb-3">
-                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">a</span>
-                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">o</span>
-                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">e</span>
-                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">i</span>
-                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">u</span>
-                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">ü</span>
+                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">聲母框 (b/p/m...)</span>
+                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">韻母框 (a/o/e...)</span>
                     </div>
-                    <p class="text-sm font-bold text-gray-600 mb-4">
-                        翻開卡片進行單韻母圖音配對，考考你的超強記憶力！
+                    <p class="text-sm font-bold text-gray-600 mb-4 leading-relaxed">
+                        看清籃框標籤（聲母或韻母），瞄準將拼音籃球精準投進對應的籃框，挑戰連擊得分！
                     </p>
                 </div>
 
                 <div>
                     <div class="bg-sky-200/60 rounded-xl p-2.5 mb-4 text-xs font-bold text-sky-900 flex justify-between items-center">
-                        <span>關卡狀態:</span>
-                        <span class="text-sm text-blue-700 font-black">開放試玩 🎈</span>
+                        <span>最高紀錄:</span>
+                        <span id="card2HighScore" class="text-base text-blue-700 font-black">0 分 🌟</span>
                     </div>
-                    <button onclick="openYunmuPreview()" class="w-full btn-bounce bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black text-lg py-3 rounded-2xl shadow-lg border-2 border-sky-200 flex justify-center items-center gap-2">
-                        <span>試玩體驗</span>
-                        <span class="text-xl">🎮</span>
-                    </button>
+                    <a href="game1.html" onclick="playClickSound()" class="w-full btn-bounce bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-black text-lg py-3 rounded-2xl shadow-lg border-2 border-sky-200 flex justify-center items-center gap-2 group-hover:scale-105 transition-all">
+                        <span>🏀 開始投籃</span>
+                        <span class="text-xl">🏀</span>
+                    </a>
                 </div>
             </div>
 
-            <!-- Game Card 3: 四聲大冒險 (Rules Preview Modal) -->
-            <div class="btn-bounce bg-gradient-to-b from-purple-100 via-white to-pink-50 rounded-3xl p-6 border-4 border-purple-400 shadow-xl flex flex-col justify-between relative overflow-hidden group">
+            <!-- Game Card 3: 四聲接水果 (game3.html) -->
+            <div class="card-depth bg-gradient-to-b from-purple-100 via-white to-pink-50 rounded-3xl p-6 border-4 border-pink-400 shadow-xl flex flex-col justify-between relative overflow-hidden group">
                 <!-- Top Badge -->
-                <div class="absolute top-3 right-3 bg-purple-500 text-white font-black text-xs px-3 py-1 rounded-full border border-white shadow tracking-wide">
-                    👑 聲調練習
+                <div class="absolute top-3 right-3 bg-pink-500 text-white font-black text-xs px-3 py-1 rounded-full border border-white shadow tracking-wide">
+                    🍎 趣味聲調
                 </div>
 
                 <div>
-                    <div class="text-5xl mb-3 transform group-hover:scale-110 transition-transform">👑</div>
-                    <h3 class="text-2xl font-black text-purple-900 mb-1">四聲大冒險</h3>
+                    <div class="text-5xl mb-3 transform group-hover:scale-110 transition-transform">🍎</div>
+                    <h3 class="text-2xl font-black text-purple-900 mb-1">四聲接水果</h3>
+                    <div class="text-xs font-black text-pink-600 mb-2">【辨別四聲調】</div>
                     <div class="flex flex-wrap gap-1 mb-3">
                         <span class="bg-purple-200 text-purple-900 font-bold text-xs px-2 py-0.5 rounded">陰平 ˉ</span>
                         <span class="bg-purple-200 text-purple-900 font-bold text-xs px-2 py-0.5 rounded">陽平 ˊ</span>
                         <span class="bg-purple-200 text-purple-900 font-bold text-xs px-2 py-0.5 rounded">上聲 ˇ</span>
                         <span class="bg-purple-200 text-purple-900 font-bold text-xs px-2 py-0.5 rounded">去聲 ˋ</span>
                     </div>
-                    <p class="text-sm font-bold text-gray-600 mb-4">
-                        一平二揚三拐彎四下降！跟我一起大聲唸出四個聲調！
+                    <p class="text-sm font-bold text-gray-600 mb-4 leading-relaxed">
+                        移動小籃子，聽清語音題目，接住對應四聲調（第一聲至第四聲）的美味水果，注意躲避炸彈！
                     </p>
                 </div>
 
                 <div>
                     <div class="bg-purple-200/60 rounded-xl p-2.5 mb-4 text-xs font-bold text-purple-900 flex justify-between items-center">
-                        <span>口訣學習:</span>
-                        <span class="text-sm text-purple-700 font-black">四聲口訣 ✨</span>
+                        <span>最高紀錄:</span>
+                        <span id="card3HighScore" class="text-base text-pink-700 font-black">0 分 🌟</span>
                     </div>
-                    <button onclick="openToneModal()" class="w-full btn-bounce bg-gradient-to-r from-purple-500 to-pink-500 text-white font-black text-lg py-3 rounded-2xl shadow-lg border-2 border-purple-200 flex justify-center items-center gap-2">
-                        <span>聲調口訣</span>
-                        <span class="text-xl">📖</span>
-                    </button>
+                    <a href="game3.html" onclick="playClickSound()" class="w-full btn-bounce bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-black text-lg py-3 rounded-2xl shadow-lg border-2 border-purple-200 flex justify-center items-center gap-2 group-hover:scale-105 transition-all">
+                        <span>🍎 開始接水果</span>
+                        <span class="text-xl">🧺</span>
+                    </a>
                 </div>
             </div>
 
@@ -366,7 +398,7 @@
 
     <!-- Footer -->
     <footer class="relative z-10 w-full py-3 bg-white/70 backdrop-blur-sm text-center text-xs font-bold text-gray-600 border-t-2 border-white">
-        <p>🌟 拼音小高手 - 小學二年級漢語拼音教學軟體 | 建議使用 Chrome / Edge 瀏覽器開啟</p>
+        <p>🌟 拼音小高手 - 小學二年級漢語拼音教學軟體 | 建議使用 Chrome / Edge 瀏覽器體驗最佳效果</p>
     </footer>
 
     <!-- MODAL 1: Student Profile Modal -->
@@ -418,9 +450,9 @@
                 <button onclick="closeModal('leaderboardModal')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
             </div>
 
-            <p class="text-xs font-bold text-purple-600 mb-3">📍 聲母打地鼠 - 本機最高得分英雄榜</p>
+            <p class="text-xs font-bold text-purple-600 mb-3">📍 各項拼音遊戲最高得分紀錄榜</p>
 
-            <div class="bg-purple-50 rounded-2xl p-4 max-h-60 overflow-y-auto space-y-2" id="leaderboardList">
+            <div class="bg-purple-50 rounded-2xl p-4 max-h-72 overflow-y-auto space-y-3" id="leaderboardList">
                 <!-- Leaderboard entries injected dynamically -->
             </div>
 
@@ -430,36 +462,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: Yunmu Matching Mini Game Modal -->
-    <div id="yunmuModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl border-4 border-sky-400 p-6 w-full max-w-md shadow-2xl text-center">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="text-2xl font-black text-sky-800 flex items-center">
-                    <span class="mr-2">🎯</span> 單韻母對對碰試玩
-                </h3>
-                <button onclick="closeModal('yunmuModal')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
-            </div>
-            
-            <p class="text-sm font-bold text-gray-600 mb-4">點擊下方按鈕聽發音，找出對應的韻母卡片！</p>
-
-            <div class="bg-sky-50 rounded-2xl p-4 border-2 border-sky-200 mb-4">
-                <button onclick="playYunmuAudio()" class="btn-bounce bg-sky-500 text-white font-black px-4 py-2 rounded-xl mb-4 shadow flex items-center justify-center mx-auto gap-2">
-                    <span>🔊 點擊播放音效: </span>
-                    <span id="targetYunmuText" class="text-xl underline">a</span>
-                </button>
-
-                <div class="grid grid-cols-3 gap-3" id="yunmuCardGrid">
-                    <!-- Cards will be populated by JS -->
-                </div>
-            </div>
-
-            <div id="yunmuFeedback" class="text-base font-black h-6 mb-2 text-green-600"></div>
-
-            <button onclick="closeModal('yunmuModal')" class="btn-bounce w-full py-2 bg-sky-500 text-white font-extrabold rounded-xl">關閉試玩</button>
-        </div>
-    </div>
-
-    <!-- MODAL 4: Four Tones Rules Modal -->
+    <!-- MODAL 3: Four Tones Rules Modal -->
     <div id="toneModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl border-4 border-pink-400 p-6 w-full max-w-md shadow-2xl text-center">
             <div class="flex justify-between items-center mb-3">
@@ -475,7 +478,7 @@
                         <span class="text-red-600 font-black text-lg">第一聲 (陰平 ˉ)</span>
                         <div class="text-xs font-bold text-gray-600">一声平 (ā) - 像高高走平路</div>
                     </div>
-                    <button onclick="speakTone('ā')" class="btn-bounce bg-red-400 text-white p-2 rounded-xl text-xs font-black">🔊 聽發音</button>
+                    <button onclick="speakTone('ā')" class="btn-bounce bg-red-400 hover:bg-red-500 text-white p-2 rounded-xl text-xs font-black flex items-center gap-1">🔊 聽發音</button>
                 </div>
 
                 <div class="p-3 bg-amber-50 rounded-2xl border-2 border-amber-200 flex items-center justify-between">
@@ -483,7 +486,7 @@
                         <span class="text-amber-600 font-black text-lg">第二聲 (陽平 ˊ)</span>
                         <div class="text-xs font-bold text-gray-600">二声扬 (á) - 像爬上小山坡</div>
                     </div>
-                    <button onclick="speakTone('á')" class="btn-bounce bg-amber-400 text-white p-2 rounded-xl text-xs font-black">🔊 聽發音</button>
+                    <button onclick="speakTone('á')" class="btn-bounce bg-amber-400 hover:bg-amber-500 text-white p-2 rounded-xl text-xs font-black flex items-center gap-1">🔊 聽發音</button>
                 </div>
 
                 <div class="p-3 bg-emerald-50 rounded-2xl border-2 border-emerald-200 flex items-center justify-between">
@@ -491,7 +494,7 @@
                         <span class="text-emerald-600 font-black text-lg">第三聲 (上聲 ˇ)</span>
                         <div class="text-xs font-bold text-gray-600">三声拐弯 (ǎ) - 像先下坡再上坡</div>
                     </div>
-                    <button onclick="speakTone('ǎ')" class="btn-bounce bg-emerald-400 text-white p-2 rounded-xl text-xs font-black">🔊 聽發音</button>
+                    <button onclick="speakTone('ǎ')" class="btn-bounce bg-emerald-400 hover:bg-emerald-500 text-white p-2 rounded-xl text-xs font-black flex items-center gap-1">🔊 聽發音</button>
                 </div>
 
                 <div class="p-3 bg-blue-50 rounded-2xl border-2 border-blue-200 flex items-center justify-between">
@@ -499,7 +502,7 @@
                         <span class="text-blue-600 font-black text-lg">第四聲 (去聲 ˋ)</span>
                         <div class="text-xs font-bold text-gray-600">四声下降 (à) - 像從高處衝下來</div>
                     </div>
-                    <button onclick="speakTone('à')" class="btn-bounce bg-blue-400 text-white p-2 rounded-xl text-xs font-black">🔊 聽發音</button>
+                    <button onclick="speakTone('à')" class="btn-bounce bg-blue-400 hover:bg-blue-500 text-white p-2 rounded-xl text-xs font-black flex items-center gap-1">🔊 聽發音</button>
                 </div>
             </div>
 
@@ -520,10 +523,11 @@
             studentId: localStorage.getItem('pinyin_student_id') || '01',
             studentName: localStorage.getItem('pinyin_student_name') || '小明',
             stars: parseInt(localStorage.getItem('pinyin_student_stars') || '5', 10),
-            highScore: parseInt(localStorage.getItem('pinyin_whack_highscore') || '0', 10)
+            highScoreWhack: parseInt(localStorage.getItem('pinyin_whack_highscore') || '0', 10),
+            highScoreBasket: parseInt(localStorage.getItem('pinyin_basket_highscore') || '0', 10),
+            highScoreFruit: parseInt(localStorage.getItem('pinyin_fruit_highscore') || '0', 10)
         };
 
-        // Initialize on DOM load
         window.onload = function() {
             updateProfileUI();
             updateHighScoreDisplay();
@@ -599,7 +603,6 @@
         function startBGM() {
             initAudioContext();
             if (bgmOscillator) return;
-            // Gentle pentatonic background synth loop
             const notes = [261.63, 293.66, 329.63, 392.00, 440.00];
             let noteIdx = 0;
             bgmOscillator = setInterval(() => {
@@ -628,9 +631,9 @@
         function mascotSpeak() {
             playClickSound();
             const greetings = [
-                "歡迎來到拼音小高手！今天想玩哪一個遊戲呢？",
+                "歡迎來到漢語拼音大冒險！快選一個遊戲挑戰吧！",
+                "打地鼠、投籃球還是接水果，今天想挑戰哪一個？",
                 "加油！練習漢語拼音，你最棒了！",
-                "點擊「聲母打地鼠」開始挑戰吧！",
                 "記得每天打卡賺取星星喔！"
             ];
             const randomMsg = greetings[Math.floor(Math.random() * greetings.length)];
@@ -664,7 +667,9 @@
         }
 
         function updateHighScoreDisplay() {
-            document.getElementById('card1HighScore').innerText = `${userData.highScore} 分 🌟`;
+            document.getElementById('card1HighScore').innerText = `${userData.highScoreWhack} 分 🌟`;
+            document.getElementById('card2HighScore').innerText = `${userData.highScoreBasket} 分 🌟`;
+            document.getElementById('card3HighScore').innerText = `${userData.highScoreFruit} 分 🌟`;
         }
 
         function openProfileModal() {
@@ -710,69 +715,33 @@
             playClickSound();
             const listContainer = document.getElementById('leaderboardList');
             
-            // Mock leaderboard entries + current student high score
-            let scores = [
-                { class: '2A', id: '08', name: '陳小華', score: 1450 },
-                { class: '2B', id: '15', name: '李大衛', score: 1200 },
-                { class: userData.className, id: userData.studentId, name: userData.studentName, score: userData.highScore }
-            ];
-
-            // Sort descending
-            scores.sort((a, b) => b.score - a.score);
-
-            listContainer.innerHTML = scores.map((item, idx) => `
-                <div class="flex items-center justify-between p-3 bg-white rounded-xl shadow-sm border border-purple-100">
-                    <div class="flex items-center space-x-3">
-                        <span class="w-7 h-7 flex items-center justify-center font-black rounded-full ${idx === 0 ? 'bg-yellow-400 text-white' : idx === 1 ? 'bg-gray-300 text-white' : 'bg-amber-600 text-white'}">${idx + 1}</span>
-                        <div>
-                            <div class="font-extrabold text-gray-800">${item.class}班 ${item.name} (${item.id}號)</div>
-                        </div>
+            listContainer.innerHTML = `
+                <div class="p-3 bg-white rounded-xl shadow-sm border border-purple-100 flex items-center justify-between">
+                    <div>
+                        <div class="font-extrabold text-amber-800">🔨 聲母打地鼠</div>
+                        <div class="text-xs text-gray-500">${userData.className} 班 ${userData.studentName}</div>
                     </div>
-                    <div class="font-black text-purple-700 text-lg">${item.score} 分</div>
+                    <div class="font-black text-amber-600 text-lg">${userData.highScoreWhack} 分</div>
                 </div>
-            `).join('');
+
+                <div class="p-3 bg-white rounded-xl shadow-sm border border-purple-100 flex items-center justify-between">
+                    <div>
+                        <div class="font-extrabold text-sky-800">🏀 聲韻大投籃</div>
+                        <div class="text-xs text-gray-500">${userData.className} 班 ${userData.studentName}</div>
+                    </div>
+                    <div class="font-black text-sky-600 text-lg">${userData.highScoreBasket} 分</div>
+                </div>
+
+                <div class="p-3 bg-white rounded-xl shadow-sm border border-purple-100 flex items-center justify-between">
+                    <div>
+                        <div class="font-extrabold text-pink-800">🍎 四聲接水果</div>
+                        <div class="text-xs text-gray-500">${userData.className} 班 ${userData.studentName}</div>
+                    </div>
+                    <div class="font-black text-pink-600 text-lg">${userData.highScoreFruit} 分</div>
+                </div>
+            `;
 
             document.getElementById('leaderboardModal').classList.remove('hidden');
-        }
-
-        let currentTargetYunmu = 'a';
-        const yunmus = ['a', 'o', 'e', 'i', 'u', 'ü'];
-
-        function openYunmuPreview() {
-            playClickSound();
-            setupYunmuGame();
-            document.getElementById('yunmuModal').classList.remove('hidden');
-        }
-
-        function setupYunmuGame() {
-            currentTargetYunmu = yunmus[Math.floor(Math.random() * yunmus.length)];
-            document.getElementById('targetYunmuText').innerText = currentTargetYunmu;
-            document.getElementById('yunmuFeedback').innerText = '';
-
-            const grid = document.getElementById('yunmuCardGrid');
-            grid.innerHTML = yunmus.map(y => `
-                <button onclick="checkYunmu('${y}')" class="btn-bounce bg-white border-2 border-sky-300 text-sky-800 font-black text-2xl py-3 rounded-2xl shadow hover:bg-sky-100">
-                    ${y}
-                </button>
-            `).join('');
-        }
-
-        function playYunmuAudio() {
-            speakChinese(currentTargetYunmu);
-        }
-
-        function checkYunmu(selected) {
-            playClickSound();
-            const feedback = document.getElementById('yunmuFeedback');
-            if (selected === currentTargetYunmu) {
-                feedback.className = "text-base font-black h-6 mb-2 text-green-600 animate-bounce";
-                feedback.innerText = "🎉 答對了！太棒了！";
-                playCheerSound();
-                setTimeout(setupYunmuGame, 1200);
-            } else {
-                feedback.className = "text-base font-black h-6 mb-2 text-red-500";
-                feedback.innerText = "❌ 再試一次看看喔！";
-            }
         }
 
         function openToneModal() {
