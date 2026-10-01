@@ -569,9 +569,9 @@
         this.vocab = vocabItem;
         this.state = 'UPPING'; // UPPING, STAY, DOWNING, HIT, DEAD
         this.offsetY = 0;
-        this.maxOffsetY = 65;
-        this.stayTimer = 2.2; // 停留時間
-        this.speed = 120;
+        this.maxOffsetY = 75;
+        this.stayTimer = 2.2;
+        this.speed = 130;
       }
 
       update(dt) {
@@ -611,66 +611,68 @@
         
         // 剪裁區域：防止地鼠穿透洞口下方
         ctx.beginPath();
-        ctx.rect(h.x - 70, h.y - 110, 140, 115);
+        ctx.rect(h.x - 65, h.y - 120, 130, 125);
         ctx.clip();
 
-        // 畫地鼠身體
+        // 畫地鼠身體 (頭部與身體)
         ctx.fillStyle = this.state === 'HIT' ? '#dc2626' : '#a16207';
         ctx.beginPath();
-        ctx.arc(moleX, moleY - 10, 36, Math.PI, 0, false);
+        ctx.arc(moleX, moleY - 20, 42, Math.PI, 0, false);
         ctx.fill();
-        ctx.fillRect(moleX - 36, moleY - 10, 72, 40);
+        ctx.fillRect(moleX - 42, moleY - 20, 84, 60);
 
         // 地鼠耳朵
         ctx.fillStyle = '#78350f';
         ctx.beginPath();
-        ctx.arc(moleX - 28, moleY - 38, 10, 0, Math.PI * 2);
-        ctx.arc(moleX + 28, moleY - 38, 10, 0, Math.PI * 2);
+        ctx.arc(moleX - 32, moleY - 52, 11, 0, Math.PI * 2);
+        ctx.arc(moleX + 32, moleY - 52, 11, 0, Math.PI * 2);
         ctx.fill();
 
         // 眼睛
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
-        ctx.arc(moleX - 12, moleY - 25, 8, 0, Math.PI * 2);
-        ctx.arc(moleX + 12, moleY - 25, 8, 0, Math.PI * 2);
+        ctx.arc(moleX - 14, moleY - 36, 9, 0, Math.PI * 2);
+        ctx.arc(moleX + 14, moleY - 36, 9, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.fillStyle = '#0f172a';
         ctx.beginPath();
-        ctx.arc(moleX - 12, moleY - 25, 4, 0, Math.PI * 2);
-        ctx.arc(moleX + 12, moleY - 25, 4, 0, Math.PI * 2);
+        ctx.arc(moleX - 14, moleY - 36, 4, 0, Math.PI * 2);
+        ctx.arc(moleX + 14, moleY - 36, 4, 0, Math.PI * 2);
         ctx.fill();
 
         // 鼻子
         ctx.fillStyle = '#f43f5e';
         ctx.beginPath();
-        ctx.arc(moleX, moleY - 16, 6, 0, Math.PI * 2);
+        ctx.arc(moleX, moleY - 26, 7, 0, Math.PI * 2);
         ctx.fill();
 
-        // 牌子 / 漢字標籤
-        ctx.fillStyle = '#fef08a';
-        ctx.strokeStyle = '#ca8a04';
-        ctx.lineWidth = 2;
+        // 地鼠肚皮 (白色/淺黃色圓角徽章，字放在這裡)
+        ctx.fillStyle = '#fef3c7';
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        if (ctx.roundRect) ctx.roundRect(moleX - 34, moleY - 78, 68, 38, 8);
-        else ctx.rect(moleX - 34, moleY - 78, 68, 38);
+        if (ctx.roundRect) ctx.roundRect(moleX - 35, moleY - 10, 70, 48, 12);
+        else ctx.rect(moleX - 35, moleY - 10, 70, 48);
         ctx.fill();
         ctx.stroke();
 
-        ctx.fillStyle = '#0f172a';
         ctx.textAlign = 'center';
 
         if (currentLevel === 1) {
-          // 第一關：顯示漢字 + 拼音
-          ctx.font = 'bold 16px "Microsoft JhengHei", sans-serif';
-          ctx.fillText(this.vocab.c, moleX, moleY - 58);
-          ctx.font = 'bold 12px sans-serif';
-          ctx.fillStyle = '#ea580c';
-          ctx.fillText(this.vocab.p, moleX, moleY - 43);
-        } else {
-          // 第二關：只顯示漢字
+          // 第一關：肚皮上顯示「漢字 + 拼音」
+          ctx.fillStyle = '#0f172a';
           ctx.font = 'bold 22px "Microsoft JhengHei", sans-serif';
-          ctx.fillText(this.vocab.c, moleX, moleY - 52);
+          ctx.fillText(this.vocab.c, moleX, moleY + 12);
+
+          ctx.fillStyle = '#ea580c';
+          ctx.font = 'bold 15px sans-serif';
+          ctx.fillText(this.vocab.p, moleX, moleY + 31);
+        } else {
+          // 第二關：肚皮上「只顯示漢字」
+          ctx.fillStyle = '#0f172a';
+          ctx.font = 'bold 28px "Microsoft JhengHei", sans-serif';
+          ctx.fillText(this.vocab.c, moleX, moleY + 23);
         }
 
         ctx.restore();
@@ -685,7 +687,7 @@
       questionHint.innerHTML = "🔨 請聽讀音，擊中帶有目標聲母的地鼠！";
       
       if (currentLevel === 1) {
-        questionText.innerHTML = `當前目標聲母：<span style="color:#fde047; font-size:1.6rem;">${currentTargetInitial}</span> (${pron})<br><span style="font-size:0.9rem; color:#cbd5e1;">(地鼠牌子顯示漢字與拼音)</span>`;
+        questionText.innerHTML = `當前目標聲母：<span style="color:#fde047; font-size:1.6rem;">${currentTargetInitial}</span> (${pron})<br><span style="font-size:0.9rem; color:#cbd5e1;">(地鼠肚皮上顯示漢字與拼音)</span>`;
       } else {
         questionText.innerHTML = `當前目標聲母：<span style="color:#fde047; font-size:1.6rem;">${currentTargetInitial}</span> (${pron})<br><span style="font-size:0.9rem; color:#f87171;">(拼音已隱藏，請聽音辨認漢字)</span>`;
       }
@@ -698,7 +700,6 @@
     });
 
     function spawnMole() {
-      // 找出空的洞
       const occupiedHoles = moles.map(m => m.holeIndex);
       const freeHoles = [0, 1, 2, 3, 4, 5].filter(idx => !occupiedHoles.includes(idx));
 
@@ -706,7 +707,6 @@
 
       const randomHole = freeHoles[Math.floor(Math.random() * freeHoles.length)];
 
-      // 50% 機率生成符合當前目標聲母的字
       let chosenVocab;
       if (Math.random() < 0.5) {
         const correctVocabs = RAW_VOCAB.filter(v => v.initial === currentTargetInitial);
@@ -735,19 +735,19 @@
         const moleX = h.x;
         const moleY = h.y - mole.offsetY;
 
-        // 判斷點擊區域
+        // 判斷點擊區域（包含頭部與肚皮文字區）
         if (
           clickX >= moleX - 45 &&
           clickX <= moleX + 45 &&
-          clickY >= moleY - 80 &&
-          clickY <= moleY + 20
+          clickY >= moleY - 60 &&
+          clickY <= moleY + 40
         ) {
           if (mole.vocab.initial === currentTargetInitial) {
             score += 10;
             playSound('hit');
             mole.state = 'HIT';
             mole.stayTimer = 0.3;
-            addFloatText('答對 +10分！', moleX, moleY - 60, '#22c55e');
+            addFloatText('答對 +10分！', moleX, moleY - 50, '#22c55e');
 
             if (currentLevel === 1) {
               level1Hits++;
@@ -761,14 +761,13 @@
               }
             }
 
-            // 換下一個目標聲母
             setTargetInitial();
           } else {
             score = Math.max(0, score - 5);
             playSound('wrong');
             mole.state = 'HIT';
             mole.stayTimer = 0.3;
-            addFloatText('打錯 -5分！', moleX, moleY - 60, '#ef4444');
+            addFloatText('打錯 -5分！', moleX, moleY - 50, '#ef4444');
           }
 
           scoreDisplay.textContent = score;
@@ -903,7 +902,6 @@
       }
       timeDisplay.textContent = formatTime(Math.ceil(timeLeft));
 
-      // 地鼠生成邏輯
       spawnTimer += dt;
       if (spawnTimer >= 0.85) {
         spawnTimer = 0;
@@ -912,7 +910,6 @@
         }
       }
 
-      // 更新地鼠
       for (let i = moles.length - 1; i >= 0; i--) {
         moles[i].update(dt);
         if (moles[i].state === 'DEAD') {
@@ -927,11 +924,9 @@
     function render() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // 草地背景
       ctx.fillStyle = '#15803d';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // 裝飾小草
       ctx.fillStyle = '#166534';
       ctx.beginPath();
       ctx.arc(80, 100, 40, 0, Math.PI * 2);
@@ -939,21 +934,17 @@
       ctx.arc(300, 440, 60, 0, Math.PI * 2);
       ctx.fill();
 
-      // 畫地鼠洞與地鼠
       HOLES.forEach((h, index) => {
-        // 洞口後方陰影
         ctx.fillStyle = '#3f2305';
         ctx.beginPath();
         ctx.ellipse(h.x, h.y, 55, 22, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // 畫該洞對應的地鼠
         const mole = moles.find(m => m.holeIndex === index);
         if (mole) {
           mole.draw();
         }
 
-        // 洞口前泥土邊框
         ctx.fillStyle = '#854d0e';
         ctx.beginPath();
         ctx.ellipse(h.x, h.y + 6, 58, 16, 0, 0, Math.PI * 2);
@@ -964,7 +955,6 @@
         ctx.stroke();
       });
 
-      // 繪製浮動文字
       for (let i = floatTexts.length - 1; i >= 0; i--) {
         const ft = floatTexts[i];
         ctx.save();
