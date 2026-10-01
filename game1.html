@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>拼音小高手 - 二年級聽音辨韻母大賽 (4秒長音放大版)</title>
+  <title>拼音小高手 - 二年級聽音辨韻母大賽 </title>
   <style>
     * {
       box-sizing: border-box;
@@ -210,32 +210,46 @@
 
     .btn-group {
       display: flex;
-      gap: 12px;
+      gap: 8px;
       margin-top: 10px;
       justify-content: center;
       width: 100%;
+      flex-wrap: wrap;
     }
 
     .btn {
       background: #ea580c;
       color: white;
       border: none;
-      padding: 10px 24px;
-      font-size: 1.05rem;
+      padding: 10px 18px;
+      font-size: 0.95rem;
       font-weight: bold;
       border-radius: 50px;
       cursor: pointer;
-      box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35);
+      box-shadow: 0 4px 12px rgba(234, 88, 12, 0.35);
       transition: transform 0.15s ease, background-color 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn-secondary {
       background: #0284c7;
-      box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
     }
 
     .btn-secondary:hover {
       background: #0369a1;
+    }
+
+    .btn-menu {
+      background: #64748b;
+      box-shadow: 0 4px 12px rgba(100, 116, 139, 0.35);
+    }
+
+    .btn-menu:hover {
+      background: #475569;
     }
 
     .btn:hover {
@@ -329,6 +343,7 @@
         <b>滿 60 分即可自動晉級第二關！限時 1分30秒</b>，輸入班號後開始！</p>
 
         <button id="start-btn" class="btn">開始挑戰 (1分30秒)</button>
+        <a href="index.html" class="btn btn-menu" style="margin-top: 10px;">🏠 主選單</a>
       </div>
 
       <div id="end-screen" class="overlay hidden" style="justify-content: center;">
@@ -356,6 +371,7 @@
         <div class="btn-group">
           <button id="restart-btn" class="btn">再次挑戰</button>
           <button id="switch-player-btn" class="btn btn-secondary">換人遊玩</button>
+          <a href="index.html" class="btn btn-menu">🏠 主選單</a>
         </div>
       </div>
     </div>
@@ -464,13 +480,11 @@
       "ǖ", "ǘ", "ǚ", "ǜ"
     ];
 
-    // 動態生成關卡題庫與隨機干擾選項
     function generateQuestionPools() {
       const qL1 = [];
       const qL2 = [];
 
       RAW_VOCAB.forEach(item => {
-        // 第一關干擾選項：正確單韻母 + 隨機3個其他單韻母
         const wrongBases = ALL_BASE_VOWELS.filter(v => v !== item.b).sort(() => Math.random() - 0.5).slice(0, 3);
         const optionsL1 = [item.b, ...wrongBases];
 
@@ -482,7 +496,6 @@
           options: optionsL1
         });
 
-        // 第二關干擾選項：帶調單韻母 + 隨機3個其他帶調單韻母
         const wrongToned = ALL_TONED_VOWELS.filter(v => v !== item.t).sort(() => Math.random() - 0.5).slice(0, 3);
         const optionsL2 = [item.t, ...wrongToned];
 
@@ -551,19 +564,17 @@
       }
     }
 
-    // 播放國語語音 (Web Speech API) - 音量最大化，語速放慢至約 4 秒長音
     function playSpeech(text) {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(text);
         msg.lang = 'zh-TW';
-        msg.volume = 1.0; // 將朗讀音量調至最大
-        msg.rate = 0.18;   // 將語速放慢至約 4 秒長音
+        msg.volume = 1.0;
+        msg.rate = 0.18;
         window.speechSynthesis.speak(msg);
       }
     }
 
-    // 格式化時間 (秒 -> 分:秒，如 90 -> 1:30)
     function formatTime(seconds) {
       const m = Math.floor(seconds / 60);
       const s = Math.floor(seconds % 60);
@@ -594,7 +605,7 @@
 
     let gameState = 'START';
     let score = 0;
-    let timeLeft = 90; // 限時 1分30秒 (90秒)
+    let timeLeft = 90;
     let lastTime = 0;
     let currentLevel = 1;
     let currentQIndex = 0;
@@ -625,17 +636,14 @@
       
       let charPromptHtml = "";
       if (currentLevel === 1) {
-        // 第一關：顯示漢字與拼音
         charPromptHtml = `漢字：<b>「${q.char}」</b> (${q.pinyin})<br><span style="font-size:0.95rem; color:#fde047;">請問這個字的單韻母是什麼？</span>`;
       } else {
-        // 第二關：隱藏拼音，考考學生耳朵聽四聲！
         charPromptHtml = `漢字：<b>「${q.char}」</b> <span style="font-size:0.85rem; color:#cbd5e1;">(拼音已隱藏)</span><br><span style="font-size:0.95rem; color:#fde047;">請聽音辨認帶聲調的單韻母！</span>`;
       }
 
       questionText.innerHTML = charPromptHtml;
       qProgressDisplay.textContent = `${currentQIndex + 1}/${questionPool.length}`;
 
-      // 自動播放當前音節延長讀音
       playSpeech(q.textToSpeak);
     }
 
@@ -670,7 +678,6 @@
       loadBallsForCurrentQuestion();
     }
 
-    // 第一關滿 60 分進入第二關
     function checkLevelProgression() {
       if (currentLevel === 1 && score >= 60) {
         currentLevel = 2;
@@ -724,11 +731,8 @@
     });
 
     startBtn.addEventListener('click', startGame);
-    
-    // 再次挑戰：同一位同學直接重新開始
     restartBtn.addEventListener('click', startGame);
 
-    // 換人遊玩：返回首頁並清空班級與學號輸入框
     switchPlayerBtn.addEventListener('click', () => {
       endScreen.classList.add('hidden');
       startScreen.classList.remove('hidden');
@@ -748,10 +752,10 @@
 
       currentStudent = { className, studentId };
       initAudio();
-      allGeneratedQuestions = generateQuestionPools(); // 每次開局刷新隨機干擾題庫
+      allGeneratedQuestions = generateQuestionPools();
 
       score = 0;
-      timeLeft = 90; // 1分30秒 (90秒)
+      timeLeft = 90;
       currentLevel = 1;
       floatTexts = [];
       scoreDisplay.textContent = score;
@@ -850,7 +854,7 @@
           const currentQ = questionPool[currentQIndex];
 
           if (shotBall.symbol === currentQ.correct) {
-            score += 10; // 每球 10 分
+            score += 10;
             playSound('swish');
             HOOP.scale = 1.25;
             addFloatText('答對 +10分！', HOOP.x, HOOP.y - 20, '#22c55e');
