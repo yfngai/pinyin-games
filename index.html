@@ -1,124 +1,789 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>拼音小高手 - 遊戲闖關大合集</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Microsoft JhengHei", Roboto, sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-    .container {
-      background: #ffffff;
-      width: 100%;
-      max-width: 600px;
-      border-radius: 24px;
-      padding: 30px 24px;
-      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.35);
-      text-align: center;
-    }
-    h1 {
-      font-size: 1.8rem;
-      color: #0f172a;
-      margin-bottom: 8px;
-    }
-    p.subtitle {
-      font-size: 0.95rem;
-      color: #64748b;
-      margin-bottom: 24px;
-    }
-    .game-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .game-card {
-      background: #f8fafc;
-      border: 2px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.2s ease;
-    }
-    .game-card:hover {
-      border-color: #ea580c;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(234, 88, 12, 0.15);
-    }
-    .game-info {
-      text-align: left;
-    }
-    .game-title {
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: #0f172a;
-      margin-bottom: 4px;
-    }
-    .game-desc {
-      font-size: 0.85rem;
-      color: #64748b;
-    }
-    .play-btn {
-      background: #ea580c;
-      color: white;
-      padding: 8px 18px;
-      border-radius: 20px;
-      font-weight: bold;
-      font-size: 0.9rem;
-      white-space: nowrap;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拼音小高手 - 漢語拼音遊戲大本營</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #70d6ff 0%, #a0e426 65%, #38b000 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* 3D Bouncy Buttons */
+        .btn-bounce {
+            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0px 8px 0px rgba(0, 0, 0, 0.2), 0px 10px 15px rgba(0, 0, 0, 0.15);
+        }
+        .btn-bounce:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0px 12px 0px rgba(0, 0, 0, 0.2), 0px 14px 20px rgba(0, 0, 0, 0.2);
+        }
+        .btn-bounce:active {
+            transform: translateY(4px) scale(0.98);
+            box-shadow: 0px 2px 0px rgba(0, 0, 0, 0.2), 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Floating Cloud Animations */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-12px) translateX(10px); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(255, 223, 0, 0.6)); }
+            50% { transform: scale(1.06); filter: drop-shadow(0 0 20px rgba(255, 223, 0, 0.9)); }
+        }
+        .animate-float {
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+        .animate-glow {
+            animation: pulseGlow 2.5s infinite;
+        }
+
+        /* Cartoon Mole Mascot Styling */
+        .mascot-container {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .mascot-container:hover {
+            transform: scale(1.08) rotate(2deg);
+        }
+        .mascot-container:active {
+            transform: scale(0.95);
+        }
+
+        /* Speech Bubble Tail */
+        .speech-bubble {
+            position: relative;
+            background: #ffffff;
+            border-radius: 20px;
+            border: 4px solid #3b82f6;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            left: -16px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 10px 16px 10px 0;
+            border-style: solid;
+            border-color: transparent #ffffff transparent transparent;
+            display: block;
+            width: 0;
+        }
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 12px 18px 12px 0;
+            border-style: solid;
+            border-color: transparent #3b82f6 transparent transparent;
+            display: block;
+            width: 0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ffb703;
+            border-radius: 10px;
+        }
+    </style>
 </head>
-<body>
+<body class="relative flex flex-col min-h-screen justify-between overflow-x-hidden text-gray-800">
 
-  <div class="container">
-    <h1>🏀 拼音小高手 - 闖關大合集</h1>
-    <p class="subtitle">請選擇你今天想要挑戰的拼音主題：</p>
-
-    <div class="game-grid">
-      <!-- 遊戲 1 -->
-      <a href="game1.html" class="game-card">
-        <div class="game-info">
-          <div class="game-title">🎧 聽音辨單韻母大賽</div>
-          <div class="game-desc">練習單韻母 (a, o, e, i, u, ü) 與四聲調辨識</div>
+    <!-- Floating Background Clouds & Sun -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <!-- Sun -->
+        <div class="absolute -top-10 -right-10 w-44 h-44 bg-yellow-300 rounded-full blur-sm opacity-90 animate-glow"></div>
+        <!-- Clouds -->
+        <div class="absolute top-8 left-10 text-white/80 animate-float opacity-90" style="animation-delay: 0s;">
+            <svg class="w-28 h-16 fill-current" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
         </div>
-        <div class="play-btn">開始遊戲</div>
-      </a>
-
-      <!-- 遊戲 2 -->
-      <a href="game2.html" class="game-card">
-        <div class="game-info">
-          <div class="game-title">🎯 聲母挑戰賽</div>
-          <div class="game-desc">練習 bpmfdtnlgkh等聲母</div>
+        <div class="absolute top-28 right-24 text-white/70 animate-float opacity-80" style="animation-delay: 1.5s;">
+            <svg class="w-36 h-20 fill-current" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
         </div>
-        <div class="play-btn">開始遊戲</div>
-      </a>
-
-      <!-- 遊戲 3 -->
-      <a href="game3.html" class="game-card">
-        <div class="game-info">
-          <div class="game-title">⭐ 聲母與整體認讀音節</div>
-          <div class="game-desc">進階聲母辨識與整體認讀練習</div>
+        <div class="absolute bottom-20 left-12 text-white/60 animate-float opacity-70" style="animation-delay: 2.5s;">
+            <svg class="w-24 h-14 fill-current" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
         </div>
-        <div class="play-btn">開始遊戲</div>
-      </a>
     </div>
-  </div>
 
+    <!-- Top Navigation / Student Info & Settings Bar -->
+    <header class="relative z-10 w-full px-4 py-3 bg-white/85 backdrop-blur-md border-b-4 border-yellow-400 shadow-lg flex flex-wrap justify-between items-center gap-3">
+        <!-- Logo -->
+        <div class="flex items-center space-x-2">
+            <span class="text-3xl filter drop-shadow">🎒</span>
+            <span class="text-2xl md:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 tracking-wider">
+                拼音小高手
+            </span>
+            <span class="bg-yellow-400 text-yellow-950 font-bold text-xs px-2.5 py-1 rounded-full uppercase tracking-widest shadow-sm hidden sm:inline-block">
+                小二專屬
+            </span>
+        </div>
+
+        <!-- Right Side Controls -->
+        <div class="flex items-center space-x-2 md:space-x-4">
+            <!-- Student Profile Badge (Click to Edit) -->
+            <button onclick="openProfileModal()" class="btn-bounce flex items-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-2xl shadow border-2 border-white">
+                <span class="text-xl mr-1.5">👧</span>
+                <div class="text-left leading-tight">
+                    <div class="text-[10px] text-blue-200 font-bold uppercase">學生身份</div>
+                    <div id="userBadgeText" class="text-sm font-extrabold tracking-wide">2A 班 (點擊設定)</div>
+                </div>
+            </button>
+
+            <!-- Daily Check-in Star Badge -->
+            <button onclick="triggerCheckIn()" id="checkInBtn" class="btn-bounce flex items-center bg-gradient-to-r from-amber-400 to-orange-500 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-2xl shadow border-2 border-white">
+                <span class="text-xl mr-1.5 animate-bounce">⭐</span>
+                <div class="text-left leading-tight">
+                    <div class="text-[10px] text-yellow-100 font-bold">打卡星</div>
+                    <div id="starCounter" class="text-sm font-black">5 顆星</div>
+                </div>
+            </button>
+
+            <!-- Sound & Music Toggles -->
+            <button id="sfxToggle" onclick="toggleSFX()" class="btn-bounce bg-white p-2 rounded-full border-2 border-gray-200 text-xl shadow" title="音效設定">
+                🔊
+            </button>
+            <button id="bgmToggle" onclick="toggleBGM()" class="btn-bounce bg-white p-2 rounded-full border-2 border-gray-200 text-xl shadow" title="背景音樂">
+                🎵
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Banner with Interactive Mole Mascot -->
+    <main class="relative z-10 container mx-auto px-4 py-4 md:py-6 flex-1 flex flex-col justify-center items-center">
+        
+        <!-- Mascot Interactive Area -->
+        <div class="w-full max-w-4xl bg-white/90 backdrop-blur-md rounded-3xl p-4 md:p-6 mb-6 shadow-2xl border-4 border-yellow-300 flex flex-col md:flex-row items-center justify-around gap-4">
+            
+            <!-- Cartoon Mole Mascot SVG (Clickable) -->
+            <div class="flex flex-col items-center">
+                <div class="mascot-container relative" onclick="mascotSpeak()">
+                    <!-- Cute Cartoon Mole SVG -->
+                    <svg class="w-36 h-36 md:w-44 md:h-44 filter drop-shadow-xl" viewBox="0 0 200 200">
+                        <!-- Dirt mound -->
+                        <ellipse cx="100" cy="175" rx="85" ry="20" fill="#7f5539" />
+                        <ellipse cx="100" cy="170" rx="75" ry="15" fill="#9c6644" />
+                        
+                        <!-- Mole body -->
+                        <path d="M 50 160 C 40 100, 60 40, 100 40 C 140 40, 160 100, 150 160 Z" fill="#6c584c" />
+                        
+                        <!-- Mole tummy -->
+                        <ellipse cx="100" cy="130" rx="35" ry="30" fill="#dde5b6" />
+
+                        <!-- Yellow Construction Helmet / Toy Cap -->
+                        <path d="M 55 55 C 55 25, 145 25, 145 55 Z" fill="#ffb703" />
+                        <rect x="45" y="52" width="110" height="10" rx="4" fill="#fb8500" />
+                        <circle cx="100" cy="35" r="8" fill="#ffffff" />
+                        <text x="100" y="39" font-size="10" font-weight="bold" fill="#000" text-anchor="middle">拼</text>
+
+                        <!-- Eyes -->
+                        <circle cx="80" cy="80" r="10" fill="#ffffff" />
+                        <circle cx="82" cy="80" r="5" fill="#000000" />
+                        <circle cx="84" cy="78" r="2" fill="#ffffff" />
+
+                        <circle cx="120" cy="80" r="10" fill="#ffffff" />
+                        <circle cx="118" cy="80" r="5" fill="#000000" />
+                        <circle cx="116" cy="78" r="2" fill="#ffffff" />
+
+                        <!-- Cute Rosy Cheeks -->
+                        <ellipse cx="68" cy="95" rx="8" ry="5" fill="#ffb5a7" opacity="0.8" />
+                        <ellipse cx="132" cy="95" rx="8" ry="5" fill="#ffb5a7" opacity="0.8" />
+
+                        <!-- Snout & Nose -->
+                        <ellipse cx="100" cy="92" rx="16" ry="11" fill="#ffcad4" />
+                        <ellipse cx="100" cy="88" rx="8" ry="6" fill="#6b705c" />
+
+                        <!-- Happy Smile -->
+                        <path d="M 92 100 Q 100 108 108 100" stroke="#000" stroke-width="3" fill="none" stroke-linecap="round" />
+
+                        <!-- Toy Soft Hammer in Paw -->
+                        <g transform="rotate(-20 140 120)">
+                            <rect x="145" y="100" width="10" height="40" rx="3" fill="#d4a373" />
+                            <rect x="130" y="85" width="40" height="22" rx="6" fill="#e63946" />
+                            <rect x="127" y="88" width="6" height="16" rx="2" fill="#ffb703" />
+                            <rect x="167" y="88" width="6" height="16" rx="2" fill="#ffb703" />
+                        </g>
+                    </svg>
+                    <!-- Click Me Badge -->
+                    <span class="absolute -bottom-2 bg-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full border-2 border-white shadow animate-bounce">
+                        點我說話 🗣️
+                    </span>
+                </div>
+            </div>
+
+            <!-- Speech Bubble & Greeting -->
+            <div class="flex-1 max-w-lg">
+                <div class="speech-bubble p-4 md:p-5 text-gray-800">
+                    <h2 class="text-xl md:text-2xl font-black text-blue-600 mb-1 flex items-center">
+                        <span>👋 歡迎來到拼音大本營！</span>
+                    </h2>
+                    <p id="mascotText" class="text-base md:text-lg font-bold text-gray-700 leading-relaxed">
+                        「我是地鼠小哥！今天想挑戰哪一個拼音遊戲？快點擊下方卡片開啟冒險吧！」
+                    </p>
+                </div>
+                <div class="mt-3 flex flex-wrap gap-2 justify-center md:justify-start">
+                    <button onclick="openLeaderboard()" class="btn-bounce bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-extrabold text-sm px-4 py-2 rounded-2xl shadow border-2 border-purple-200 flex items-center">
+                        🏆 班級龍虎榜
+                    </button>
+                    <button onclick="playVoiceGreeting()" class="btn-bounce bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-sm px-4 py-2 rounded-2xl shadow border-2 border-emerald-200 flex items-center">
+                        🔊 語音介紹
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Game Hub Selection Cards Grid -->
+        <div class="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6 my-2">
+            
+            <!-- Game Card 1: Active Main Game (聲母打地鼠) -->
+            <div class="btn-bounce bg-gradient-to-b from-amber-100 via-white to-orange-50 rounded-3xl p-6 border-4 border-amber-400 shadow-xl flex flex-col justify-between relative overflow-hidden group">
+                <!-- Top Badge -->
+                <div class="absolute top-3 right-3 bg-red-500 text-white font-black text-xs px-3 py-1 rounded-full border border-white shadow tracking-wide animate-pulse">
+                    🔥 最受歡迎
+                </div>
+
+                <div>
+                    <div class="text-5xl mb-3 transform group-hover:scale-110 transition-transform">🔨</div>
+                    <h3 class="text-2xl font-black text-amber-900 mb-1">聲母打地鼠</h3>
+                    <div class="flex flex-wrap gap-1 mb-3">
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">b</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">p</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">m</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">f</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">d</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">t</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">n</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">l</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">g</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">k</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">h</span>
+                    </div>
+                    <p class="text-sm font-bold text-gray-600 mb-4">
+                        聽語音辨識聲母，眼疾手快打地鼠！包含雙關卡挑戰與闖關倒數！
+                    </p>
+                </div>
+
+                <div>
+                    <div class="bg-amber-200/60 rounded-xl p-2.5 mb-4 text-xs font-bold text-amber-900 flex justify-between items-center">
+                        <span>最高紀錄:</span>
+                        <span id="card1HighScore" class="text-base text-red-600 font-black">0 分 🌟</span>
+                    </div>
+                    <a href="game2.html" onclick="playClickSound()" class="w-full btn-bounce bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-lg py-3 rounded-2xl shadow-lg border-2 border-yellow-200 flex justify-center items-center gap-2 group-hover:scale-105 transition-all">
+                        <span>開始挑戰</span>
+                        <span class="text-xl">🚀</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Game Card 2: 韻母對對碰 (Preview / Interactive Modal) -->
+            <div class="btn-bounce bg-gradient-to-b from-sky-100 via-white to-blue-50 rounded-3xl p-6 border-4 border-sky-400 shadow-xl flex flex-col justify-between relative overflow-hidden group">
+                <!-- Top Badge -->
+                <div class="absolute top-3 right-3 bg-sky-500 text-white font-black text-xs px-3 py-1 rounded-full border border-white shadow tracking-wide">
+                    🎯 迷你試玩
+                </div>
+
+                <div>
+                    <div class="text-5xl mb-3 transform group-hover:scale-110 transition-transform">🎯</div>
+                    <h3 class="text-2xl font-black text-sky-900 mb-1">韻母對對碰</h3>
+                    <div class="flex flex-wrap gap-1 mb-3">
+                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">a</span>
+                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">o</span>
+                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">e</span>
+                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">i</span>
+                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">u</span>
+                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">ü</span>
+                    </div>
+                    <p class="text-sm font-bold text-gray-600 mb-4">
+                        翻開卡片進行單韻母圖音配對，考考你的超強記憶力！
+                    </p>
+                </div>
+
+                <div>
+                    <div class="bg-sky-200/60 rounded-xl p-2.5 mb-4 text-xs font-bold text-sky-900 flex justify-between items-center">
+                        <span>關卡狀態:</span>
+                        <span class="text-sm text-blue-700 font-black">開放試玩 🎈</span>
+                    </div>
+                    <button onclick="openYunmuPreview()" class="w-full btn-bounce bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black text-lg py-3 rounded-2xl shadow-lg border-2 border-sky-200 flex justify-center items-center gap-2">
+                        <span>試玩體驗</span>
+                        <span class="text-xl">🎮</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Game Card 3: 四聲大冒險 (Rules Preview Modal) -->
+            <div class="btn-bounce bg-gradient-to-b from-purple-100 via-white to-pink-50 rounded-3xl p-6 border-4 border-purple-400 shadow-xl flex flex-col justify-between relative overflow-hidden group">
+                <!-- Top Badge -->
+                <div class="absolute top-3 right-3 bg-purple-500 text-white font-black text-xs px-3 py-1 rounded-full border border-white shadow tracking-wide">
+                    👑 聲調練習
+                </div>
+
+                <div>
+                    <div class="text-5xl mb-3 transform group-hover:scale-110 transition-transform">👑</div>
+                    <h3 class="text-2xl font-black text-purple-900 mb-1">四聲大冒險</h3>
+                    <div class="flex flex-wrap gap-1 mb-3">
+                        <span class="bg-purple-200 text-purple-900 font-bold text-xs px-2 py-0.5 rounded">陰平 ˉ</span>
+                        <span class="bg-purple-200 text-purple-900 font-bold text-xs px-2 py-0.5 rounded">陽平 ˊ</span>
+                        <span class="bg-purple-200 text-purple-900 font-bold text-xs px-2 py-0.5 rounded">上聲 ˇ</span>
+                        <span class="bg-purple-200 text-purple-900 font-bold text-xs px-2 py-0.5 rounded">去聲 ˋ</span>
+                    </div>
+                    <p class="text-sm font-bold text-gray-600 mb-4">
+                        一平二揚三拐彎四下降！跟我一起大聲唸出四個聲調！
+                    </p>
+                </div>
+
+                <div>
+                    <div class="bg-purple-200/60 rounded-xl p-2.5 mb-4 text-xs font-bold text-purple-900 flex justify-between items-center">
+                        <span>口訣學習:</span>
+                        <span class="text-sm text-purple-700 font-black">四聲口訣 ✨</span>
+                    </div>
+                    <button onclick="openToneModal()" class="w-full btn-bounce bg-gradient-to-r from-purple-500 to-pink-500 text-white font-black text-lg py-3 rounded-2xl shadow-lg border-2 border-purple-200 flex justify-center items-center gap-2">
+                        <span>聲調口訣</span>
+                        <span class="text-xl">📖</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 w-full py-3 bg-white/70 backdrop-blur-sm text-center text-xs font-bold text-gray-600 border-t-2 border-white">
+        <p>🌟 拼音小高手 - 小學二年級漢語拼音教學軟體 | 建議使用 Chrome / Edge 瀏覽器開啟</p>
+    </footer>
+
+    <!-- MODAL 1: Student Profile Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl border-4 border-yellow-400 p-6 w-full max-w-md shadow-2xl transform transition-all scale-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-black text-gray-800 flex items-center">
+                    <span class="mr-2">👧</span> 編輯學生資料
+                </h3>
+                <button onclick="closeModal('profileModal')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+            </div>
+            
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">選擇班別 (Class):</label>
+                    <select id="inputClass" class="w-full p-3 rounded-xl border-2 border-gray-300 font-bold focus:border-yellow-500 focus:outline-none">
+                        <option value="2A">2A 班</option>
+                        <option value="2B">2B 班</option>
+                        <option value="2C">2C 班</option>
+                        <option value="2D">2D 班</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">學號 (Student No.):</label>
+                    <input type="number" id="inputId" placeholder="請輸入學號 (例: 12)" class="w-full p-3 rounded-xl border-2 border-gray-300 font-bold focus:border-yellow-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">學生姓名 (Name):</label>
+                    <input type="text" id="inputName" placeholder="請輸入姓名 (例: 丁小明)" class="w-full p-3 rounded-xl border-2 border-gray-300 font-bold focus:border-yellow-500 focus:outline-none">
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end space-x-3">
+                <button onclick="closeModal('profileModal')" class="px-4 py-2 bg-gray-200 font-bold rounded-xl text-gray-700">取消</button>
+                <button onclick="saveProfile()" class="btn-bounce px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-extrabold rounded-xl shadow">儲存設定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Leaderboard Modal -->
+    <div id="leaderboardModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl border-4 border-purple-400 p-6 w-full max-w-lg shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-black text-purple-900 flex items-center">
+                    <span class="mr-2">🏆</span> 班級龍虎榜
+                </h3>
+                <button onclick="closeModal('leaderboardModal')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+            </div>
+
+            <p class="text-xs font-bold text-purple-600 mb-3">📍 聲母打地鼠 - 本機最高得分英雄榜</p>
+
+            <div class="bg-purple-50 rounded-2xl p-4 max-h-60 overflow-y-auto space-y-2" id="leaderboardList">
+                <!-- Leaderboard entries injected dynamically -->
+            </div>
+
+            <div class="mt-5 text-right">
+                <button onclick="closeModal('leaderboardModal')" class="btn-bounce px-6 py-2 bg-purple-600 text-white font-extrabold rounded-xl">關閉</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Yunmu Matching Mini Game Modal -->
+    <div id="yunmuModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl border-4 border-sky-400 p-6 w-full max-w-md shadow-2xl text-center">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-2xl font-black text-sky-800 flex items-center">
+                    <span class="mr-2">🎯</span> 單韻母對對碰試玩
+                </h3>
+                <button onclick="closeModal('yunmuModal')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+            </div>
+            
+            <p class="text-sm font-bold text-gray-600 mb-4">點擊下方按鈕聽發音，找出對應的韻母卡片！</p>
+
+            <div class="bg-sky-50 rounded-2xl p-4 border-2 border-sky-200 mb-4">
+                <button onclick="playYunmuAudio()" class="btn-bounce bg-sky-500 text-white font-black px-4 py-2 rounded-xl mb-4 shadow flex items-center justify-center mx-auto gap-2">
+                    <span>🔊 點擊播放音效: </span>
+                    <span id="targetYunmuText" class="text-xl underline">a</span>
+                </button>
+
+                <div class="grid grid-cols-3 gap-3" id="yunmuCardGrid">
+                    <!-- Cards will be populated by JS -->
+                </div>
+            </div>
+
+            <div id="yunmuFeedback" class="text-base font-black h-6 mb-2 text-green-600"></div>
+
+            <button onclick="closeModal('yunmuModal')" class="btn-bounce w-full py-2 bg-sky-500 text-white font-extrabold rounded-xl">關閉試玩</button>
+        </div>
+    </div>
+
+    <!-- MODAL 4: Four Tones Rules Modal -->
+    <div id="toneModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl border-4 border-pink-400 p-6 w-full max-w-md shadow-2xl text-center">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-2xl font-black text-pink-700 flex items-center">
+                    <span class="mr-2">👑</span> 漢語拼音四聲調口訣
+                </h3>
+                <button onclick="closeModal('toneModal')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+            </div>
+
+            <div class="space-y-3 my-4 text-left">
+                <div class="p-3 bg-red-50 rounded-2xl border-2 border-red-200 flex items-center justify-between">
+                    <div>
+                        <span class="text-red-600 font-black text-lg">第一聲 (陰平 ˉ)</span>
+                        <div class="text-xs font-bold text-gray-600">一声平 (ā) - 像高高走平路</div>
+                    </div>
+                    <button onclick="speakTone('ā')" class="btn-bounce bg-red-400 text-white p-2 rounded-xl text-xs font-black">🔊 聽發音</button>
+                </div>
+
+                <div class="p-3 bg-amber-50 rounded-2xl border-2 border-amber-200 flex items-center justify-between">
+                    <div>
+                        <span class="text-amber-600 font-black text-lg">第二聲 (陽平 ˊ)</span>
+                        <div class="text-xs font-bold text-gray-600">二声扬 (á) - 像爬上小山坡</div>
+                    </div>
+                    <button onclick="speakTone('á')" class="btn-bounce bg-amber-400 text-white p-2 rounded-xl text-xs font-black">🔊 聽發音</button>
+                </div>
+
+                <div class="p-3 bg-emerald-50 rounded-2xl border-2 border-emerald-200 flex items-center justify-between">
+                    <div>
+                        <span class="text-emerald-600 font-black text-lg">第三聲 (上聲 ˇ)</span>
+                        <div class="text-xs font-bold text-gray-600">三声拐弯 (ǎ) - 像先下坡再上坡</div>
+                    </div>
+                    <button onclick="speakTone('ǎ')" class="btn-bounce bg-emerald-400 text-white p-2 rounded-xl text-xs font-black">🔊 聽發音</button>
+                </div>
+
+                <div class="p-3 bg-blue-50 rounded-2xl border-2 border-blue-200 flex items-center justify-between">
+                    <div>
+                        <span class="text-blue-600 font-black text-lg">第四聲 (去聲 ˋ)</span>
+                        <div class="text-xs font-bold text-gray-600">四声下降 (à) - 像從高處衝下來</div>
+                    </div>
+                    <button onclick="speakTone('à')" class="btn-bounce bg-blue-400 text-white p-2 rounded-xl text-xs font-black">🔊 聽發音</button>
+                </div>
+            </div>
+
+            <button onclick="closeModal('toneModal')" class="btn-bounce w-full py-2.5 bg-pink-500 text-white font-extrabold rounded-xl shadow">學會了！</button>
+        </div>
+    </div>
+
+    <script>
+        /* Global Sound & User State */
+        let sfxEnabled = true;
+        let bgmEnabled = false;
+        let audioCtx = null;
+        let bgmOscillator = null;
+
+        // User Data initialized from localStorage
+        let userData = {
+            className: localStorage.getItem('pinyin_student_class') || '2A',
+            studentId: localStorage.getItem('pinyin_student_id') || '01',
+            studentName: localStorage.getItem('pinyin_student_name') || '小明',
+            stars: parseInt(localStorage.getItem('pinyin_student_stars') || '5', 10),
+            highScore: parseInt(localStorage.getItem('pinyin_whack_highscore') || '0', 10)
+        };
+
+        // Initialize on DOM load
+        window.onload = function() {
+            updateProfileUI();
+            updateHighScoreDisplay();
+        };
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        // Web Audio Synthesizer for Click FX
+        function playClickSound() {
+            if (!sfxEnabled) return;
+            try {
+                initAudioContext();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } catch (e) {
+                console.log("Audio not allowed yet");
+            }
+        }
+
+        // Cheer Fanfare Sound
+        function playCheerSound() {
+            if (!sfxEnabled) return;
+            try {
+                initAudioContext();
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime + idx * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.1 + 0.2);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(audioCtx.currentTime + idx * 0.1);
+                    osc.stop(audioCtx.currentTime + idx * 0.1 + 0.2);
+                });
+            } catch (e) {}
+        }
+
+        function toggleSFX() {
+            sfxEnabled = !sfxEnabled;
+            document.getElementById('sfxToggle').innerText = sfxEnabled ? '🔊' : '🔇';
+            if (sfxEnabled) playClickSound();
+        }
+
+        function toggleBGM() {
+            bgmEnabled = !bgmEnabled;
+            const btn = document.getElementById('bgmToggle');
+            if (bgmEnabled) {
+                btn.innerText = '🎶';
+                btn.classList.add('animate-spin');
+                startBGM();
+            } else {
+                btn.innerText = '🎵';
+                btn.classList.remove('animate-spin');
+                stopBGM();
+            }
+        }
+
+        function startBGM() {
+            initAudioContext();
+            if (bgmOscillator) return;
+            // Gentle pentatonic background synth loop
+            const notes = [261.63, 293.66, 329.63, 392.00, 440.00];
+            let noteIdx = 0;
+            bgmOscillator = setInterval(() => {
+                if (!bgmEnabled) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.value = notes[noteIdx % notes.length];
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+                noteIdx++;
+            }, 500);
+        }
+
+        function stopBGM() {
+            if (bgmOscillator) {
+                clearInterval(bgmOscillator);
+                bgmOscillator = null;
+            }
+        }
+
+        function mascotSpeak() {
+            playClickSound();
+            const greetings = [
+                "歡迎來到拼音小高手！今天想玩哪一個遊戲呢？",
+                "加油！練習漢語拼音，你最棒了！",
+                "點擊「聲母打地鼠」開始挑戰吧！",
+                "記得每天打卡賺取星星喔！"
+            ];
+            const randomMsg = greetings[Math.floor(Math.random() * greetings.length)];
+            document.getElementById('mascotText').innerText = `「${randomMsg}」`;
+
+            speakChinese(randomMsg);
+        }
+
+        function playVoiceGreeting() {
+            mascotSpeak();
+        }
+
+        function speakChinese(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-CN'; // Mandarin standard pronunciation
+                utterance.rate = 0.9;
+                utterance.pitch = 1.2; // Friendly kid pitch
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function speakTone(pinyinTone) {
+            speakChinese(pinyinTone);
+        }
+
+        function updateProfileUI() {
+            document.getElementById('userBadgeText').innerText = `${userData.className} 班 ${userData.studentId}號 ${userData.studentName}`;
+            document.getElementById('starCounter').innerText = `${userData.stars} 顆星`;
+        }
+
+        function updateHighScoreDisplay() {
+            document.getElementById('card1HighScore').innerText = `${userData.highScore} 分 🌟`;
+        }
+
+        function openProfileModal() {
+            playClickSound();
+            document.getElementById('inputClass').value = userData.className;
+            document.getElementById('inputId').value = userData.studentId;
+            document.getElementById('inputName').value = userData.studentName;
+            document.getElementById('profileModal').classList.remove('hidden');
+        }
+
+        function saveProfile() {
+            playClickSound();
+            userData.className = document.getElementById('inputClass').value;
+            userData.studentId = document.getElementById('inputId').value || '01';
+            userData.studentName = document.getElementById('inputName').value || '小明';
+
+            localStorage.setItem('pinyin_student_class', userData.className);
+            localStorage.setItem('pinyin_student_id', userData.studentId);
+            localStorage.setItem('pinyin_student_name', userData.studentName);
+
+            updateProfileUI();
+            closeModal('profileModal');
+        }
+
+        function triggerCheckIn() {
+            playClickSound();
+            playCheerSound();
+            userData.stars += 1;
+            localStorage.setItem('pinyin_student_stars', userData.stars);
+            updateProfileUI();
+
+            // Confetti Blast
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function openLeaderboard() {
+            playClickSound();
+            const listContainer = document.getElementById('leaderboardList');
+            
+            // Mock leaderboard entries + current student high score
+            let scores = [
+                { class: '2A', id: '08', name: '陳小華', score: 1450 },
+                { class: '2B', id: '15', name: '李大衛', score: 1200 },
+                { class: userData.className, id: userData.studentId, name: userData.studentName, score: userData.highScore }
+            ];
+
+            // Sort descending
+            scores.sort((a, b) => b.score - a.score);
+
+            listContainer.innerHTML = scores.map((item, idx) => `
+                <div class="flex items-center justify-between p-3 bg-white rounded-xl shadow-sm border border-purple-100">
+                    <div class="flex items-center space-x-3">
+                        <span class="w-7 h-7 flex items-center justify-center font-black rounded-full ${idx === 0 ? 'bg-yellow-400 text-white' : idx === 1 ? 'bg-gray-300 text-white' : 'bg-amber-600 text-white'}">${idx + 1}</span>
+                        <div>
+                            <div class="font-extrabold text-gray-800">${item.class}班 ${item.name} (${item.id}號)</div>
+                        </div>
+                    </div>
+                    <div class="font-black text-purple-700 text-lg">${item.score} 分</div>
+                </div>
+            `).join('');
+
+            document.getElementById('leaderboardModal').classList.remove('hidden');
+        }
+
+        let currentTargetYunmu = 'a';
+        const yunmus = ['a', 'o', 'e', 'i', 'u', 'ü'];
+
+        function openYunmuPreview() {
+            playClickSound();
+            setupYunmuGame();
+            document.getElementById('yunmuModal').classList.remove('hidden');
+        }
+
+        function setupYunmuGame() {
+            currentTargetYunmu = yunmus[Math.floor(Math.random() * yunmus.length)];
+            document.getElementById('targetYunmuText').innerText = currentTargetYunmu;
+            document.getElementById('yunmuFeedback').innerText = '';
+
+            const grid = document.getElementById('yunmuCardGrid');
+            grid.innerHTML = yunmus.map(y => `
+                <button onclick="checkYunmu('${y}')" class="btn-bounce bg-white border-2 border-sky-300 text-sky-800 font-black text-2xl py-3 rounded-2xl shadow hover:bg-sky-100">
+                    ${y}
+                </button>
+            `).join('');
+        }
+
+        function playYunmuAudio() {
+            speakChinese(currentTargetYunmu);
+        }
+
+        function checkYunmu(selected) {
+            playClickSound();
+            const feedback = document.getElementById('yunmuFeedback');
+            if (selected === currentTargetYunmu) {
+                feedback.className = "text-base font-black h-6 mb-2 text-green-600 animate-bounce";
+                feedback.innerText = "🎉 答對了！太棒了！";
+                playCheerSound();
+                setTimeout(setupYunmuGame, 1200);
+            } else {
+                feedback.className = "text-base font-black h-6 mb-2 text-red-500";
+                feedback.innerText = "❌ 再試一次看看喔！";
+            }
+        }
+
+        function openToneModal() {
+            playClickSound();
+            document.getElementById('toneModal').classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            playClickSound();
+            document.getElementById(modalId).classList.add('hidden');
+        }
+    </script>
 </body>
 </html>
