@@ -43,7 +43,7 @@
 
         /* Glassmorphism overlays */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border: 4px solid #4D96FF;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
@@ -87,7 +87,7 @@
         <!-- TOP HUD Overlay (Visible during game) -->
         <div id="hudOverlay" class="hidden absolute top-0 left-0 right-0 p-3 flex justify-between items-center pointer-events-none z-10">
             <!-- Left Stats -->
-            <div class="flex items-center space-x-2 sm:space-x-4 bg-white/90 backdrop-filter blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border-2 border-blue-400 shadow-md">
+            <div class="flex items-center space-x-2 sm:space-x-3 bg-white/90 backdrop-filter blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border-2 border-blue-400 shadow-md">
                 <div class="flex items-center space-x-1">
                     <span class="text-xs sm:text-sm font-bold text-slate-600">👤</span>
                     <span id="hudUser" class="text-xs sm:text-sm font-bold text-slate-800">3A (12)</span>
@@ -109,10 +109,17 @@
                 </button>
             </div>
 
-            <!-- Right Stats & Audio -->
+            <!-- Right Stats & Timer -->
             <div class="flex items-center space-x-2 sm:space-x-3 bg-white/90 backdrop-filter blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border-2 border-blue-400 shadow-md">
+                <!-- Countdown Timer -->
                 <div class="flex items-center space-x-1">
-                    <span class="text-xs sm:text-sm text-emerald-600 font-bold">🎯 進度:</span>
+                    <span class="text-xs sm:text-sm text-rose-500 font-bold"><i class="fa-solid fa-clock"></i></span>
+                    <span id="hudTimer" class="text-xs sm:text-base font-black text-rose-600 font-fredoka">60s</span>
+                </div>
+                <div class="h-4 w-0.5 bg-slate-300"></div>
+                <!-- Target Progress -->
+                <div class="flex items-center space-x-1">
+                    <span class="text-xs sm:text-sm text-emerald-600 font-bold">🎯</span>
                     <span id="hudProgress" class="text-xs sm:text-base font-bold text-emerald-700 font-fredoka">0/10</span>
                 </div>
                 <div class="h-4 w-0.5 bg-slate-300"></div>
@@ -145,13 +152,13 @@
                 <!-- Floating Graphic -->
                 <div class="text-5xl sm:text-6xl mb-2 animate-float">🪙</div>
                 <h1 class="text-2xl sm:text-3xl font-black text-blue-600 mb-1 tracking-wide">聲母大冒險</h1>
-                <p class="text-xs sm:text-sm font-bold text-slate-500 mb-6">b p m f d t n l g k h 語音冒險</p>
+                <p class="text-xs sm:text-sm font-bold text-slate-500 mb-6">b p m f d t n l g k h 語音冒險（60秒限時挑戰）</p>
 
                 <!-- Input Form -->
                 <div class="space-y-4 mb-6 text-left">
                     <div>
                         <label class="block text-xs font-bold text-slate-600 mb-1">班別 (Class)</label>
-                        <input type="text" id="inputClass" placeholder="例如：3A" value="1A"
+                        <input type="text" id="inputClass" placeholder="例如：2A" value="2A"
                             class="w-full px-4 py-2.5 rounded-xl border-2 border-slate-300 focus:border-blue-500 focus:outline-none font-bold text-slate-800 text-sm">
                     </div>
                     <div>
@@ -167,6 +174,7 @@
                     <ul class="list-disc list-inside space-y-0.5 text-slate-700">
                         <li><strong>第一關：</strong>收集標有目標聲母（漢字+拼音）的金幣（10個過關）。</li>
                         <li><strong>第二關：</strong>聽音辨聲母！僅顯示漢字，聽語音收集正確聲母金幣。</li>
+                        <li><strong>時間限制：</strong>全程 60 秒限時考驗！</li>
                     </ul>
                 </div>
 
@@ -193,7 +201,7 @@
                     </div>
                     <div class="bg-blue-50 border-2 border-blue-200 p-3 rounded-2xl">
                         <div class="text-xs font-bold text-blue-600">玩家身份</div>
-                        <div id="finalPlayer" class="text-sm sm:text-base font-bold text-blue-800 mt-1">3A (08)</div>
+                        <div id="finalPlayer" class="text-sm sm:text-base font-bold text-blue-800 mt-1">2A (01)</div>
                     </div>
                 </div>
 
@@ -209,16 +217,16 @@
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
+                <!-- Action Buttons: Include Home, Retry, Switch User -->
                 <div class="grid grid-cols-3 gap-2">
-                    <button id="btnRetry" class="py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow border-b-4 border-emerald-700 btn-bounce">
+                    <button id="btnRetry" class="py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow border-b-4 border-emerald-700 btn-bounce flex items-center justify-center">
                         <i class="fa-solid fa-rotate-right mr-1"></i>再次挑戰
                     </button>
-                    <button id="btnSwitchUser" class="py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow border-b-4 border-blue-700 btn-bounce">
+                    <button id="btnSwitchUser" class="py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow border-b-4 border-blue-700 btn-bounce flex items-center justify-center">
                         <i class="fa-solid fa-user-gear mr-1"></i>換人遊玩
                     </button>
-                    <button id="btnHome" class="py-2.5 bg-slate-600 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow border-b-4 border-slate-800 btn-bounce">
-                        <i class="fa-solid fa-house mr-1"></i>主選單
+                    <button id="btnHome" class="py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow border-b-4 border-amber-700 btn-bounce flex items-center justify-center">
+                        <i class="fa-solid fa-house mr-1"></i>返回主畫面
                     </button>
                 </div>
             </div>
@@ -227,53 +235,83 @@
     </div>
 
     <script>
-        // Word Database grouped by Initial Consonants (bpmfdtnlgh)
+        // Initial Consonants
         const INITIALS = ['b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h'];
 
+        // Phonetic Pronounciation Guide to prevent English alphabet spelling (e.g. "bee", "pee")
+        const INITIAL_PRONUNCIATION = {
+            'b': '玻',
+            'p': '坡',
+            'm': '摸',
+            'f': '佛',
+            'd': '得',
+            't': '特',
+            'n': '呢',
+            'l': '勒',
+            'g': '哥',
+            'k': '科',
+            'h': '喝'
+        };
+
+        // 100 Grade-2 Level Common Chinese Words grouped by Initial Consonants
         const WORD_DATABASE = {
             'b': [
-                { char: '包', pinyin: 'bāo' }, { char: '八', pinyin: 'bā' },
-                { char: '爸', pinyin: 'bà' }, { char: '筆', pinyin: 'bǐ' }, { char: '白', pinyin: 'bái' }
+                { char: '包', pinyin: 'bāo' }, { char: '八', pinyin: 'bā' }, { char: '爸', pinyin: 'bà' },
+                { char: '筆', pinyin: 'bǐ' }, { char: '白', pinyin: 'bái' }, { char: '報', pinyin: 'bào' },
+                { char: '百', pinyin: 'bǎi' }, { char: '變', pinyin: 'biàn' }, { char: '表', pinyin: 'biǎo' },
+                { char: '半', pinyin: 'bàn' }
             ],
             'p': [
-                { char: '跑', pinyin: 'pǎo' }, { char: '旁', pinyin: 'páng' },
-                { char: '朋', pinyin: 'péng' }, { char: '皮', pinyin: 'pí' }, { char: '盤', pinyin: 'pán' }
+                { char: '跑', pinyin: 'pǎo' }, { char: '旁', pinyin: 'páng' }, { char: '朋', pinyin: 'péng' },
+                { char: '皮', pinyin: 'pí' }, { char: '盤', pinyin: 'pán' }, { char: '胖', pinyin: 'pàng' },
+                { char: '平', pinyin: 'píng' }, { char: '片', pinyin: 'piàn' }, { char: '漂', pinyin: 'piāo' },
+                { char: '票', pinyin: 'piào' }
             ],
             'm': [
-                { char: '貓', pinyin: 'māo' }, { char: '媽', pinyin: 'mā' },
-                { char: '木', pinyin: 'mù' }, { char: '馬', pinyin: 'mǎ' }, { char: '米', pinyin: 'mǐ' }
+                { char: '貓', pinyin: 'māo' }, { char: '媽', pinyin: 'mā' }, { char: '木', pinyin: 'mù' },
+                { char: '馬', pinyin: 'mǎ' }, { char: '米', pinyin: 'mǐ' }, { char: '門', pinyin: 'mén' },
+                { char: '面', pinyin: 'miàn' }, { char: '明', pinyin: 'míng' }, { char: '妹', pinyin: 'mèi' },
+                { char: '名', pinyin: 'míng' }
             ],
             'f': [
-                { char: '飛', pinyin: 'fēi' }, { char: '風', pinyin: 'fēng' },
-                { char: '房', pinyin: 'fáng' }, { char: '飯', pinyin: 'fàn' }, { char: '方', pinyin: 'fāng' }
+                { char: '飛', pinyin: 'fēi' }, { char: '風', pinyin: 'fēng' }, { char: '房', pinyin: 'fáng' },
+                { char: '飯', pinyin: 'fàn' }, { char: '方', pinyin: 'fāng' }, { char: '分', pinyin: 'fēn' },
+                { char: '發', pinyin: 'fā' }, { char: '放', pinyin: 'fàng' }, { char: '非', pinyin: 'fēi' }
             ],
             'd': [
-                { char: '大', pinyin: 'dà' }, { char: '刀', pinyin: 'dāo' },
-                { char: '東', pinyin: 'dōng' }, { char: '電', pinyin: 'diàn' }, { char: '地', pinyin: 'dì' }
+                { char: '大', pinyin: 'dà' }, { char: '刀', pinyin: 'dāo' }, { char: '東', pinyin: 'dōng' },
+                { char: '電', pinyin: 'diàn' }, { char: '地', pinyin: 'dì' }, { char: '多', pinyin: 'duō' },
+                { char: '答', pinyin: 'dá' }, { char: '動', pinyin: 'dòng' }, { char: '等', pinyin: 'děng' }
             ],
             't': [
-                { char: '兔', pinyin: 'tù' }, { char: '天', pinyin: 'tiān' },
-                { char: '頭', pinyin: 'tóu' }, { char: '糖', pinyin: 'táng' }, { char: '跳', pinyin: 'tiào' }
+                { char: '兔', pinyin: 'tù' }, { char: '天', pinyin: 'tiān' }, { char: '頭', pinyin: 'tóu' },
+                { char: '糖', pinyin: 'táng' }, { char: '跳', pinyin: 'tiào' }, { char: '聽', pinyin: 'tīng' },
+                { char: '同', pinyin: 'tóng' }, { char: '太', pinyin: 'tài' }, { char: '田', pinyin: 'tián' }
             ],
             'n': [
-                { char: '牛', pinyin: 'niú' }, { char: '鳥', pinyin: 'niǎo' },
-                { char: '南', pinyin: 'nán' }, { char: '女', pinyin: 'nǚ' }, { char: '年', pinyin: 'nián' }
+                { char: '牛', pinyin: 'niú' }, { char: '鳥', pinyin: 'niǎo' }, { char: '南', pinyin: 'nán' },
+                { char: '女', pinyin: 'nǚ' }, { char: '年', pinyin: 'nián' }, { char: '你', pinyin: 'nǐ' },
+                { char: '能', pinyin: 'néng' }, { char: '奶', pinyin: 'nǎi' }, { char: '念', pinyin: 'niàn' }
             ],
             'l': [
-                { char: '龍', pinyin: 'lóng' }, { char: '綠', pinyin: 'lǜ' },
-                { char: '路', pinyin: 'lù' }, { char: '老', pinyin: 'lǎo' }, { char: '藍', pinyin: 'lán' }
+                { char: '龍', pinyin: 'lóng' }, { char: '綠', pinyin: 'lǜ' }, { char: '路', pinyin: 'lù' },
+                { char: '老', pinyin: 'lǎo' }, { char: '藍', pinyin: 'lán' }, { char: '來', pinyin: 'lái' },
+                { char: '林', pinyin: 'lín' }, { char: '立', pinyin: 'lì' }, { char: '流', pinyin: 'liú' }
             ],
             'g': [
-                { char: '狗', pinyin: 'gǒu' }, { char: '高', pinyin: 'gāo' },
-                { char: '歌', pinyin: 'gē' }, { char: '光', pinyin: 'guāng' }, { char: '果', pinyin: 'guǒ' }
+                { char: '狗', pinyin: 'gǒu' }, { char: '高', pinyin: 'gāo' }, { char: '歌', pinyin: 'gē' },
+                { char: '光', pinyin: 'guāng' }, { char: '果', pinyin: 'guǒ' }, { char: '公', pinyin: 'gōng' },
+                { char: '國', pinyin: 'guó' }, { char: '過', pinyin: 'guò' }, { char: '給', pinyin: 'gěi' }
             ],
             'k': [
-                { char: '卡', pinyin: 'kǎ' }, { char: '開', pinyin: 'kāi' },
-                { char: '看', pinyin: 'kàn' }, { char: '口', pinyin: 'kǒu' }, { char: '褲', pinyin: 'kù' }
+                { char: '卡', pinyin: 'kǎ' }, { char: '開', pinyin: 'kāi' }, { char: '看', pinyin: 'kàn' },
+                { char: '口', pinyin: 'kǒu' }, { char: '褲', pinyin: 'kù' }, { char: '快', pinyin: 'kuài' },
+                { char: '可', pinyin: 'kě' }, { char: '課', pinyin: 'kè' }, { char: '空', pinyin: 'kōng' }
             ],
             'h': [
-                { char: '花', pinyin: 'huā' }, { char: '紅', pinyin: 'hóng' },
-                { char: '海', pinyin: 'hǎi' }, { char: '好', pinyin: 'hǎo' }, { char: '河', pinyin: 'hé' }
+                { char: '花', pinyin: 'huā' }, { char: '紅', pinyin: 'hóng' }, { char: '海', pinyin: 'hǎi' },
+                { char: '好', pinyin: 'hǎo' }, { char: '河', pinyin: 'hé' }, { char: '黃', pinyin: 'huáng' },
+                { char: '後', pinyin: 'hòu' }, { char: '畫', pinyin: 'huà' }, { char: '黑', pinyin: 'hēi' }
             ]
         };
 
@@ -361,12 +399,13 @@
 
         const audioManager = new SoundFX();
 
+        // Optimized speech helper avoiding raw letter pronunciation (e.g., using "玻" for b)
         function speakText(text) {
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // stop current sound
+                window.speechSynthesis.cancel(); // stop current speech
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'zh-TW'; // Chinese Traditional / Mandarin
-                utterance.rate = 0.85; // slightly slower for students
+                utterance.lang = 'zh-TW'; // Mandarin speech
+                utterance.rate = 0.8; // Friendly slow pace for primary students
                 window.speechSynthesis.speak(utterance);
             }
         }
@@ -374,7 +413,7 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Game Configuration
+        // Game Dimension Config
         let CANVAS_WIDTH = 1000;
         let CANVAS_HEIGHT = 500;
 
@@ -389,13 +428,17 @@
         resizeCanvas();
 
         // Game State Variables
-        let gameState = 'START'; // 'START', 'PLAYING', 'LEVEL_COMPLETE', 'GAMEOVER'
+        let gameState = 'START'; // 'START', 'PLAYING', 'GAMEOVER'
         let currentLevel = 1;
         let score = 0;
         let collectedCount = 0;
         const TARGET_GOAL = 10;
         let targetInitial = 'b';
-        let targetWordObj = null; // Used in level 2 for specific target word
+        let targetWordObj = null;
+
+        // Timer Variables
+        let timeLeft = 60;
+        let timerInterval = null;
 
         let playerClass = '';
         let playerSeat = '';
@@ -412,12 +455,10 @@
             jumpStrength: -12.5,
             gravity: 0.55,
             isGrounded: false,
-            facingRight: true,
-            frame: 0,
-            animTimer: 0
+            facingRight: true
         };
 
-        // Platforms & Coins
+        // Platforms & Items
         let cameraX = 0;
         let worldWidth = 3500;
         let platforms = [];
@@ -431,6 +472,16 @@
             right: false,
             up: false
         };
+
+        // Utility: Array Shuffle
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
 
         function generateLevelLayout() {
             platforms = [];
@@ -460,44 +511,57 @@
                 platforms.push({ x: p.x, y: p.y, width: p.w, height: 22, isGround: false });
             });
 
-            // Pick initial for level 1 / word for level 2
+            // Pick initial target
             pickNewTarget();
 
-            // Spawn Coins along world
+            // Prepare word pools with shuffling
+            const correctWords = shuffleArray(WORD_DATABASE[targetInitial]);
+            let wrongWordsPool = [];
+            INITIALS.filter(i => i !== targetInitial).forEach(i => {
+                wrongWordsPool.push(...WORD_DATABASE[i]);
+            });
+            wrongWordsPool = shuffleArray(wrongWordsPool);
+
+            let correctIndex = 0;
+            let wrongIndex = 0;
+
             const spawnXCoords = [];
-            for (let x = 250; x < worldWidth - 200; x += 150) {
+            for (let x = 250; x < worldWidth - 200; x += 140) {
                 spawnXCoords.push(x);
             }
 
             spawnXCoords.forEach(x => {
-                // Determine height
                 let y = groundY - 45;
                 if (Math.random() > 0.4) {
                     y = groundY - 130 - Math.random() * 80;
                 }
 
-                // Decide if correct coin or wrong coin
                 const isCorrect = Math.random() < 0.45;
                 let coinData = {};
 
-                if (currentLevel === 1) {
-                    let initialChoice = isCorrect ? targetInitial : getRandomInitialExcept(targetInitial);
-                    const wordList = WORD_DATABASE[initialChoice];
-                    const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
+                if (isCorrect) {
+                    const wordObj = correctWords[correctIndex % correctWords.length];
+                    correctIndex++;
                     coinData = {
-                        initial: initialChoice,
-                        char: randomWord.char,
-                        pinyin: randomWord.pinyin
+                        initial: targetInitial,
+                        char: wordObj.char,
+                        pinyin: wordObj.pinyin
                     };
                 } else {
-                    // Level 2: Target is specific speech target
-                    let initialChoice = isCorrect ? targetInitial : getRandomInitialExcept(targetInitial);
-                    const wordList = WORD_DATABASE[initialChoice];
-                    const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
+                    const wordObj = wrongWordsPool[wrongIndex % wrongWordsPool.length];
+                    wrongIndex++;
+                    // Find initial for this wrong word
+                    let wrongInitial = 'b';
+                    for (const key in WORD_DATABASE) {
+                        if (WORD_DATABASE[key].some(w => w.char === wordObj.char)) {
+                            wrongInitial = key;
+                            break;
+                        }
+                    }
                     coinData = {
-                        initial: initialChoice,
-                        char: randomWord.char,
-                        pinyin: randomWord.pinyin
+                        initial: wrongInitial,
+                        char: wordObj.char,
+                        pinyin: wordObj.pinyin
                     };
                 }
 
@@ -512,33 +576,24 @@
             });
         }
 
-        function getRandomInitialExcept(exclude) {
-            const pool = INITIALS.filter(i => i !== exclude);
-            return pool[Math.floor(Math.random() * pool.length)];
-        }
-
         function pickNewTarget() {
-            if (currentLevel === 1) {
-                targetInitial = INITIALS[Math.floor(Math.random() * INITIALS.length)];
-            } else {
-                targetInitial = INITIALS[Math.floor(Math.random() * INITIALS.length)];
-                const wordList = WORD_DATABASE[targetInitial];
-                targetWordObj = wordList[Math.floor(Math.random() * wordList.length)];
-            }
+            targetInitial = INITIALS[Math.floor(Math.random() * INITIALS.length)];
+            const wordList = WORD_DATABASE[targetInitial];
+            targetWordObj = wordList[Math.floor(Math.random() * wordList.length)];
             updateHUDTargetUI();
         }
 
         function updateHUDTargetUI() {
             const targetTextEl = document.getElementById('targetText');
             const replayBtn = document.getElementById('replaySpeechBtn');
+            const zhPron = INITIAL_PRONUNCIATION[targetInitial];
 
             if (currentLevel === 1) {
-                targetTextEl.innerHTML = `請收集聲母是 <span class="text-2xl font-fredoka underline text-blue-700 ml-1 font-black">[ ${targetInitial} ]</span> 的金幣！`;
+                targetTextEl.innerHTML = `請收集聲母是 <span class="text-2xl font-fredoka underline text-blue-700 ml-1 font-black">[ ${targetInitial} ] (${zhPron})</span> 的金幣！`;
                 replayBtn.classList.add('hidden');
             } else {
-                targetTextEl.innerHTML = `請聽聲音！收集聲母為 <span class="text-2xl font-fredoka text-blue-700 underline font-black">[ ${targetInitial} ]</span> 的漢字！`;
+                targetTextEl.innerHTML = `請聽聲音！收集聲母為 <span class="text-2xl font-fredoka text-blue-700 underline font-black">[ ${targetInitial} ] (${zhPron})</span> 的漢字！`;
                 replayBtn.classList.remove('hidden');
-                // Speak target audio
                 speakTargetAudio();
             }
 
@@ -546,9 +601,13 @@
             document.getElementById('hudScore').innerText = score;
         }
 
+        // Standard Chinese Phonetic Audio Pronunciation (Never reads raw English letters)
         function speakTargetAudio() {
-            if (currentLevel === 2 && targetWordObj) {
-                speakText(`請找聲母是 ${targetInitial} 的字，例如：${targetWordObj.char}`);
+            const zhPron = INITIAL_PRONUNCIATION[targetInitial];
+            if (currentLevel === 1) {
+                speakText(`請找出聲母是 ${zhPron} 的金幣`);
+            } else {
+                speakText(`請聽聲音，找出聲母是 ${zhPron} 的字，例如：${targetWordObj.char}`);
             }
         }
 
@@ -556,6 +615,7 @@
             speakTargetAudio();
         });
 
+        // Controls Bindings
         window.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
             if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
@@ -575,7 +635,7 @@
             if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') keys.up = false;
         });
 
-        // Touch Control Listeners
+        // Touch Controls
         const bindTouchBtn = (id, keyName) => {
             const btn = document.getElementById(id);
             btn.addEventListener('touchstart', (e) => {
@@ -597,6 +657,24 @@
         bindTouchBtn('btnRight', 'right');
         bindTouchBtn('btnJump', 'up');
 
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 60;
+            document.getElementById('hudTimer').innerText = `${timeLeft}s`;
+
+            timerInterval = setInterval(() => {
+                if (gameState === 'PLAYING') {
+                    timeLeft--;
+                    document.getElementById('hudTimer').innerText = `${timeLeft}s`;
+
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        endGame(false, '時間到！挑戰結束！');
+                    }
+                }
+            }, 1000);
+        }
+
         function updatePhysics() {
             if (gameState !== 'PLAYING') return;
 
@@ -608,23 +686,19 @@
                 player.vx = player.speed;
                 player.facingRight = true;
             } else {
-                player.vx *= 0.7; // friction
+                player.vx *= 0.7;
             }
 
             player.x += player.vx;
 
-            // World bounds check
             if (player.x < 10) player.x = 10;
             if (player.x > worldWidth - player.width) player.x = worldWidth - player.width;
 
-            // Gravity & Vertical Movement
+            // Vertical Movement
             player.vy += player.gravity;
             player.y += player.vy;
 
-            // Platform Collisions
             player.isGrounded = false;
-            const groundY = CANVAS_HEIGHT - 60;
-
             platforms.forEach(p => {
                 if (
                     player.x + player.width > p.x &&
@@ -651,16 +725,14 @@
                 const coinScreenX = coin.x;
                 const coinScreenY = coin.y + Math.sin(Date.now() * 0.005 + coin.bounceOffset) * 6;
 
-                // Simple Circle-Box collision
                 const distX = Math.abs((player.x + player.width / 2) - coinScreenX);
                 const distY = Math.abs((player.y + player.height / 2) - coinScreenY);
 
                 if (distX < (player.width / 2 + coin.radius) && distY < (player.height / 2 + coin.radius)) {
-                    // Collision Happened!
                     coin.collected = true;
 
                     if (coin.data.initial === targetInitial) {
-                        // Correct Coin
+                        // Correct
                         score += 100;
                         collectedCount++;
                         audioManager.playCoin();
@@ -671,11 +743,11 @@
                             handleLevelPass();
                         }
                     } else {
-                        // Incorrect Coin
+                        // Incorrect
                         score = Math.max(0, score - 30);
                         audioManager.playWrong();
                         spawnParticles(coin.x, coin.y, '#ef4444', 8);
-                        spawnFloatingText(coin.x, coin.y - 20, '-30 答錯嘍', '#ef4444');
+                        spawnFloatingText(coin.x, coin.y - 20, '-30 答錯囉', '#ef4444');
                     }
 
                     document.getElementById('hudScore').innerText = score;
@@ -683,7 +755,7 @@
                 }
             });
 
-            // Update Particles & Floating Text
+            // Particles & Floating Text
             particles.forEach((pt, i) => {
                 pt.x += pt.vx;
                 pt.y += pt.vy;
@@ -709,11 +781,20 @@
                     player.x = 100;
                 }, 1500);
             } else {
-                // Game Completed!
-                gameState = 'GAMEOVER';
-                saveScoreToLeaderboard(playerClass, playerSeat, score);
-                showEndScreen();
+                endGame(true, '太棒了！你順利通關所有聲母考驗！');
             }
+        }
+
+        function endGame(isVictory, subtitleMsg) {
+            gameState = 'GAMEOVER';
+            clearInterval(timerInterval);
+            saveScoreToLeaderboard(playerClass, playerSeat, score);
+
+            document.getElementById('endEmoji').innerText = isVictory ? '🏆' : '⏰';
+            document.getElementById('endTitle').innerText = isVictory ? '挑戰完成！' : '時間結束！';
+            document.getElementById('endSubtitle').innerText = subtitleMsg;
+
+            showEndScreen();
         }
 
         function spawnParticles(x, y, color, count) {
@@ -741,7 +822,7 @@
             ctx.save();
             ctx.translate(-cameraX, 0);
 
-            // 1. Render Sky Parallax Clouds
+            // Parallax Sky Clouds
             ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
             for (let i = 0; i < 15; i++) {
                 const cloudX = (i * 300) - cameraX * 0.3;
@@ -752,16 +833,14 @@
                 ctx.fill();
             }
 
-            // 2. Render Platforms
+            // Platforms
             platforms.forEach(p => {
                 if (p.isGround) {
-                    // Dirt/Grass Ground
-                    ctx.fillStyle = '#48bb78'; // grass top
+                    ctx.fillStyle = '#48bb78';
                     ctx.fillRect(p.x, p.y, p.width, 15);
-                    ctx.fillStyle = '#975a16'; // dirt body
+                    ctx.fillStyle = '#975a16';
                     ctx.fillRect(p.x, p.y + 15, p.width, p.height - 15);
                 } else {
-                    // Floating Wooden Block
                     ctx.fillStyle = '#ed8936';
                     ctx.beginPath();
                     ctx.roundRect(p.x, p.y, p.width, p.height, 8);
@@ -772,13 +851,12 @@
                 }
             });
 
-            // 3. Render Coins
+            // Coins
             coins.forEach(coin => {
                 if (coin.collected) return;
 
                 const floatY = coin.y + Math.sin(Date.now() * 0.005 + coin.bounceOffset) * 6;
 
-                // Golden Coin Circle
                 ctx.fillStyle = '#fbbf24';
                 ctx.beginPath();
                 ctx.arc(coin.x, floatY, coin.radius, 0, Math.PI * 2);
@@ -787,12 +865,10 @@
                 ctx.lineWidth = 3;
                 ctx.stroke();
 
-                // Text Display on Coin
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
 
                 if (currentLevel === 1) {
-                    // Level 1: Chinese character + Pinyin
                     ctx.fillStyle = '#78350f';
                     ctx.font = 'bold 14px "Noto Sans TC", sans-serif';
                     ctx.fillText(coin.data.char, coin.x, floatY - 5);
@@ -801,37 +877,33 @@
                     ctx.font = 'bold 11px Fredoka One, cursive';
                     ctx.fillText(coin.data.pinyin, coin.x, floatY + 9);
                 } else {
-                    // Level 2: Only Chinese Character
                     ctx.fillStyle = '#78350f';
                     ctx.font = 'bold 18px "Noto Sans TC", sans-serif';
                     ctx.fillText(coin.data.char, coin.x, floatY);
                 }
             });
 
-            // 4. Render Player Character
+            // Player
             ctx.save();
             ctx.translate(player.x + player.width / 2, player.y + player.height / 2);
             if (!player.facingRight) ctx.scale(-1, 1);
 
-            // Character Body (Cute Explorer Bear/Kid)
-            ctx.fillStyle = '#3b82f6'; // Shirt
+            ctx.fillStyle = '#3b82f6';
             ctx.beginPath();
             ctx.roundRect(-18, -10, 36, 32, 6);
             ctx.fill();
 
-            ctx.fillStyle = '#fde047'; // Head
+            ctx.fillStyle = '#fde047';
             ctx.beginPath();
             ctx.arc(0, -20, 20, 0, Math.PI * 2);
             ctx.fill();
 
-            // Eyes
             ctx.fillStyle = '#1e293b';
             ctx.beginPath();
             ctx.arc(8, -22, 3, 0, Math.PI * 2);
             ctx.arc(16, -22, 3, 0, Math.PI * 2);
             ctx.fill();
 
-            // Cap
             ctx.fillStyle = '#ef4444';
             ctx.beginPath();
             ctx.arc(0, -25, 20, Math.PI, Math.PI * 2);
@@ -840,7 +912,7 @@
 
             ctx.restore();
 
-            // 5. Render Particles
+            // Particles
             particles.forEach(pt => {
                 ctx.fillStyle = pt.color;
                 ctx.globalAlpha = pt.alpha;
@@ -850,7 +922,7 @@
             });
             ctx.globalAlpha = 1.0;
 
-            // 6. Render Floating Score Texts
+            // Floating Text
             floatingTexts.forEach(ft => {
                 ctx.fillStyle = ft.color;
                 ctx.globalAlpha = ft.alpha;
@@ -868,6 +940,7 @@
             requestAnimationFrame(gameLoop);
         }
 
+        // Leaderboard logic
         const STORAGE_KEY = 'pinyin_adventure_scores';
 
         function saveScoreToLeaderboard(cls, seat, sc) {
@@ -877,9 +950,7 @@
                 score: sc,
                 date: new Date().toLocaleDateString()
             });
-            // Sort Descending
             scores.sort((a, b) => b.score - a.score);
-            // Keep Top 5
             scores = scores.slice(0, 5);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
         }
@@ -914,8 +985,9 @@
             renderLeaderboard();
         }
 
+        // Button Event Handlers
         document.getElementById('startGameBtn').addEventListener('click', () => {
-            playerClass = document.getElementById('inputClass').value.trim() || '1A';
+            playerClass = document.getElementById('inputClass').value.trim() || '2A';
             playerSeat = document.getElementById('inputSeat').value.trim() || '01';
 
             document.getElementById('hudUser').innerText = `${playerClass} (${playerSeat}號)`;
@@ -924,7 +996,6 @@
             document.getElementById('hudOverlay').classList.remove('hidden');
             document.getElementById('touchControls').classList.remove('hidden');
 
-            // Reset Game Variables
             currentLevel = 1;
             score = 0;
             collectedCount = 0;
@@ -934,6 +1005,7 @@
             generateLevelLayout();
             gameState = 'PLAYING';
             audioManager.init();
+            startTimer();
         });
 
         document.getElementById('btnRetry').addEventListener('click', () => {
@@ -949,6 +1021,7 @@
 
             generateLevelLayout();
             gameState = 'PLAYING';
+            startTimer();
         });
 
         document.getElementById('btnSwitchUser').addEventListener('click', () => {
