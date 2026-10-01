@@ -1,745 +1,650 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>拼音小高手 - 樂趣學習主選單</title>
-  <style>
-    :root {
-      --primary-color: #ff6b6b;
-      --secondary-color: #4ecdc4;
-      --yellow-accent: #ffe66d;
-      --purple-accent: #a29bfe;
-      --dark-text: #2d3436;
-      --card-bg: #ffffff;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拼音小高手 - 漢語拼音樂趣主選單</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti for Daily Check-in -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
-    }
+    <style>
+        body {
+            font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
+            background: linear-gradient(180deg, #70d6ff 0%, #a0e426 65%, #38b000 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            user-select: none;
+        }
 
-    body {
-      font-family: 'Fredoka', -apple-system, BlinkMacSystemFont, "Microsoft JhengHei", "Segoe UI", Roboto, sans-serif;
-      background: linear-gradient(180deg, #70a1ff 0%, #a8c0ff 60%, #e0c3fc 100%);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 16px;
-      position: relative;
-      overflow-x: hidden;
-    }
+        /* 3D Bouncy Buttons */
+        .btn-bounce {
+            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0px 8px 0px rgba(0, 0, 0, 0.2), 0px 10px 15px rgba(0, 0, 0, 0.15);
+        }
+        .btn-bounce:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0px 12px 0px rgba(0, 0, 0, 0.2), 0px 14px 20px rgba(0, 0, 0, 0.2);
+        }
+        .btn-bounce:active {
+            transform: translateY(4px) scale(0.98);
+            box-shadow: 0px 2px 0px rgba(0, 0, 0, 0.2), 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
 
-    /* 裝飾性漂浮雲朵 */
-    .cloud {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 50px;
-      z-index: 1;
-      animation: floatCloud linear infinite;
-    }
+        /* Card Hover Depth Effect */
+        .card-depth {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(255, 255, 255, 0.8);
+        }
+        .card-depth:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.25), 0 0 0 5px rgba(255, 255, 255, 1);
+        }
 
-    .cloud::before, .cloud::after {
-      content: '';
-      position: absolute;
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 50%;
-    }
+        /* Floating Cloud Animations */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-12px) translateX(10px); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(255, 223, 0, 0.6)); }
+            50% { transform: scale(1.06); filter: drop-shadow(0 0 20px rgba(255, 223, 0, 0.9)); }
+        }
+        .animate-float {
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+        .animate-glow {
+            animation: pulseGlow 2.5s infinite;
+        }
 
-    .cloud1 {
-      width: 120px;
-      height: 40px;
-      top: 40px;
-      left: -140px;
-      animation-duration: 25s;
-    }
-    .cloud1::before { width: 50px; height: 50px; top: -20px; left: 20px; }
-    .cloud1::after { width: 40px; height: 40px; top: -15px; left: 55px; }
+        /* Mascot Styling */
+        .mascot-container {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .mascot-container:hover {
+            transform: scale(1.08) rotate(2deg);
+        }
+        .mascot-container:active {
+            transform: scale(0.95);
+        }
 
-    .cloud2 {
-      width: 160px;
-      height: 50px;
-      top: 120px;
-      left: -180px;
-      animation-duration: 35s;
-      animation-delay: 5s;
-    }
-    .cloud2::before { width: 60px; height: 60px; top: -25px; left: 30px; }
-    .cloud2::after { width: 50px; height: 50px; top: -20px; left: 80px; }
+        /* Speech Bubble Tail */
+        .speech-bubble {
+            position: relative;
+            background: #ffffff;
+            border-radius: 24px;
+            border: 4px solid #3b82f6;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            left: -16px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 10px 16px 10px 0;
+            border-style: solid;
+            border-color: transparent #ffffff transparent transparent;
+            display: block;
+            width: 0;
+        }
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 12px 18px 12px 0;
+            border-style: solid;
+            border-color: transparent #3b82f6 transparent transparent;
+            display: block;
+            width: 0;
+        }
 
-    @keyframes floatCloud {
-      from { transform: translateX(-200px); }
-      to { transform: translateX(calc(100vw + 200px)); }
-    }
+        @media (max-width: 768px) {
+            .speech-bubble::after {
+                left: 50%;
+                top: -16px;
+                transform: translateX(-50%);
+                border-width: 0 10px 16px 10px;
+                border-color: transparent transparent #ffffff transparent;
+            }
+            .speech-bubble::before {
+                left: 50%;
+                top: -22px;
+                transform: translateX(-50%);
+                border-width: 0 12px 18px 12px;
+                border-color: transparent transparent #3b82f6 transparent;
+            }
+        }
 
-    /* 頂部功能列 */
-    .header-bar {
-      width: 100%;
-      max-width: 900px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 10;
-      margin-bottom: 12px;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .user-pill {
-      background: rgba(255, 255, 255, 0.95);
-      border: 3px solid #ffbe76;
-      padding: 8px 18px;
-      border-radius: 30px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      color: var(--dark-text);
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-      font-size: 1.05rem;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    .user-pill:hover {
-      transform: scale(1.04);
-    }
-
-    .user-avatar {
-      font-size: 1.4rem;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .action-btn {
-      background: #ffffff;
-      border: 3px solid #30336b;
-      padding: 8px 16px;
-      border-radius: 25px;
-      font-weight: 800;
-      font-size: 0.95rem;
-      color: #30336b;
-      cursor: pointer;
-      box-shadow: 0 5px 0 #30336b;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.15s;
-    }
-
-    .action-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 7px 0 #30336b;
-    }
-
-    .action-btn:active {
-      transform: translateY(3px);
-      box-shadow: 0 2px 0 #30336b;
-    }
-
-    /* 標題區域 */
-    .title-container {
-      text-align: center;
-      z-index: 10;
-      margin-bottom: 20px;
-      position: relative;
-    }
-
-    .main-title {
-      font-size: 3rem;
-      font-weight: 900;
-      color: #ffffff;
-      text-shadow: 4px 4px 0px #222f3e, -2px -2px 0 #222f3e, 2px -2px 0 #222f3e, -2px 2px 0 #222f3e, 0 8px 15px rgba(0,0,0,0.25);
-      letter-spacing: 2px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-    }
-
-    .sub-title {
-      background: var(--yellow-accent);
-      color: #d35400;
-      display: inline-block;
-      padding: 4px 18px;
-      border-radius: 20px;
-      font-weight: 800;
-      font-size: 1.15rem;
-      margin-top: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-      border: 2px solid #f39c12;
-    }
-
-    /* 吉祥物與對話框 */
-    .mascot-section {
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 24px;
-      cursor: pointer;
-    }
-
-    .speech-bubble {
-      background: #ffffff;
-      border: 3px solid #222f3e;
-      border-radius: 20px;
-      padding: 10px 18px;
-      font-weight: 800;
-      color: #2c3e50;
-      position: relative;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.12);
-      font-size: 1rem;
-      max-width: 260px;
-      animation: pulseBubble 2s infinite ease-in-out;
-    }
-
-    .speech-bubble::after {
-      content: '';
-      position: absolute;
-      right: -14px;
-      top: 50%;
-      transform: translateY(-50%);
-      border-width: 8px 0 8px 14px;
-      border-style: solid;
-      border-color: transparent transparent transparent #222f3e;
-    }
-
-    @keyframes pulseBubble {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.03); }
-    }
-
-    .mole-mascot {
-      width: 75px;
-      height: 75px;
-      animation: bounceMascot 2.5s infinite ease-in-out;
-    }
-
-    @keyframes bounceMascot {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    /* 遊戲卡片網格 */
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      width: 100%;
-      max-width: 960px;
-      z-index: 10;
-      margin-bottom: 24px;
-    }
-
-    .game-card {
-      background: var(--card-bg);
-      border-radius: 28px;
-      border: 4px solid #222f3e;
-      box-shadow: 0 12px 0 #222f3e;
-      padding: 20px 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      position: relative;
-      transition: all 0.2s ease;
-      overflow: hidden;
-    }
-
-    .game-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 18px 0 #222f3e;
-    }
-
-    .card-tag {
-      position: absolute;
-      top: 12px;
-      right: -32px;
-      background: #ff4757;
-      color: white;
-      font-weight: 900;
-      font-size: 0.75rem;
-      padding: 4px 35px;
-      transform: rotate(30deg);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
-
-    .card-icon-wrapper {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
-      font-size: 3rem;
-      border: 3px solid #222f3e;
-      box-shadow: inset 0 -5px 10px rgba(0,0,0,0.1);
-    }
-
-    .card-1 .card-icon-wrapper { background: #ff7675; }
-    .card-2 .card-icon-wrapper { background: #74b9ff; }
-    .card-3 .card-icon-wrapper { background: #55efc4; }
-
-    .game-title {
-      font-size: 1.45rem;
-      font-weight: 900;
-      color: var(--dark-text);
-      margin-bottom: 6px;
-    }
-
-    .game-desc {
-      font-size: 0.88rem;
-      color: #636e72;
-      font-weight: 700;
-      line-height: 1.4;
-      margin-bottom: 16px;
-      min-height: 38px;
-    }
-
-    .play-btn {
-      width: 100%;
-      padding: 12px 0;
-      border-radius: 20px;
-      border: 3px solid #222f3e;
-      font-size: 1.1rem;
-      font-weight: 900;
-      color: white;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-block;
-      box-shadow: 0 5px 0 #222f3e;
-      transition: all 0.15s;
-    }
-
-    .card-1 .play-btn { background: #ff4757; }
-    .card-2 .play-btn { background: #0984e3; }
-    .card-3 .play-btn { background: #00b894; }
-
-    .play-btn:hover {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
-    }
-
-    .play-btn:active {
-      transform: translateY(3px);
-      box-shadow: 0 2px 0 #222f3e;
-    }
-
-    /* 簽到領獎小區域 */
-    .daily-reward-bar {
-      background: rgba(255, 255, 255, 0.92);
-      border: 3px solid #222f3e;
-      border-radius: 24px;
-      padding: 12px 24px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      z-index: 10;
-      box-shadow: 0 6px 0 #222f3e;
-    }
-
-    .reward-text {
-      font-weight: 800;
-      color: #2c3e50;
-      font-size: 0.95rem;
-    }
-
-    .star-counter {
-      color: #f39c12;
-      font-size: 1.2rem;
-      font-weight: 900;
-    }
-
-    .claim-btn {
-      background: #ffe66d;
-      border: 2px solid #222f3e;
-      padding: 6px 14px;
-      border-radius: 15px;
-      font-weight: 900;
-      color: #d35400;
-      cursor: pointer;
-      box-shadow: 0 3px 0 #222f3e;
-    }
-
-    .claim-btn:disabled {
-      background: #dfe6e9;
-      color: #b2bec3;
-      border-color: #b2bec3;
-      box-shadow: none;
-      cursor: not-allowed;
-    }
-
-    /* 通用 Modal 彈窗 */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    .modal-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .modal-card {
-      background: #ffffff;
-      border: 4px solid #222f3e;
-      border-radius: 28px;
-      padding: 24px;
-      width: 90%;
-      max-width: 440px;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-      position: relative;
-      transform: scale(0.8);
-      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .modal-overlay.active .modal-card {
-      transform: scale(1);
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .modal-title {
-      font-size: 1.4rem;
-      font-weight: 900;
-      color: #222f3e;
-    }
-
-    .close-modal {
-      background: #ff7675;
-      color: white;
-      border: 2px solid #222f3e;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      font-weight: 900;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 3px 0 #222f3e;
-    }
-
-    .modal-input {
-      width: 100%;
-      padding: 10px 14px;
-      border: 3px solid #cbd5e1;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: bold;
-      margin-bottom: 12px;
-      outline: none;
-    }
-
-    .modal-input:focus {
-      border-color: #0984e3;
-    }
-
-    .modal-btn {
-      width: 100%;
-      padding: 12px;
-      background: #2ed573;
-      border: 3px solid #222f3e;
-      color: white;
-      font-size: 1.05rem;
-      font-weight: 900;
-      border-radius: 16px;
-      cursor: pointer;
-      box-shadow: 0 4px 0 #222f3e;
-    }
-
-    /* 響應式調整 */
-    @media (max-width: 768px) {
-      .games-grid {
-        grid-template-columns: 1fr;
-        max-width: 360px;
-      }
-      .main-title {
-        font-size: 2.2rem;
-      }
-      .mascot-section {
-        flex-direction: column-reverse;
-        gap: 6px;
-      }
-      .speech-bubble::after {
-        right: 50%;
-        top: 100%;
-        transform: translateX(50%);
-        border-width: 12px 12px 0 12px;
-        border-color: #222f3e transparent transparent transparent;
-      }
-    }
-  </style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ffb703;
+            border-radius: 10px;
+        }
+    </style>
 </head>
-<body>
+<body class="relative flex flex-col min-h-screen justify-between overflow-x-hidden text-gray-800">
 
-  <!-- 背景漂浮雲朵 -->
-  <div class="cloud cloud1"></div>
-  <div class="cloud cloud2"></div>
-
-  <!-- 頂部資訊與設定列 -->
-  <div class="header-bar">
-    <div class="user-pill" onclick="openModal('profileModal')">
-      <span class="user-avatar">👧</span>
-      <span id="user-display-text">2A 班 01 號 (未設定)</span>
-      <span style="font-size: 0.8rem; color: #7f8c8d;">✏️</span>
+    <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <!-- Sun -->
+        <div class="absolute -top-10 -right-10 w-44 h-44 bg-yellow-300 rounded-full blur-sm opacity-90 animate-glow"></div>
+        <!-- Floating Clouds -->
+        <div class="absolute top-8 left-10 text-white/80 animate-float opacity-90" style="animation-delay: 0s;">
+            <svg class="w-28 h-16 fill-current" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+        </div>
+        <div class="absolute top-28 right-24 text-white/70 animate-float opacity-80" style="animation-delay: 1.5s;">
+            <svg class="w-36 h-20 fill-current" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+        </div>
+        <div class="absolute bottom-20 left-12 text-white/60 animate-float opacity-70" style="animation-delay: 2.5s;">
+            <svg class="w-24 h-14 fill-current" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+        </div>
     </div>
 
-    <div class="header-actions">
-      <button class="action-btn" onclick="openModal('rankModal')">🏆 英雄榜</button>
+    <header class="relative z-10 w-full px-4 py-3 bg-white/85 backdrop-blur-md border-b-4 border-yellow-400 shadow-md flex flex-wrap justify-between items-center gap-3">
+        <!-- Header Left: Logo + Clickable Student Profile Pill -->
+        <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2">
+                <span class="text-3xl filter drop-shadow">🎒</span>
+                <span class="text-2xl md:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 tracking-wider">
+                    拼音小高手
+                </span>
+            </div>
+
+            <!-- Student Profile Badge Pill (Clickable) -->
+            <button onclick="openProfileModal()" class="btn-bounce flex items-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-3 py-1.5 rounded-2xl shadow border-2 border-white cursor-pointer" title="點擊編輯個人資料">
+                <span class="text-lg mr-1.5">👧</span>
+                <div class="text-left leading-tight">
+                    <div id="userBadgeText" class="text-xs md:text-sm font-black tracking-wide">2A 班 01 號 (點擊設定)</div>
+                </div>
+            </button>
+        </div>
+
+        <!-- Header Right: ONLY Leaderboard Button -->
+        <div class="flex items-center space-x-2">
+            <button onclick="openLeaderboard()" class="btn-bounce bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-extrabold text-sm md:text-base px-4 py-2 rounded-2xl shadow-lg border-2 border-purple-200 flex items-center gap-1.5">
+                <span>🏆</span>
+                <span>英雄榜</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="relative z-10 container mx-auto px-4 py-4 md:py-6 flex-1 flex flex-col justify-center items-center">
+        
+        <!-- Interactive Mascot & Daily Check-in Card -->
+        <div class="w-full max-w-4xl bg-white/90 backdrop-blur-md rounded-3xl p-5 md:p-6 mb-6 shadow-2xl border-4 border-yellow-300 flex flex-col md:flex-row items-center justify-between gap-6">
+            
+            <!-- Cute Mole Mascot SVG (Clickable for Voice Speech) -->
+            <div class="flex flex-col items-center">
+                <div class="mascot-container relative" onclick="mascotSpeak()">
+                    <svg class="w-36 h-36 md:w-44 md:h-44 filter drop-shadow-xl" viewBox="0 0 200 200">
+                        <!-- Dirt Mound -->
+                        <ellipse cx="100" cy="175" rx="85" ry="20" fill="#7f5539" />
+                        <ellipse cx="100" cy="170" rx="75" ry="15" fill="#9c6644" />
+                        
+                        <!-- Mole Body -->
+                        <path d="M 50 160 C 40 100, 60 40, 100 40 C 140 40, 160 100, 150 160 Z" fill="#6c584c" />
+                        
+                        <!-- Mole Tummy -->
+                        <ellipse cx="100" cy="130" rx="35" ry="30" fill="#dde5b6" />
+
+                        <!-- Yellow Construction Helmet -->
+                        <path d="M 55 55 C 55 25, 145 25, 145 55 Z" fill="#ffb703" />
+                        <rect x="45" y="52" width="110" height="10" rx="4" fill="#fb8500" />
+                        <circle cx="100" cy="35" r="8" fill="#ffffff" />
+                        <text x="100" y="39" font-size="10" font-weight="bold" fill="#000" text-anchor="middle">拼</text>
+
+                        <!-- Eyes -->
+                        <circle cx="80" cy="80" r="10" fill="#ffffff" />
+                        <circle cx="82" cy="80" r="5" fill="#000000" />
+                        <circle cx="84" cy="78" r="2" fill="#ffffff" />
+
+                        <circle cx="120" cy="80" r="10" fill="#ffffff" />
+                        <circle cx="118" cy="80" r="5" fill="#000000" />
+                        <circle cx="116" cy="78" r="2" fill="#ffffff" />
+
+                        <!-- Rosy Cheeks -->
+                        <ellipse cx="68" cy="95" rx="8" ry="5" fill="#ffb5a7" opacity="0.8" />
+                        <ellipse cx="132" cy="95" rx="8" ry="5" fill="#ffb5a7" opacity="0.8" />
+
+                        <!-- Nose & Snout -->
+                        <ellipse cx="100" cy="92" rx="16" ry="11" fill="#ffcad4" />
+                        <ellipse cx="100" cy="88" rx="8" ry="6" fill="#6b705c" />
+
+                        <!-- Happy Smile -->
+                        <path d="M 92 100 Q 100 108 108 100" stroke="#000" stroke-width="3" fill="none" stroke-linecap="round" />
+
+                        <!-- Soft Toy Hammer -->
+                        <g transform="rotate(-20 140 120)">
+                            <rect x="145" y="100" width="10" height="40" rx="3" fill="#d4a373" />
+                            <rect x="130" y="85" width="40" height="22" rx="6" fill="#e63946" />
+                            <rect x="127" y="88" width="6" height="16" rx="2" fill="#ffb703" />
+                            <rect x="167" y="88" width="6" height="16" rx="2" fill="#ffb703" />
+                        </g>
+                    </svg>
+
+                    <span class="absolute -bottom-2 bg-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full border-2 border-white shadow animate-bounce">
+                        點我說話 🗣️
+                    </span>
+                </div>
+            </div>
+
+            <!-- Mascot Speech Bubble & Interactive Greeting -->
+            <div class="flex-1 max-w-md">
+                <div class="speech-bubble p-4 text-gray-800">
+                    <h2 class="text-lg md:text-xl font-black text-blue-600 mb-1 flex items-center gap-1">
+                        <span>👋 歡迎來到拼音遊戲大本營！</span>
+                    </h2>
+                    <p id="mascotText" class="text-sm md:text-base font-bold text-gray-700 leading-relaxed">
+                        「我是地鼠小哥！今天想玩籃球投籃、打地鼠還是接水果？完全自由選，快開始挑戰吧！」
+                    </p>
+                </div>
+
+                <!-- Daily Reward / Check-in Widget -->
+                <div class="mt-4 flex items-center justify-between bg-amber-50 p-3 rounded-2xl border-2 border-amber-200 shadow-sm">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-2xl animate-bounce">⭐</span>
+                        <div>
+                            <div class="text-xs font-black text-amber-800">每日簽到獎勵</div>
+                            <div id="starCounter" class="text-sm font-extrabold text-orange-600">已累積 5 顆星星</div>
+                        </div>
+                    </div>
+                    <button onclick="triggerCheckIn()" id="checkInBtn" class="btn-bounce bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-black text-xs md:text-sm px-3.5 py-2 rounded-xl shadow border border-white flex items-center gap-1">
+                        <span>🎁</span>
+                        <span id="checkInBtnText">每日簽到領星星</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Game Hub Selection Cards Grid (3 Games Unlocked) -->
+        <div class="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6 my-2">
+            
+            <!-- GAME CARD 1: 籃球投籃 (game1.html) -->
+            <div class="card-depth bg-gradient-to-b from-sky-100 via-white to-blue-50 rounded-3xl p-6 border-4 border-sky-400 shadow-xl flex flex-col justify-between relative overflow-hidden group">
+                <div class="absolute top-3 right-3 bg-sky-500 text-white font-black text-xs px-3 py-1 rounded-full border border-white shadow tracking-wide">
+                    🏀 聽力特訓 / 籃球投籃辨聲
+                </div>
+
+                <div>
+                    <div class="text-5xl mb-3 transform group-hover:scale-110 transition-transform">🏀</div>
+                    <h3 class="text-2xl font-black text-sky-900 mb-1">聲韻大投籃</h3>
+                    <div class="text-xs font-black text-sky-600 mb-2">【辨別聲母與韻母】</div>
+                    <div class="flex flex-wrap gap-1 mb-3">
+                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">聲母框 (b/p/m...)</span>
+                        <span class="bg-sky-200 text-sky-900 font-bold text-xs px-2 py-0.5 rounded">韻母框 (a/o/e...)</span>
+                    </div>
+                    <p class="text-sm font-bold text-gray-600 mb-4 leading-relaxed">
+                        看清籃框標籤，聽清楚語音發音，將拼音籃球精準投進對應的聲母或韻母籃框！
+                    </p>
+                </div>
+
+                <div>
+                    <div class="bg-sky-200/60 rounded-xl p-2.5 mb-4 text-xs font-bold text-sky-900 flex justify-between items-center">
+                        <span>最高紀錄:</span>
+                        <span id="card1HighScore" class="text-base text-blue-700 font-black">0 分 🌟</span>
+                    </div>
+                    <a href="game1.html" onclick="playClickSound()" class="w-full btn-bounce bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-black text-lg py-3 rounded-2xl shadow-lg border-2 border-sky-200 flex justify-center items-center gap-2 group-hover:scale-105 transition-all">
+                        <span>🏀 開始投籃</span>
+                        <span class="text-xl">🚀</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- GAME CARD 2: 聲母打地鼠 (game2.html) -->
+            <div class="card-depth bg-gradient-to-b from-amber-100 via-white to-orange-50 rounded-3xl p-6 border-4 border-amber-400 shadow-xl flex flex-col justify-between relative overflow-hidden group">
+                <div class="absolute top-3 right-3 bg-red-500 text-white font-black text-xs px-3 py-1 rounded-full border border-white shadow tracking-wide animate-pulse">
+                    🔥 熱門推薦 / 聲母快速反應
+                </div>
+
+                <div>
+                    <div class="text-5xl mb-3 transform group-hover:scale-110 transition-transform">🔨</div>
+                    <h3 class="text-2xl font-black text-amber-900 mb-1">聲母打地鼠</h3>
+                    <div class="text-xs font-black text-amber-600 mb-2">【聲母辨識大挑戰】</div>
+                    <div class="flex flex-wrap gap-1 mb-3">
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">b</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">p</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">m</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">f</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">d</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">t</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">n</span>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-2 py-0.5 rounded">l</span>
+                    </div>
+                    <p class="text-sm font-bold text-gray-600 mb-4 leading-relaxed">
+                        聽清目標聲母語音發音，快速反應敲擊正確的地鼠，訓練耳快手快！
+                    </p>
+                </div>
+
+                <div>
+                    <div class="bg-amber-200/60 rounded-xl p-2.5 mb-4 text-xs font-bold text-amber-900 flex justify-between items-center">
+                        <span>最高紀錄:</span>
+                        <span id="card2HighScore" class="text-base text-red-600 font-black">0 分 🌟</span>
+                    </div>
+                    <a href="game2.html" onclick="playClickSound()" class="w-full btn-bounce bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-lg py-3 rounded-2xl shadow-lg border-2 border-yellow-200 flex justify-center items-center gap-2 group-hover:scale-105 transition-all">
+                        <span>🔨 開始打地鼠</span>
+                        <span class="text-xl">💥</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- GAME CARD 3: 四聲接水果 (game3.html) -->
+            <div class="card-depth bg-gradient-to-b from-purple-100 via-white to-pink-50 rounded-3xl p-6 border-4 border-pink-400 shadow-xl flex flex-col justify-between relative overflow-hidden group">
+                <div class="absolute top-3 right-3 bg-pink-500 text-white font-black text-xs px-3 py-1 rounded-full border border-white shadow tracking-wide">
+                    🧺 四聲考驗 / 聲調接水果
+                </div>
+
+                <div>
+                    <div class="text-5xl mb-3 transform group-hover:scale-110 transition-transform">🧺</div>
+                    <h3 class="text-2xl font-black text-purple-900 mb-1">四聲接水果</h3>
+                    <div class="text-xs font-black text-pink-600 mb-2">【辨別四聲調】</div>
+                    <div class="flex flex-wrap gap-1 mb-3">
+                        <span class="bg-purple-200 text-purple-900 font-bold text-xs px-2 py-0.5 rounded">陰平 ˉ</span>
+                        <span class="bg-purple-200 text-purple-900 font-bold text-xs px-2 py-0.5 rounded">陽平 ˊ</span>
+                        <span class="bg-purple-200 text-purple-900 font-bold text-xs px-2 py-0.5 rounded">上聲 ˇ</span>
+                        <span class="bg-purple-200 text-purple-900 font-bold text-xs px-2 py-0.5 rounded">去聲 ˋ</span>
+                    </div>
+                    <p class="text-sm font-bold text-gray-600 mb-4 leading-relaxed">
+                        移動小籃子，聽清四聲發音題目，接住對應聲調的美味水果，小心躲避炸彈！
+                    </p>
+                </div>
+
+                <div>
+                    <div class="bg-purple-200/60 rounded-xl p-2.5 mb-4 text-xs font-bold text-purple-900 flex justify-between items-center">
+                        <span>最高紀錄:</span>
+                        <span id="card3HighScore" class="text-base text-pink-700 font-black">0 分 🌟</span>
+                    </div>
+                    <a href="game3.html" onclick="playClickSound()" class="w-full btn-bounce bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-black text-lg py-3 rounded-2xl shadow-lg border-2 border-purple-200 flex justify-center items-center gap-2 group-hover:scale-105 transition-all">
+                        <span>🧺 開始接水果</span>
+                        <span class="text-xl">🍎</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="relative z-10 w-full py-3 bg-white/70 backdrop-blur-sm text-center text-xs font-bold text-gray-700 border-t-2 border-white">
+        <p>🌟 拼音小高手 - 小學二年級漢語拼音教學軟體 | 自由選關 ‧ 輕鬆學習</p>
+    </footer>
+
+    <!-- MODAL 1: Student Profile Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl border-4 border-yellow-400 p-6 w-full max-w-md shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-black text-gray-800 flex items-center">
+                    <span class="mr-2">👧</span> 編輯學生資料
+                </h3>
+                <button onclick="closeModal('profileModal')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+            </div>
+            
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">選擇班別 (Class):</label>
+                    <select id="inputClass" class="w-full p-3 rounded-xl border-2 border-gray-300 font-bold focus:border-yellow-500 focus:outline-none">
+                        <option value="2A">2A 班</option>
+                        <option value="2B">2B 班</option>
+                        <option value="2C">2C 班</option>
+                        <option value="2D">2D 班</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">學號 (Student No.):</label>
+                    <input type="text" id="inputId" placeholder="請輸入學號 (例: 01)" class="w-full p-3 rounded-xl border-2 border-gray-300 font-bold focus:border-yellow-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">學生姓名 (Name):</label>
+                    <input type="text" id="inputName" placeholder="請輸入姓名 (例: 小明)" class="w-full p-3 rounded-xl border-2 border-gray-300 font-bold focus:border-yellow-500 focus:outline-none">
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end space-x-3">
+                <button onclick="closeModal('profileModal')" class="px-4 py-2 bg-gray-200 font-bold rounded-xl text-gray-700">取消</button>
+                <button onclick="saveProfile()" class="btn-bounce px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-extrabold rounded-xl shadow">儲存設定</button>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- 標題區域 -->
-  <div class="title-container">
-    <div class="main-title">
-      <span>✨</span>
-      <span>拼音小高手</span>
-      <span>⭐</span>
-    </div>
-    <div class="sub-title">二年級漢語拼音遊樂園 🎪</div>
-  </div>
+    <!-- MODAL 2: Leaderboard Modal (英雄榜) -->
+    <div id="leaderboardModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl border-4 border-purple-400 p-6 w-full max-w-lg shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-black text-purple-900 flex items-center">
+                    <span class="mr-2">🏆</span> 拼音英雄榜
+                </h3>
+                <button onclick="closeModal('leaderboardModal')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+            </div>
 
-  <!-- 吉祥物互動區 -->
-  <div class="mascot-section" onclick="mascotSpeak()">
-    <div class="speech-bubble" id="mascot-speech">
-      點擊我！今天想挑戰哪一個拼音遊戲呢？🔨
-    </div>
-    <svg class="mole-mascot" viewBox="0 0 100 100">
-      <ellipse cx="50" cy="65" rx="32" ry="26" fill="#8d5524" />
-      <ellipse cx="50" cy="40" rx="26" ry="24" fill="#a0522d" />
-      <ellipse cx="50" cy="48" rx="16" ry="12" fill="#ffdbac" />
-      <circle cx="50" cy="43" r="5" fill="#e74c3c" />
-      <circle cx="42" cy="35" r="3" fill="#2c3e50" />
-      <circle cx="58" cy="35" r="3" fill="#2c3e50" />
-      <path d="M 44 53 Q 50 58 56 53" stroke="#2c3e50" stroke-width="2" fill="none" />
-      <!-- 玩具錘子 -->
-      <rect x="70" y="25" width="8" height="35" fill="#f39c12" rx="2" transform="rotate(20 70 25)" />
-      <rect x="62" y="15" width="26" height="15" fill="#e74c3c" rx="4" transform="rotate(20 62 15)" />
-    </svg>
-  </div>
+            <p class="text-xs font-bold text-purple-600 mb-3">📍 各項拼音遊戲最高得分紀錄榜</p>
 
-  <!-- 遊戲選擇網格 (三個專屬小二的拼音遊戲) -->
-  <div class="games-grid">
-    
-    <!-- 遊戲 1：聲母打地鼠 -->
-    <div class="game-card card-1">
-      <div class="card-tag">最受歡迎</div>
-      <div class="card-icon-wrapper">🔨</div>
-      <h2 class="game-title">聲母打地鼠</h2>
-      <p class="game-desc">考考你的反應！聽清題目，擊中正確聲母的地鼠！</p>
-      <a href="game2.html" class="play-btn">立即開玩 ➔</a>
+            <div class="bg-purple-50 rounded-2xl p-4 max-h-72 overflow-y-auto space-y-3" id="leaderboardList">
+                <!-- Leaderboard entries injected dynamically via JS -->
+            </div>
+
+            <div class="mt-5 text-right">
+                <button onclick="closeModal('leaderboardModal')" class="btn-bounce px-6 py-2 bg-purple-600 text-white font-extrabold rounded-xl">關閉</button>
+            </div>
+        </div>
     </div>
 
-    <!-- 遊戲 2：聲韻大投籃 -->
-    <div class="game-card card-2">
-      <div class="card-tag" style="background:#0984e3;">聽力特訓</div>
-      <div class="card-icon-wrapper">🏀</div>
-      <h2 class="game-title">聲韻大投籃</h2>
-      <p class="game-desc">聽題目讀音，將帶有正確聲母或韻母的籃球投進籃框！</p>
-      <a href="#" onclick="alert('「聲韻大投籃」遊戲正在進行關卡更新，請先體驗「聲母打地鼠」或「四聲接水果」！'); return false;" class="play-btn">準備開始 ➔</a>
-    </div>
+    <script>
+        /* Audio Context & User State */
+        let audioCtx = null;
 
-    <!-- 遊戲 3：四聲接水果 -->
-    <div class="game-card card-3">
-      <div class="card-tag" style="background:#00b894;">四聲考驗</div>
-      <div class="card-icon-wrapper">🧺</div>
-      <h2 class="game-title">四聲接水果</h2>
-      <p class="game-desc">移動水果籃！接住陰平、陽平、上聲或去聲對應的水果！</p>
-      <a href="game1.html" class="play-btn">立即開玩 ➔</a>
-    </div>
+        // User Data initialized from localStorage
+        let userData = {
+            className: localStorage.getItem('pinyin_student_class') || '2A',
+            studentId: localStorage.getItem('pinyin_student_id') || '01',
+            studentName: localStorage.getItem('pinyin_student_name') || '小明',
+            stars: parseInt(localStorage.getItem('pinyin_student_stars') || '5', 10),
+            checkedInDate: localStorage.getItem('pinyin_checkin_date') || '',
+            highScoreBasket: parseInt(localStorage.getItem('pinyin_basket_highscore') || '0', 10),
+            highScoreWhack: parseInt(localStorage.getItem('pinyin_whack_highscore') || '0', 10),
+            highScoreFruit: parseInt(localStorage.getItem('pinyin_fruit_highscore') || '0', 10)
+        };
 
-  </div>
+        window.onload = function() {
+            updateProfileUI();
+            updateHighScoreDisplay();
+            checkTodayCheckIn();
+        };
 
-  <!-- 每日簽到領獎小列 -->
-  <div class="daily-reward-bar">
-    <span style="font-size: 1.5rem;">📅</span>
-    <div class="reward-text">
-      每日簽到獎勵：<span class="star-counter" id="star-count">⭐ 0</span>
-    </div>
-    <button class="claim-btn" id="claim-btn" onclick="claimStar()">簽到領星星</button>
-  </div>
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
 
-  <!-- Modal 1: 修改個人資料 -->
-  <div class="modal-overlay" id="profileModal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 class="modal-title">✏️ 設定學生資料</h3>
-        <button class="close-modal" onclick="closeModal('profileModal')">✕</button>
-      </div>
-      <p style="font-size: 0.9rem; color: #636e72; margin-bottom: 12px;">請輸入你的班別與學號，得分會記錄在龍虎榜喔！</p>
-      <input type="text" id="modal-class" class="modal-input" placeholder="班別 (例如: 2A)" maxlength="10">
-      <input type="text" id="modal-id" class="modal-input" placeholder="學號 (例如: 01)" maxlength="10">
-      <button class="modal-btn" onclick="saveProfile()">儲存資料</button>
-    </div>
-  </div>
+        // Web Audio Synthesizer for Sound Effects
+        function playClickSound() {
+            try {
+                initAudioContext();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } catch (e) {}
+        }
 
-  <!-- Modal 2: 英雄榜 modal -->
-  <div class="modal-overlay" id="rankModal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 class="modal-title">🏆 班級最高分榜</h3>
-        <button class="close-modal" onclick="closeModal('rankModal')">✕</button>
-      </div>
-      <div id="rank-content" style="max-height: 250px; overflow-y: auto; text-align: left; font-size: 0.95rem; font-weight: bold; color: #2d3436;">
-        <!-- JS 動態生成 -->
-      </div>
-    </div>
-  </div>
+        function playFanfareSound() {
+            try {
+                initAudioContext();
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime + idx * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.1 + 0.2);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(audioCtx.currentTime + idx * 0.1);
+                    osc.stop(audioCtx.currentTime + idx * 0.1 + 0.2);
+                });
+            } catch (e) {}
+        }
 
-  <script>
-    // 網頁載入初始化
-    document.addEventListener('DOMContentLoaded', () => {
-      loadProfile();
-      checkDailyStar();
-    });
+        // Mascot Speech Synthesis (SpeechSynthesis API)
+        function mascotSpeak() {
+            playClickSound();
+            const greetings = [
+                "歡迎來到拼音遊戲大本營！今天想挑戰哪一個遊戲？",
+                "投籃球、打地鼠還是接水果，任你挑選，加油！",
+                "練習漢語拼音好簡單，你一定能拿到高分！",
+                "記得每天打卡領取星星獎勵喔！"
+            ];
+            const randomMsg = greetings[Math.floor(Math.random() * greetings.length)];
+            document.getElementById('mascotText').innerText = `「${randomMsg}」`;
 
-    // 載入個人資料
-    function loadProfile() {
-      const savedClass = localStorage.getItem('pinyin_class') || '';
-      const savedId = localStorage.getItem('pinyin_id') || '';
-      
-      const userDisplay = document.getElementById('user-display-text');
-      if (savedClass && savedId) {
-        userDisplay.textContent = `${savedClass} 班 ${savedId} 號`;
-        document.getElementById('modal-class').value = savedClass;
-        document.getElementById('modal-id').value = savedId;
-      } else {
-        userDisplay.textContent = `點此設定班別與學號`;
-      }
-    }
+            speakMandarin(randomMsg);
+        }
 
-    // 儲存個人資料
-    function saveProfile() {
-      const c = document.getElementById('modal-class').value.trim();
-      const id = document.getElementById('modal-id').value.trim();
+        function speakMandarin(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-TW'; // Mandarin standard
+                utterance.rate = 0.95;
+                utterance.pitch = 1.2; // Kid-friendly tone
+                window.speechSynthesis.speak(utterance);
+            }
+        }
 
-      if (!c || !id) {
-        alert('請填寫完整班別與學號喔！');
-        return;
-      }
+        function updateProfileUI() {
+            document.getElementById('userBadgeText').innerText = `${userData.className} 班 ${userData.studentId} 號 ${userData.studentName}`;
+            document.getElementById('starCounter').innerText = `已累積 ${userData.stars} 顆星星`;
+        }
 
-      localStorage.setItem('pinyin_class', c);
-      localStorage.setItem('pinyin_id', id);
-      loadProfile();
-      closeModal('profileModal');
-      alert('資料儲存成功！祝你遊戲拿高分！🎉');
-    }
+        function updateHighScoreDisplay() {
+            document.getElementById('card1HighScore').innerText = `${userData.highScoreBasket} 分 🌟`;
+            document.getElementById('card2HighScore').innerText = `${userData.highScoreWhack} 分 🌟`;
+            document.getElementById('card3HighScore').innerText = `${userData.highScoreFruit} 分 🌟`;
+        }
 
-    // 吉祥物點擊對話與發聲
-    const speechLines = [
-      "準備好挑戰聲母打地鼠了嗎？🔨",
-      "記得分清四個聲調的符號喔！🍎",
-      "加油！今天也要拿滿分！⭐",
-      "我是地鼠小助手，陪你練習拼音！✨"
-    ];
+        // Check-in logic
+        function checkTodayCheckIn() {
+            const todayStr = new Date().toDateString();
+            const btnText = document.getElementById('checkInBtnText');
+            if (userData.checkedInDate === todayStr) {
+                btnText.innerText = "今日已簽到 ⭐";
+            } else {
+                btnText.innerText = "每日簽到領星星";
+            }
+        }
 
-    function mascotSpeak() {
-      const bubble = document.getElementById('mascot-speech');
-      const randomLine = speechLines[Math.floor(Math.random() * speechLines.length)];
-      bubble.textContent = randomLine;
+        function triggerCheckIn() {
+            playClickSound();
+            const todayStr = new Date().toDateString();
 
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const msg = new SpeechSynthesisUtterance(randomLine);
-        msg.lang = 'zh-TW';
-        msg.rate = 0.95;
-        window.speechSynthesis.speak(msg);
-      }
-    }
+            if (userData.checkedInDate === todayStr) {
+                speakMandarin("你今天已經簽到過囉！明天再來領取星星吧！");
+                return;
+            }
 
-    // 每日星星簽到機制
-    function checkDailyStar() {
-      const lastDate = localStorage.getItem('pinyin_star_date');
-      const today = new Date().toDateString();
-      let stars = parseInt(localStorage.getItem('pinyin_stars') || '0');
+            playFanfareSound();
+            userData.stars += 1;
+            userData.checkedInDate = todayStr;
+            localStorage.setItem('pinyin_student_stars', userData.stars);
+            localStorage.setItem('pinyin_checkin_date', todayStr);
 
-      document.getElementById('star-count').textContent = `⭐ ${stars}`;
+            updateProfileUI();
+            checkTodayCheckIn();
 
-      if (lastDate === today) {
-        const btn = document.getElementById('claim-btn');
-        btn.textContent = '今日已領取';
-        btn.disabled = true;
-      }
-    }
+            speakMandarin("簽到成功！獎勵你一顆小星星！");
 
-    function claimStar() {
-      const today = new Date().toDateString();
-      let stars = parseInt(localStorage.getItem('pinyin_stars') || '0');
-      stars += 1;
+            // Trigger Confetti Blast
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
 
-      localStorage.setItem('pinyin_stars', stars);
-      localStorage.setItem('pinyin_star_date', today);
+        // Student Profile Modal Actions
+        function openProfileModal() {
+            playClickSound();
+            document.getElementById('inputClass').value = userData.className;
+            document.getElementById('inputId').value = userData.studentId;
+            document.getElementById('inputName').value = userData.studentName;
+            document.getElementById('profileModal').classList.remove('hidden');
+        }
 
-      document.getElementById('star-count').textContent = `⭐ ${stars}`;
-      const btn = document.getElementById('claim-btn');
-      btn.textContent = '今日已領取';
-      btn.disabled = true;
+        function saveProfile() {
+            playClickSound();
+            userData.className = document.getElementById('inputClass').value;
+            userData.studentId = document.getElementById('inputId').value || '01';
+            userData.studentName = document.getElementById('inputName').value || '小明';
 
-      alert('獲得 1 顆獎勵星星！好棒喔！⭐');
-    }
+            localStorage.setItem('pinyin_student_class', userData.className);
+            localStorage.setItem('pinyin_student_id', userData.studentId);
+            localStorage.setItem('pinyin_student_name', userData.studentName);
 
-    // 彈窗 Modal 控制
-    function openModal(id) {
-      if (id === 'rankModal') {
-        renderLeaderboard();
-      }
-      document.getElementById(id).classList.add('active');
-    }
+            updateProfileUI();
+            closeModal('profileModal');
+        }
 
-    function closeModal(id) {
-      document.getElementById(id).classList.remove('active');
-    }
+        // Leaderboard Modal Actions
+        function openLeaderboard() {
+            playClickSound();
+            const listContainer = document.getElementById('leaderboardList');
+            
+            listContainer.innerHTML = `
+                <div class="p-3 bg-white rounded-xl shadow-sm border border-purple-100 flex items-center justify-between">
+                    <div>
+                        <div class="font-extrabold text-sky-800">🏀 聲韻大投籃 (game1)</div>
+                        <div class="text-xs text-gray-500">${userData.className} 班 ${userData.studentName}</div>
+                    </div>
+                    <div class="font-black text-sky-600 text-lg">${userData.highScoreBasket} 分</div>
+                </div>
 
-    // 渲染排行榜
-    function renderLeaderboard() {
-      const rankContent = document.getElementById('rank-content');
-      let scores = [];
-      try {
-        scores = JSON.parse(localStorage.getItem('pinyin_mole_leaderboard') || '[]');
-      } catch (e) {
-        scores = [];
-      }
+                <div class="p-3 bg-white rounded-xl shadow-sm border border-purple-100 flex items-center justify-between">
+                    <div>
+                        <div class="font-extrabold text-amber-800">🔨 聲母打地鼠 (game2)</div>
+                        <div class="text-xs text-gray-500">${userData.className} 班 ${userData.studentName}</div>
+                    </div>
+                    <div class="font-black text-amber-600 text-lg">${userData.highScoreWhack} 分</div>
+                </div>
 
-      if (scores.length === 0) {
-        rankContent.innerHTML = `<p style="text-align:center; color:#a0aec0; padding:15px;">目前尚無成績記錄，快去挑戰遊戲吧！🎮</p>`;
-        return;
-      }
+                <div class="p-3 bg-white rounded-xl shadow-sm border border-purple-100 flex items-center justify-between">
+                    <div>
+                        <div class="font-extrabold text-pink-800">🧺 四聲接水果 (game3)</div>
+                        <div class="text-xs text-gray-500">${userData.className} 班 ${userData.studentName}</div>
+                    </div>
+                    <div class="font-black text-pink-600 text-lg">${userData.highScoreFruit} 分</div>
+                </div>
+            `;
 
-      let html = `<ol style="padding-left: 20px; line-height: 2;">`;
-      scores.slice(0, 5).forEach((item, index) => {
-        let badge = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '👤';
-        html += `<li>${badge} <b>${item.className || '無班別'}</b> 班 <b>${item.studentId || '無學號'}</b> 號 — <span style="color:#e67e22; font-weight:900;">${item.score} 分</span></li>`;
-      });
-      html += `</ol>`;
-      rankContent.innerHTML = html;
-    }
-  </script>
+            document.getElementById('leaderboardModal').classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            playClickSound();
+            document.getElementById(modalId).classList.add('hidden');
+        }
+    </script>
 </body>
 </html>
