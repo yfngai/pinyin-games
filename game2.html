@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>拼音小高手 - 聲母打地鼠大冒險 (b p m f d t n l g k h)</title>
+  <title>拼音小高手 - 聲母打地鼠大冒險 (b p m f d t n l g k h j q x)</title>
   <style>
     * {
       box-sizing: border-box;
@@ -42,6 +42,8 @@
       padding: 12px 16px;
       background: #f8fafc;
       border-bottom: 2px solid #e2e8f0;
+      flex-wrap: wrap;
+      gap: 6px;
     }
 
     .stat-box {
@@ -157,7 +159,7 @@
       flex-direction: column;
       justify-content: flex-start;
       align-items: center;
-      padding: 24px 20px;
+      padding: 20px 16px;
       text-align: center;
       z-index: 10;
       overflow-y: auto;
@@ -171,12 +173,12 @@
       display: flex;
       gap: 8px;
       justify-content: center;
-      margin-bottom: 16px;
+      margin-bottom: 8px;
       width: 100%;
     }
 
     .user-inputs-top input {
-      width: 95px;
+      width: 110px;
       padding: 6px 10px;
       border: 2px solid #cbd5e1;
       border-radius: 10px;
@@ -194,18 +196,26 @@
       box-shadow: 0 0 6px rgba(234, 88, 12, 0.3);
     }
 
-    .overlay h1 {
-      font-size: 1.5rem;
-      color: #0f172a;
+    .error-msg {
+      color: #ef4444;
+      font-size: 0.85rem;
+      font-weight: bold;
       margin-bottom: 8px;
+      display: none;
+    }
+
+    .overlay h1 {
+      font-size: 1.4rem;
+      color: #0f172a;
+      margin-bottom: 6px;
     }
 
     .overlay p {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: #475569;
       line-height: 1.5;
-      margin-bottom: 16px;
-      max-width: 500px;
+      margin-bottom: 12px;
+      max-width: 520px;
     }
 
     .btn-group {
@@ -262,10 +272,10 @@
     }
 
     .final-score {
-      font-size: 2.6rem;
+      font-size: 2.5rem;
       font-weight: 900;
       color: #ea580c;
-      margin: 4px 0;
+      margin: 2px 0;
     }
 
     .leaderboard-container {
@@ -275,7 +285,7 @@
       border: 2px solid #e2e8f0;
       border-radius: 16px;
       padding: 10px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
     .leaderboard-title {
@@ -333,9 +343,11 @@
           <input type="text" id="input-class" placeholder="班別 (如2A)" maxlength="10">
           <input type="text" id="input-id" placeholder="學號 (如01)" maxlength="10">
         </div>
+        <div id="input-error" class="error-msg">⚠️ 請先輸入「班別」與「學號」再開始挑戰！</div>
 
         <h1>🔨 聲母打地鼠大冒險 🐹</h1>
-        <p><b>二年級漢語拼音專題練習 (b p m f d t n l g k h)</b><br>
+        <p><b>二年級漢語拼音專題練習 (b p m f d t n l g k h j q x)</b><br>
+        <b>精選 150 個符合小二程度的繁體漢字題庫！</b><br>
         <b>玩法說明：</b>聽系統播放的目標聲母讀音，快速打中拿著正確聲母地鼠！<br>
         🔨 <b>打中加 10 分，打錯扣 5 分！</b><br>
         • <b>第 1 關：基礎提示</b>（顯示「漢字 + 拼音」，累計打中 10 個即可自動晉級）<br>
@@ -343,7 +355,7 @@
         <b>總限時 60 秒</b>，輸入班別學號後即可開始！</p>
 
         <button id="start-btn" class="btn">開始挑戰 (60秒)</button>
-        <a href="index.html" class="btn btn-menu" style="margin-top: 10px;">🏠 主選單</a>
+        <a href="index.html" class="btn btn-menu" style="margin-top: 8px;">🏠 主選單</a>
       </div>
 
       <div id="end-screen" class="overlay hidden" style="justify-content: center;">
@@ -378,73 +390,103 @@
   </div>
 
   <script>
-    // 聲母標準發音漢字對應
+    // 聲母標準發音漢字對應 (擴充至 14 個聲母：b, p, m, f, d, t, n, l, g, k, h, j, q, x)
     const INITIAL_PRONUNCIATION = {
       'b': '玻', 'p': '坡', 'm': '摸', 'f': '佛',
       'd': '得', 't': '特', 'n': '呢', 'l': '勒',
-      'g': '哥', 'k': '科', 'h': '喝'
+      'g': '哥', 'k': '科', 'h': '喝',
+      'j': '基', 'q': '七', 'x': '西'
     };
 
-    // 100 個適合小二學生程度的繁體漢字題庫
+    // 精選正好 150 個適合小二學生程度的繁體漢字題庫
     const RAW_VOCAB = [
-      // === b (10字) ===
+      // === b (11字) ===
       { c: "爸", p: "bà", initial: "b" }, { c: "八", p: "bā", initial: "b" }, { c: "報", p: "bào", initial: "b" },
       { c: "白", p: "bái", initial: "b" }, { c: "百", p: "bǎi", initial: "b" }, { c: "班", p: "bān", initial: "b" },
       { c: "包", p: "bāo", initial: "b" }, { c: "冰", p: "bīng", initial: "b" }, { c: "筆", p: "bǐ", initial: "b" },
-      { c: "變", p: "biàn", initial: "b" },
+      { c: "變", p: "biàn", initial: "b" }, { c: "本", p: "běn", initial: "b" },
 
-      // === p (9字) ===
+      // === p (11字) ===
       { c: "跑", p: "pǎo", initial: "p" }, { c: "朋", p: "péng", initial: "p" }, { c: "旁", p: "páng", initial: "p" },
       { c: "爬", p: "pá", initial: "p" }, { c: "怕", p: "pà", initial: "p" }, { c: "篇", p: "piān", initial: "p" },
       { c: "票", p: "piào", initial: "p" }, { c: "胖", p: "pàng", initial: "p" }, { c: "盆", p: "pén", initial: "p" },
+      { c: "平", p: "píng", initial: "p" }, { c: "盤", p: "pán", initial: "p" },
 
-      // === m (9字) ===
+      // === m (11字) ===
       { c: "媽", p: "mā", initial: "m" }, { c: "馬", p: "mǎ", initial: "m" }, { c: "門", p: "mén", initial: "m" },
       { c: "貓", p: "māo", initial: "m" }, { c: "面", p: "miàn", initial: "m" }, { c: "明", p: "míng", initial: "m" },
       { c: "買", p: "mǎi", initial: "m" }, { c: "木", p: "mù", initial: "m" }, { c: "米", p: "mǐ", initial: "m" },
+      { c: "妹", p: "mèi", initial: "m" }, { c: "滿", p: "mǎn", initial: "m" },
 
-      // === f (9字) ===
+      // === f (11字) ===
       { c: "風", p: "fēng", initial: "f" }, { c: "飛", p: "fēi", initial: "f" }, { c: "方", p: "fāng", initial: "f" },
       { c: "房", p: "fáng", initial: "f" }, { c: "分", p: "fēn", initial: "f" }, { c: "放", p: "fàng", initial: "f" },
       { c: "發", p: "fā", initial: "f" }, { c: "服", p: "fú", initial: "f" }, { c: "父", p: "fù", initial: "f" },
+      { c: "飯", p: "fàn", initial: "f" }, { c: "翻", p: "fān", initial: "f" },
 
-      // === d (9字) ===
+      // === d (11字) ===
       { c: "大", p: "dà", initial: "d" }, { c: "地", p: "dì", initial: "d" }, { c: "東", p: "dōng", initial: "d" },
       { c: "多", p: "duō", initial: "d" }, { c: "對", p: "duì", initial: "d" }, { c: "答", p: "dá", initial: "d" },
       { c: "帶", p: "dài", initial: "d" }, { c: "電", p: "diàn", initial: "d" }, { c: "刀", p: "dāo", initial: "d" },
+      { c: "燈", p: "dēng", initial: "d" }, { c: "動", p: "dòng", initial: "d" },
 
-      // === t (9字) ===
+      // === t (11字) ===
       { c: "天", p: "tiān", initial: "t" }, { c: "同", p: "tóng", initial: "t" }, { c: "太", p: "tài", initial: "t" },
       { c: "頭", p: "tóu", initial: "t" }, { c: "聽", p: "tīng", initial: "t" }, { c: "跳", p: "tiào", initial: "t" },
       { c: "兔", p: "tù", initial: "t" }, { c: "提", p: "tí", initial: "t" }, { c: "田", p: "tián", initial: "t" },
+      { c: "糖", p: "táng", initial: "t" }, { c: "甜", p: "tián", initial: "t" },
 
-      // === n (9字) ===
+      // === n (10字) ===
       { c: "你", p: "nǐ", initial: "n" }, { c: "年", p: "nián", initial: "n" }, { c: "鳥", p: "niǎo", initial: "n" },
       { c: "男", p: "nán", initial: "n" }, { c: "女", p: "nǚ", initial: "n" }, { c: "牛", p: "niú", initial: "n" },
       { c: "暖", p: "nuǎn", initial: "n" }, { c: "南", p: "nán", initial: "n" }, { c: "念", p: "niàn", initial: "n" },
+      { c: "拿", p: "ná", initial: "n" },
 
-      // === l (9字) ===
+      // === l (11字) ===
       { c: "六", p: "liù", initial: "l" }, { c: "來", p: "lái", initial: "l" }, { c: "立", p: "lì", initial: "l" },
       { c: "老", p: "lǎo", initial: "l" }, { c: "龍", p: "lóng", initial: "l" }, { c: "綠", p: "lǜ", initial: "l" },
       { c: "兩", p: "liǎng", initial: "l" }, { c: "亮", p: "liàng", initial: "l" }, { c: "路", p: "lù", initial: "l" },
+      { c: "藍", p: "lán", initial: "l" }, { c: "涼", p: "liáng", initial: "l" },
 
-      // === g (9字) ===
+      // === g (11字) ===
       { c: "高", p: "gāo", initial: "g" }, { c: "歌", p: "gē", initial: "g" }, { c: "公", p: "gōng", initial: "g" },
       { c: "狗", p: "gǒu", initial: "g" }, { c: "國", p: "guó", initial: "g" }, { c: "光", p: "guāng", initial: "g" },
       { c: "過", p: "guò", initial: "g" }, { c: "個", p: "gè", initial: "g" }, { c: "給", p: "gěi", initial: "g" },
+      { c: "故", p: "gù", initial: "g" }, { c: "果", p: "guǒ", initial: "g" },
 
-      // === k (9字) ===
+      // === k (10字) ===
       { c: "開", p: "kāi", initial: "k" }, { c: "看", p: "kàn", initial: "k" }, { c: "課", p: "kè", initial: "k" },
       { c: "空", p: "kōng", initial: "k" }, { c: "口", p: "kǒu", initial: "k" }, { c: "快", p: "kuài", initial: "k" },
       { c: "苦", p: "kǔ", initial: "k" }, { c: "考", p: "kǎo", initial: "k" }, { c: "可", p: "kě", initial: "k" },
+      { c: "哭", p: "kū", initial: "k" },
 
-      // === h (9字) ===
+      // === h (11字) ===
       { c: "好", p: "hǎo", initial: "h" }, { c: "花", p: "huā", initial: "h" }, { c: "海", p: "hǎi", initial: "h" },
       { c: "和", p: "hé", initial: "h" }, { c: "紅", p: "hóng", initial: "h" }, { c: "後", p: "hòu", initial: "h" },
-      { c: "黑", p: "hēi", initial: "h" }, { c: "畫", p: "huà", initial: "h" }, { c: "黃", p: "huáng", initial: "h" }
+      { c: "黑", p: "hēi", initial: "h" }, { c: "畫", p: "huà", initial: "h" }, { c: "黃", p: "huáng", initial: "h" },
+      { c: "河", p: "hé", initial: "h" }, { c: "歡", p: "huān", initial: "h" },
+
+      // === j (11字) ===
+      { c: "家", p: "jiā", initial: "j" }, { c: "見", p: "jiàn", initial: "j" }, { c: "九", p: "jiǔ", initial: "j" },
+      { c: "雞", p: "jī", initial: "j" }, { c: "金", p: "jīn", initial: "j" }, { c: "叫", p: "jiào", initial: "j" },
+      { c: "就", p: "jiù", initial: "j" }, { c: "進", p: "jìn", initial: "j" }, { c: "幾", p: "jǐ", initial: "j" },
+      { c: "借", p: "jiè", initial: "j" }, { c: "角", p: "jiǎo", initial: "j" },
+
+      // === q (10字) ===
+      { c: "七", p: "qī", initial: "q" }, { c: "千", p: "qiān", initial: "q" }, { c: "前", p: "qián", initial: "q" },
+      { c: "氣", p: "qì", initial: "q" }, { c: "請", p: "qǐng", initial: "q" }, { c: "去", p: "qù", initial: "q" },
+      { c: "秋", p: "qiū", initial: "q" }, { c: "球", p: "qiú", initial: "q" }, { c: "橋", p: "qiáo", initial: "q" },
+      { c: "清", p: "qīng", initial: "q" },
+
+      // === x (10字) ===
+      { c: "小", p: "xiǎo", initial: "x" }, { c: "星", p: "xīng", initial: "x" }, { c: "想", p: "xiǎng", initial: "x" },
+      { c: "下", p: "xià", initial: "x" }, { c: "洗", p: "xǐ", initial: "x" }, { c: "笑", p: "xiào", initial: "x" },
+      { c: "新", p: "xīn", initial: "x" }, { c: "心", p: "xīn", initial: "x" }, { c: "喜", p: "xǐ", initial: "x" },
+      { c: "寫", p: "xiě", initial: "x" }
     ];
 
-    const ALL_INITIALS = ['b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h'];
+    // 全 14 個聲母陣列
+    const ALL_INITIALS = ['b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x'];
 
     let audioCtx = null;
     let isMuted = false;
@@ -536,6 +578,7 @@
     const evalTextDisplay = document.getElementById('eval-text');
     const inputClass = document.getElementById('input-class');
     const inputId = document.getElementById('input-id');
+    const inputError = document.getElementById('input-error');
     const playerInfoDisplay = document.getElementById('player-info-display');
     const leaderboardBody = document.getElementById('leaderboard-body');
 
@@ -647,7 +690,7 @@
         ctx.arc(moleX, moleY - 26, 7, 0, Math.PI * 2);
         ctx.fill();
 
-        // 地鼠肚皮 (白色/淺黃色圓角徽章，字放在這裡)
+        // 地鼠肚皮
         ctx.fillStyle = '#fef3c7';
         ctx.strokeStyle = '#f59e0b';
         ctx.lineWidth = 3;
@@ -735,7 +778,7 @@
         const moleX = h.x;
         const moleY = h.y - mole.offsetY;
 
-        // 判斷點擊區域（包含頭部與肚皮文字區）
+        // 判斷點擊區域
         if (
           clickX >= moleX - 45 &&
           clickX <= moleX + 45 &&
@@ -793,6 +836,7 @@
       startScreen.classList.remove('hidden');
       inputClass.value = '';
       inputId.value = '';
+      inputError.style.display = 'none';
       inputClass.focus();
     });
 
@@ -801,9 +845,10 @@
       const studentId = inputId.value.trim();
 
       if (!className || !studentId) {
-        alert('請先輸入「班別」與「學號」再開始挑戰喔！');
+        inputError.style.display = 'block';
         return;
       }
+      inputError.style.display = 'none';
 
       currentStudent = { className, studentId };
       initAudio();
@@ -874,7 +919,7 @@
       playerInfoDisplay.textContent = `玩家：${currentStudent.className} 班 ${currentStudent.studentId} 號`;
 
       if (score >= 100) {
-        evalTextDisplay.textContent = '🌟 太神了！聲母辨識反應超快！拼音大師！';
+        evalTextDisplay.textContent = '🌟 太神了！14個聲母辨識反應超快！拼音大師！';
       } else if (score >= 70) {
         evalTextDisplay.textContent = '👍 非常棒！聽力與聲母反應表現極佳！';
       } else if (score >= 40) {
