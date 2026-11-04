@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>拼音小高手 - 聲母打地鼠大冒險</title>
+    <title>拼音小高手 - 聲母打地鼠大冒險 (90%放大滿版版)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -31,7 +31,7 @@
         /* Earth & Hole styling */
         .mole-hole {
             background: radial-gradient(circle, #543821 0%, #362212 80%, #211309 100%);
-            box-shadow: inset 0 8px 12px rgba(0,0,0,0.6), 0 4px 8px rgba(255,255,255,0.2);
+            box-shadow: inset 0 10px 16px rgba(0,0,0,0.65), 0 5px 10px rgba(255,255,255,0.25);
         }
 
         .grass-rim {
@@ -41,7 +41,7 @@
 
         /* Whack cursor */
         .game-cursor {
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="%23f59e0b" stroke="%2378350f" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 0-7.94-7.94l-3.76 3.76z"/><path d="m2.5 21.5 6.8-6.8"/><path d="M10 14.5l1.5 1.5"/></svg>') 15 15, auto;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="%23f59e0b" stroke="%2378350f" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 0-7.94-7.94l-3.76 3.76z"/><path d="m2.5 21.5 6.8-6.8"/><path d="M10 14.5l1.5 1.5"/></svg>') 17 17, auto;
         }
 
         /* Custom animation for mole popup */
@@ -58,10 +58,10 @@
         /* Floating Score Text */
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-30px) scale(1.2); }
+            100% { opacity: 0; transform: translateY(-36px) scale(1.25); }
         }
         .float-text {
-            animation: floatUp 0.7s ease-out forwards;
+            animation: floatUp 0.75s ease-out forwards;
         }
 
         /* Custom shake animation for alert */
@@ -77,208 +77,208 @@
 </head>
 <body class="game-cursor p-2">
 
-    <!-- Container Locked to Viewport Height -->
-    <div class="w-full max-w-4xl max-h-[98vh] flex flex-col justify-between mx-auto px-2 py-1">
+    <!-- Container Locked to Viewport Height (90% Enriched Sizing) -->
+    <div class="w-full max-w-5xl max-h-[98vh] h-full flex flex-col justify-between mx-auto px-3 py-1.5">
         
-        <!-- Header (Compact 70% scale) -->
-        <header class="text-center mb-2 shrink-0">
-            <div class="inline-flex items-center gap-1.5 bg-amber-400 text-amber-950 px-3 py-0.5 rounded-full font-bold text-xs shadow-sm mb-1">
-                <i class="fas fa-graduation-cap text-xs"></i> 國小二年級注音符號學習特輯
+        <!-- Header (90% Magnified Scale) -->
+        <header class="text-center mb-1.5 shrink-0">
+            <div class="inline-flex items-center gap-2 bg-amber-400 text-amber-950 px-3.5 py-1 rounded-full font-bold text-xs sm:text-sm shadow-sm mb-1">
+                <i class="fas fa-graduation-cap text-sm"></i> 國小二年級注音符號學習特輯
             </div>
-            <h1 class="text-xl sm:text-2xl font-black text-sky-900 tracking-wide drop-shadow-sm flex items-center justify-center gap-2">
+            <h1 class="text-2xl sm:text-3xl font-black text-sky-900 tracking-wide drop-shadow-sm flex items-center justify-center gap-2.5">
                 <span>🔨</span> 拼音小高手 - 聲母打地鼠大冒險 <span>🐹</span>
             </h1>
-            <p class="text-slate-600 font-bold text-xs mt-0.5">
-                完整涵蓋 <span class="text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded font-extrabold">23 個漢語拼音聲母</span> 與精選 <span class="text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded font-extrabold">200 個國小二年級繁體字庫</span>！
+            <p class="text-slate-600 font-bold text-xs sm:text-sm mt-0.5">
+                完整涵蓋 <span class="text-amber-600 bg-amber-100 px-2 py-0.5 rounded font-extrabold">23 個漢語拼音聲母</span> 與精選 <span class="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded font-extrabold">200 個國小二年級繁體字庫</span>！
             </p>
         </header>
 
         <!-- Dynamic Warning Alert Banner (Embedded replace alert) -->
-        <div id="warning-alert" class="hidden mb-2 bg-rose-50 border-2 border-rose-400 text-rose-800 p-2.5 rounded-xl shadow-md flex items-center justify-between transition-all duration-300 shrink-0">
-            <div class="flex items-center space-x-2">
-                <div class="w-7 h-7 rounded-full bg-rose-500 text-white flex items-center justify-center text-sm shrink-0">
+        <div id="warning-alert" class="hidden mb-2 bg-rose-50 border-2 border-rose-400 text-rose-800 p-3 rounded-xl shadow-md flex items-center justify-between transition-all duration-300 shrink-0">
+            <div class="flex items-center space-x-2.5">
+                <div class="w-8 h-8 rounded-full bg-rose-500 text-white flex items-center justify-center text-base shrink-0">
                     <i class="fas fa-triangle-exclamation"></i>
                 </div>
                 <div>
                     <h4 class="font-black text-rose-900 text-xs sm:text-sm leading-none">提示提醒</h4>
-                    <p id="warning-text" class="text-xs font-semibold text-rose-700 mt-0.5">請至少選擇一個聲母開始遊戲！</p>
+                    <p id="warning-text" class="text-xs sm:text-sm font-semibold text-rose-700 mt-0.5">請至少選擇一個聲母開始遊戲！</p>
                 </div>
             </div>
-            <button onclick="hideWarning()" class="text-rose-400 hover:text-rose-700 p-1 text-base focus:outline-none">
+            <button onclick="hideWarning()" class="text-rose-400 hover:text-rose-700 p-1 text-lg focus:outline-none">
                 <i class="fas fa-xmark"></i>
             </button>
         </div>
 
-        <!-- ================= MAIN SETUP SCREEN (Compact 70% Layout) ================= -->
-        <div id="setup-screen" class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-xl border-2 border-white flex flex-col justify-between overflow-y-auto max-h-[82vh]">
+        <!-- ================= MAIN SETUP SCREEN (90% Magnified Layout) ================= -->
+        <div id="setup-screen" class="bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-xl border-2 border-white flex flex-col justify-between overflow-y-auto max-h-[85vh] my-auto">
             
             <!-- Game Mode Selector -->
-            <div class="mb-3">
-                <h3 class="text-sm font-black text-slate-800 mb-2 flex items-center gap-1.5">
+            <div class="mb-3.5">
+                <h3 class="text-base font-black text-slate-800 mb-2 flex items-center gap-2">
                     <i class="fas fa-gamepad text-sky-500"></i> 1. 選擇遊戲模式
                 </h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                     <button type="button" onclick="selectGameMode('practice')" id="mode-btn-practice" 
-                        class="mode-btn active border-2 border-sky-400 bg-sky-50 text-sky-900 p-2.5 rounded-xl text-left hover:border-sky-500 transition shadow-sm">
-                        <div class="font-black text-xs sm:text-sm mb-0.5 flex items-center justify-between">
+                        class="mode-btn active border-2 border-sky-400 bg-sky-50 text-sky-900 p-3 rounded-xl text-left hover:border-sky-500 transition shadow-sm">
+                        <div class="font-black text-sm sm:text-base mb-1 flex items-center justify-between">
                             <span>🌱 自由練習模式</span>
                             <i class="fas fa-check-circle text-sky-500 check-icon"></i>
                         </div>
-                        <p class="text-[11px] text-slate-600 leading-tight">無時間限制，專注擊中目標聲母。</p>
+                        <p class="text-xs text-slate-600 leading-normal">無時間限制，專注擊中目標聲母。</p>
                     </button>
 
                     <button type="button" onclick="selectGameMode('timed')" id="mode-btn-timed" 
-                        class="mode-btn border-2 border-slate-200 bg-white text-slate-700 p-2.5 rounded-xl text-left hover:border-sky-300 transition shadow-sm">
-                        <div class="font-black text-xs sm:text-sm mb-0.5 flex items-center justify-between">
+                        class="mode-btn border-2 border-slate-200 bg-white text-slate-700 p-3 rounded-xl text-left hover:border-sky-300 transition shadow-sm">
+                        <div class="font-black text-sm sm:text-base mb-1 flex items-center justify-between">
                             <span>⏱️ 60秒限時挑戰</span>
                             <i class="fas fa-check-circle text-sky-500 check-icon hidden"></i>
                         </div>
-                        <p class="text-[11px] text-slate-600 leading-tight">60秒急速挑戰，衝刺高分榜！</p>
+                        <p class="text-xs text-slate-600 leading-normal">60秒急速挑戰，衝刺高分榜！</p>
                     </button>
 
                     <button type="button" onclick="selectGameMode('stage')" id="mode-btn-stage" 
-                        class="mode-btn border-2 border-slate-200 bg-white text-slate-700 p-2.5 rounded-xl text-left hover:border-sky-300 transition shadow-sm">
-                        <div class="font-black text-xs sm:text-sm mb-0.5 flex items-center justify-between">
+                        class="mode-btn border-2 border-slate-200 bg-white text-slate-700 p-3 rounded-xl text-left hover:border-sky-300 transition shadow-sm">
+                        <div class="font-black text-sm sm:text-base mb-1 flex items-center justify-between">
                             <span>🏆 聲母闖關模式</span>
                             <i class="fas fa-check-circle text-sky-500 check-icon hidden"></i>
                         </div>
-                        <p class="text-[11px] text-slate-600 leading-tight">隨機切換聲母，考驗注音辨識力！</p>
+                        <p class="text-xs text-slate-600 leading-normal">隨機切換聲母，考驗注音辨識力！</p>
                     </button>
                 </div>
             </div>
 
             <!-- Speed Level Selector -->
-            <div class="mb-3">
-                <h3 class="text-sm font-black text-slate-800 mb-2 flex items-center gap-1.5">
+            <div class="mb-3.5">
+                <h3 class="text-base font-black text-slate-800 mb-2 flex items-center gap-2">
                     <i class="fas fa-tachometer-alt text-amber-500"></i> 2. 選擇地鼠速度 (速度分級)
                 </h3>
-                <div class="grid grid-cols-3 gap-2">
+                <div class="grid grid-cols-3 gap-2.5">
                     <button type="button" onclick="selectSpeed('slow')" id="speed-btn-slow" 
-                        class="speed-btn border-2 border-slate-200 bg-white text-slate-700 p-2 rounded-xl text-center hover:border-amber-300 transition shadow-sm">
-                        <div class="font-black text-xs sm:text-sm mb-0.5 flex items-center justify-center gap-1">
+                        class="speed-btn border-2 border-slate-200 bg-white text-slate-700 p-2.5 rounded-xl text-center hover:border-amber-300 transition shadow-sm">
+                        <div class="font-black text-xs sm:text-sm mb-1 flex items-center justify-center gap-1">
                             <span>🐢 慢速</span>
                             <i class="fas fa-check-circle text-amber-500 speed-check hidden"></i>
                         </div>
-                        <p class="text-[10px] text-slate-500 leading-tight">停留 2.5 秒<br>(適合初學者)</p>
+                        <p class="text-[11px] sm:text-xs text-slate-500 leading-normal">停留 2.5 秒<br>(適合初學者)</p>
                     </button>
 
                     <button type="button" onclick="selectSpeed('medium')" id="speed-btn-medium" 
-                        class="speed-btn active border-2 border-amber-400 bg-amber-50 text-amber-950 p-2 rounded-xl text-center hover:border-amber-500 transition shadow-sm">
-                        <div class="font-black text-xs sm:text-sm mb-0.5 flex items-center justify-center gap-1">
+                        class="speed-btn active border-2 border-amber-400 bg-amber-50 text-amber-950 p-2.5 rounded-xl text-center hover:border-amber-500 transition shadow-sm">
+                        <div class="font-black text-xs sm:text-sm mb-1 flex items-center justify-center gap-1">
                             <span>🏃 中速</span>
                             <i class="fas fa-check-circle text-amber-500 speed-check"></i>
                         </div>
-                        <p class="text-[10px] text-slate-500 leading-tight">停留 1.8 秒<br>(標準練習)</p>
+                        <p class="text-[11px] sm:text-xs text-slate-500 leading-normal">停留 1.8 秒<br>(標準練習)</p>
                     </button>
 
                     <button type="button" onclick="selectSpeed('fast')" id="speed-btn-fast" 
-                        class="speed-btn border-2 border-slate-200 bg-white text-slate-700 p-2 rounded-xl text-center hover:border-amber-300 transition shadow-sm">
-                        <div class="font-black text-xs sm:text-sm mb-0.5 flex items-center justify-center gap-1">
+                        class="speed-btn border-2 border-slate-200 bg-white text-slate-700 p-2.5 rounded-xl text-center hover:border-amber-300 transition shadow-sm">
+                        <div class="font-black text-xs sm:text-sm mb-1 flex items-center justify-center gap-1">
                             <span>⚡ 快速</span>
                             <i class="fas fa-check-circle text-amber-500 speed-check hidden"></i>
                         </div>
-                        <p class="text-[10px] text-slate-500 leading-tight">停留 1.1 秒<br>(極速高手)</p>
+                        <p class="text-[11px] sm:text-xs text-slate-500 leading-normal">停留 1.1 秒<br>(極速高手)</p>
                     </button>
                 </div>
             </div>
 
-            <!-- Initials Selection Grid -->
-            <div class="mb-3">
-                <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2">
-                    <h3 class="text-sm font-black text-slate-800 flex items-center gap-1.5">
+            <!-- Initials Selection Grid (Enlarged Buttons) -->
+            <div class="mb-3.5">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                    <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
                         <i class="fas fa-spell-check text-emerald-500"></i> 3. 選擇訓練聲母範圍 (共23個)
                     </h3>
-                    <div class="flex flex-wrap gap-1 text-[11px] font-bold">
-                        <button onclick="selectAllInitials()" class="bg-sky-100 text-sky-700 hover:bg-sky-200 px-2 py-1 rounded transition">全選 23 聲母</button>
-                        <button onclick="selectGroup('zh_ch_sh_r')" class="bg-amber-100 text-amber-800 hover:bg-amber-200 px-2 py-1 rounded transition">翹舌音 (zh,ch,sh,r)</button>
-                        <button onclick="selectGroup('z_c_s')" class="bg-purple-100 text-purple-800 hover:bg-purple-200 px-2 py-1 rounded transition">平舌音 (z,c,s)</button>
-                        <button onclick="clearAllInitials()" class="bg-slate-100 text-slate-600 hover:bg-slate-200 px-2 py-1 rounded transition">清空</button>
+                    <div class="flex flex-wrap gap-1.5 text-xs font-bold">
+                        <button onclick="selectAllInitials()" class="bg-sky-100 text-sky-700 hover:bg-sky-200 px-2.5 py-1 rounded-md transition">全選 23 聲母</button>
+                        <button onclick="selectGroup('zh_ch_sh_r')" class="bg-amber-100 text-amber-800 hover:bg-amber-200 px-2.5 py-1 rounded-md transition">翹舌音 (zh,ch,sh,r)</button>
+                        <button onclick="selectGroup('z_c_s')" class="bg-purple-100 text-purple-800 hover:bg-purple-200 px-2.5 py-1 rounded-md transition">平舌音 (z,c,s)</button>
+                        <button onclick="clearAllInitials()" class="bg-slate-100 text-slate-600 hover:bg-slate-200 px-2.5 py-1 rounded-md transition">清空</button>
                     </div>
                 </div>
 
                 <!-- Category Tags & Initials Grid -->
-                <div id="initials-grid" class="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 gap-1.5">
+                <div id="initials-grid" class="grid grid-cols-4 sm:grid-cols-8 md:grid-cols-12 gap-1.5 sm:gap-2">
                     <!-- Initials generated dynamically via JS -->
                 </div>
             </div>
 
             <!-- Options & Start -->
-            <div class="flex flex-col sm:flex-row items-center justify-between pt-2 border-t border-slate-100 gap-2">
-                <div class="flex items-center space-x-4">
-                    <label class="flex items-center cursor-pointer space-x-1.5 font-bold text-slate-700 text-xs">
+            <div class="flex flex-col sm:flex-row items-center justify-between pt-3 border-t border-slate-100 gap-3">
+                <div class="flex items-center space-x-5">
+                    <label class="flex items-center cursor-pointer space-x-2 font-bold text-slate-700 text-xs sm:text-sm">
                         <input type="checkbox" id="show-pinyin-toggle" checked class="w-4 h-4 text-sky-600 rounded focus:ring-sky-500">
                         <span>顯示地鼠字詞拼音</span>
                     </label>
-                    <label class="flex items-center cursor-pointer space-x-1.5 font-bold text-slate-700 text-xs">
+                    <label class="flex items-center cursor-pointer space-x-2 font-bold text-slate-700 text-xs sm:text-sm">
                         <input type="checkbox" id="sound-toggle" checked class="w-4 h-4 text-sky-600 rounded focus:ring-sky-500">
                         <span>開啟音效與語音</span>
                     </label>
                 </div>
 
-                <button onclick="startGame()" class="w-full sm:w-auto bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-base px-8 py-2.5 rounded-xl shadow-md hover:shadow-emerald-200 transform active:scale-95 transition flex items-center justify-center gap-2">
-                    <i class="fas fa-play text-lg"></i> 開始冒險！
+                <button onclick="startGame()" class="w-full sm:w-auto bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-lg px-9 py-3 rounded-2xl shadow-md hover:shadow-emerald-200 transform active:scale-95 transition flex items-center justify-center gap-2">
+                    <i class="fas fa-play text-xl"></i> 開始冒險！
                 </button>
             </div>
         </div>
 
-        <!-- ================= GAMEPLAY SCREEN (70% Tight Viewport Fit) ================= -->
-        <div id="game-screen" class="hidden flex flex-col justify-between max-h-[85vh]">
+        <!-- ================= GAMEPLAY SCREEN (90% Enlarged Board Fit) ================= -->
+        <div id="game-screen" class="hidden flex flex-col justify-between max-h-[86vh] my-auto">
             
-            <!-- Target Banner Card -->
-            <div class="bg-white/95 rounded-xl p-2.5 shadow border-2 border-amber-300 flex items-center justify-between mb-2 gap-2 shrink-0">
-                <div class="flex items-center space-x-2">
-                    <span class="bg-amber-500 text-white font-black px-2.5 py-0.5 rounded-lg text-xs shadow-sm">當前目標聲母</span>
-                    <span id="target-initial-display" class="text-2xl sm:text-3xl font-black text-amber-600 tracking-wider">zh</span>
-                    <span id="target-pronunciation-display" class="text-slate-600 font-bold text-xs bg-amber-50 px-2 py-0.5 rounded border border-amber-200">讀音對應：知 (zhī)</span>
+            <!-- Target Banner Card (Magnified) -->
+            <div class="bg-white/95 rounded-xl p-3 shadow-md border-2 border-amber-300 flex items-center justify-between mb-2.5 gap-2 shrink-0">
+                <div class="flex items-center space-x-3">
+                    <span class="bg-amber-500 text-white font-black px-3 py-1 rounded-lg text-xs sm:text-sm shadow-sm">當前目標聲母</span>
+                    <span id="target-initial-display" class="text-3xl sm:text-4xl font-black text-amber-600 tracking-wider">zh</span>
+                    <span id="target-pronunciation-display" class="text-slate-600 font-bold text-xs sm:text-sm bg-amber-50 px-2.5 py-1 rounded border border-amber-200">讀音對應：知 (zhī)</span>
                 </div>
-                <div class="flex items-center gap-1.5">
-                    <div id="speed-badge" class="bg-amber-100 text-amber-900 font-extrabold px-2.5 py-0.5 rounded-lg text-xs border border-amber-300">
+                <div class="flex items-center gap-2">
+                    <div id="speed-badge" class="bg-amber-100 text-amber-900 font-extrabold px-3 py-1 rounded-lg text-xs sm:text-sm border border-amber-300">
                         🏃 中速
                     </div>
-                    <div id="mode-badge" class="bg-sky-100 text-sky-800 font-extrabold px-2.5 py-0.5 rounded-lg text-xs">
+                    <div id="mode-badge" class="bg-sky-100 text-sky-800 font-extrabold px-3 py-1 rounded-lg text-xs sm:text-sm">
                         自由練習模式
                     </div>
                 </div>
             </div>
 
-            <!-- Stats Bar -->
-            <div class="grid grid-cols-4 gap-2 mb-2 text-center shrink-0">
-                <div class="bg-white/90 rounded-xl p-1.5 shadow border-b-2 border-emerald-500">
-                    <div class="text-slate-400 font-bold text-[10px]">得分 Score</div>
-                    <div id="score-val" class="text-base sm:text-lg font-black text-emerald-600 leading-tight">0</div>
+            <!-- Stats Bar (Enlarged) -->
+            <div class="grid grid-cols-4 gap-2.5 mb-2.5 text-center shrink-0">
+                <div class="bg-white/90 rounded-xl p-2 shadow border-b-2 border-emerald-500">
+                    <div class="text-slate-400 font-bold text-xs">得分 Score</div>
+                    <div id="score-val" class="text-lg sm:text-xl font-black text-emerald-600 leading-tight">0</div>
                 </div>
-                <div class="bg-white/90 rounded-xl p-1.5 shadow border-b-2 border-amber-500">
-                    <div class="text-slate-400 font-bold text-[10px]">連擊 Combo</div>
-                    <div id="combo-val" class="text-base sm:text-lg font-black text-amber-600 leading-tight">0</div>
+                <div class="bg-white/90 rounded-xl p-2 shadow border-b-2 border-amber-500">
+                    <div class="text-slate-400 font-bold text-xs">連擊 Combo</div>
+                    <div id="combo-val" class="text-lg sm:text-xl font-black text-amber-600 leading-tight">0</div>
                 </div>
-                <div class="bg-white/90 rounded-xl p-1.5 shadow border-b-2 border-sky-500">
-                    <div class="text-slate-400 font-bold text-[10px]">剩餘時間 Time</div>
-                    <div id="time-val" class="text-base sm:text-lg font-black text-sky-600 leading-tight">∞</div>
+                <div class="bg-white/90 rounded-xl p-2 shadow border-b-2 border-sky-500">
+                    <div class="text-slate-400 font-bold text-xs">剩餘時間 Time</div>
+                    <div id="time-val" class="text-lg sm:text-xl font-black text-sky-600 leading-tight">∞</div>
                 </div>
-                <div class="bg-white/90 rounded-xl p-1.5 shadow border-b-2 border-purple-500">
-                    <div class="text-slate-400 font-bold text-[10px]">正確率 Accuracy</div>
-                    <div id="accuracy-val" class="text-base sm:text-lg font-black text-purple-600 leading-tight">100%</div>
+                <div class="bg-white/90 rounded-xl p-2 shadow border-b-2 border-purple-500">
+                    <div class="text-slate-400 font-bold text-xs">正確率 Accuracy</div>
+                    <div id="accuracy-val" class="text-lg sm:text-xl font-black text-purple-600 leading-tight">100%</div>
                 </div>
             </div>
 
-            <!-- Whack-a-Mole Field Grid (3x3 - Max-width Constrained for Vertically Compact Fit) -->
-            <div class="bg-amber-800/85 p-3 rounded-2xl shadow-xl border-4 border-amber-900 grid grid-cols-3 gap-2 sm:gap-3 relative overflow-hidden max-w-[380px] sm:max-w-[420px] w-full mx-auto my-auto aspect-square">
+            <!-- Whack-a-Mole Field Grid (3x3 - Expanded max-width ~460px/500px for 90% Scale) -->
+            <div class="bg-amber-800/85 p-3.5 sm:p-4 rounded-3xl shadow-2xl border-4 border-amber-900 grid grid-cols-3 gap-3 sm:gap-4 relative overflow-hidden max-w-[460px] sm:max-w-[500px] w-full mx-auto my-auto aspect-square">
                 <!-- Floating score effects container -->
                 <div id="effects-container" class="absolute inset-0 pointer-events-none z-30"></div>
 
-                <!-- 9 Mole Holes -->
+                <!-- 9 Mole Holes (Enlarged Moles & Text) -->
                 <div class="mole-hole relative aspect-square rounded-full overflow-hidden flex items-end justify-center" data-hole="0">
                     <div class="grass-rim absolute top-0 inset-x-0 h-1/3 z-20 pointer-events-none opacity-40"></div>
                     <div class="mole mole-down absolute bottom-0 w-4/5 h-4/5 z-10 flex flex-col items-center justify-center cursor-pointer transition-transform" onclick="whackMole(0)">
-                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-1.5">
-                            <div class="flex items-center space-x-2 mb-0.5">
-                                <div class="w-2 h-2 bg-slate-900 rounded-full"></div>
-                                <div class="w-2 h-2 bg-slate-900 rounded-full"></div>
+                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-2">
+                            <div class="flex items-center space-x-2.5 mb-1">
+                                <div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div>
+                                <div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div>
                             </div>
-                            <div class="w-3.5 h-1.5 bg-pink-400 rounded-full mb-0.5"></div>
-                            <div class="bg-white/95 px-1.5 py-0.5 rounded-lg shadow text-center w-11/12 border border-amber-200">
-                                <div class="mole-pinyin text-[10px] font-bold text-sky-700 leading-none">bà</div>
-                                <div class="mole-char text-base sm:text-lg font-black text-slate-900 leading-tight">爸</div>
+                            <div class="w-4 h-1.5 bg-pink-400 rounded-full mb-1"></div>
+                            <div class="bg-white/95 px-2 py-1 rounded-xl shadow text-center w-11/12 border border-amber-200">
+                                <div class="mole-pinyin text-xs font-bold text-sky-700 leading-none">bà</div>
+                                <div class="mole-char text-xl sm:text-2xl font-black text-slate-900 leading-tight">爸</div>
                             </div>
                         </div>
                     </div>
@@ -286,12 +286,12 @@
 
                 <div class="mole-hole relative aspect-square rounded-full overflow-hidden flex items-end justify-center" data-hole="1">
                     <div class="mole mole-down absolute bottom-0 w-4/5 h-4/5 z-10 flex flex-col items-center justify-center cursor-pointer transition-transform" onclick="whackMole(1)">
-                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-1.5">
-                            <div class="flex items-center space-x-2 mb-0.5"><div class="w-2 h-2 bg-slate-900 rounded-full"></div><div class="w-2 h-2 bg-slate-900 rounded-full"></div></div>
-                            <div class="w-3.5 h-1.5 bg-pink-400 rounded-full mb-0.5"></div>
-                            <div class="bg-white/95 px-1.5 py-0.5 rounded-lg shadow text-center w-11/12 border border-amber-200">
-                                <div class="mole-pinyin text-[10px] font-bold text-sky-700 leading-none"></div>
-                                <div class="mole-char text-base sm:text-lg font-black text-slate-900 leading-tight"></div>
+                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-2">
+                            <div class="flex items-center space-x-2.5 mb-1"><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div></div>
+                            <div class="w-4 h-1.5 bg-pink-400 rounded-full mb-1"></div>
+                            <div class="bg-white/95 px-2 py-1 rounded-xl shadow text-center w-11/12 border border-amber-200">
+                                <div class="mole-pinyin text-xs font-bold text-sky-700 leading-none"></div>
+                                <div class="mole-char text-xl sm:text-2xl font-black text-slate-900 leading-tight"></div>
                             </div>
                         </div>
                     </div>
@@ -299,12 +299,12 @@
 
                 <div class="mole-hole relative aspect-square rounded-full overflow-hidden flex items-end justify-center" data-hole="2">
                     <div class="mole mole-down absolute bottom-0 w-4/5 h-4/5 z-10 flex flex-col items-center justify-center cursor-pointer transition-transform" onclick="whackMole(2)">
-                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-1.5">
-                            <div class="flex items-center space-x-2 mb-0.5"><div class="w-2 h-2 bg-slate-900 rounded-full"></div><div class="w-2 h-2 bg-slate-900 rounded-full"></div></div>
-                            <div class="w-3.5 h-1.5 bg-pink-400 rounded-full mb-0.5"></div>
-                            <div class="bg-white/95 px-1.5 py-0.5 rounded-lg shadow text-center w-11/12 border border-amber-200">
-                                <div class="mole-pinyin text-[10px] font-bold text-sky-700 leading-none"></div>
-                                <div class="mole-char text-base sm:text-lg font-black text-slate-900 leading-tight"></div>
+                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-2">
+                            <div class="flex items-center space-x-2.5 mb-1"><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div></div>
+                            <div class="w-4 h-1.5 bg-pink-400 rounded-full mb-1"></div>
+                            <div class="bg-white/95 px-2 py-1 rounded-xl shadow text-center w-11/12 border border-amber-200">
+                                <div class="mole-pinyin text-xs font-bold text-sky-700 leading-none"></div>
+                                <div class="mole-char text-xl sm:text-2xl font-black text-slate-900 leading-tight"></div>
                             </div>
                         </div>
                     </div>
@@ -312,12 +312,12 @@
 
                 <div class="mole-hole relative aspect-square rounded-full overflow-hidden flex items-end justify-center" data-hole="3">
                     <div class="mole mole-down absolute bottom-0 w-4/5 h-4/5 z-10 flex flex-col items-center justify-center cursor-pointer transition-transform" onclick="whackMole(3)">
-                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-1.5">
-                            <div class="flex items-center space-x-2 mb-0.5"><div class="w-2 h-2 bg-slate-900 rounded-full"></div><div class="w-2 h-2 bg-slate-900 rounded-full"></div></div>
-                            <div class="w-3.5 h-1.5 bg-pink-400 rounded-full mb-0.5"></div>
-                            <div class="bg-white/95 px-1.5 py-0.5 rounded-lg shadow text-center w-11/12 border border-amber-200">
-                                <div class="mole-pinyin text-[10px] font-bold text-sky-700 leading-none"></div>
-                                <div class="mole-char text-base sm:text-lg font-black text-slate-900 leading-tight"></div>
+                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-2">
+                            <div class="flex items-center space-x-2.5 mb-1"><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div></div>
+                            <div class="w-4 h-1.5 bg-pink-400 rounded-full mb-1"></div>
+                            <div class="bg-white/95 px-2 py-1 rounded-xl shadow text-center w-11/12 border border-amber-200">
+                                <div class="mole-pinyin text-xs font-bold text-sky-700 leading-none"></div>
+                                <div class="mole-char text-xl sm:text-2xl font-black text-slate-900 leading-tight"></div>
                             </div>
                         </div>
                     </div>
@@ -325,12 +325,12 @@
 
                 <div class="mole-hole relative aspect-square rounded-full overflow-hidden flex items-end justify-center" data-hole="4">
                     <div class="mole mole-down absolute bottom-0 w-4/5 h-4/5 z-10 flex flex-col items-center justify-center cursor-pointer transition-transform" onclick="whackMole(4)">
-                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-1.5">
-                            <div class="flex items-center space-x-2 mb-0.5"><div class="w-2 h-2 bg-slate-900 rounded-full"></div><div class="w-2 h-2 bg-slate-900 rounded-full"></div></div>
-                            <div class="w-3.5 h-1.5 bg-pink-400 rounded-full mb-0.5"></div>
-                            <div class="bg-white/95 px-1.5 py-0.5 rounded-lg shadow text-center w-11/12 border border-amber-200">
-                                <div class="mole-pinyin text-[10px] font-bold text-sky-700 leading-none"></div>
-                                <div class="mole-char text-base sm:text-lg font-black text-slate-900 leading-tight"></div>
+                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-2">
+                            <div class="flex items-center space-x-2.5 mb-1"><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div></div>
+                            <div class="w-4 h-1.5 bg-pink-400 rounded-full mb-1"></div>
+                            <div class="bg-white/95 px-2 py-1 rounded-xl shadow text-center w-11/12 border border-amber-200">
+                                <div class="mole-pinyin text-xs font-bold text-sky-700 leading-none"></div>
+                                <div class="mole-char text-xl sm:text-2xl font-black text-slate-900 leading-tight"></div>
                             </div>
                         </div>
                     </div>
@@ -338,12 +338,12 @@
 
                 <div class="mole-hole relative aspect-square rounded-full overflow-hidden flex items-end justify-center" data-hole="5">
                     <div class="mole mole-down absolute bottom-0 w-4/5 h-4/5 z-10 flex flex-col items-center justify-center cursor-pointer transition-transform" onclick="whackMole(5)">
-                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-1.5">
-                            <div class="flex items-center space-x-2 mb-0.5"><div class="w-2 h-2 bg-slate-900 rounded-full"></div><div class="w-2 h-2 bg-slate-900 rounded-full"></div></div>
-                            <div class="w-3.5 h-1.5 bg-pink-400 rounded-full mb-0.5"></div>
-                            <div class="bg-white/95 px-1.5 py-0.5 rounded-lg shadow text-center w-11/12 border border-amber-200">
-                                <div class="mole-pinyin text-[10px] font-bold text-sky-700 leading-none"></div>
-                                <div class="mole-char text-base sm:text-lg font-black text-slate-900 leading-tight"></div>
+                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-2">
+                            <div class="flex items-center space-x-2.5 mb-1"><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div></div>
+                            <div class="w-4 h-1.5 bg-pink-400 rounded-full mb-1"></div>
+                            <div class="bg-white/95 px-2 py-1 rounded-xl shadow text-center w-11/12 border border-amber-200">
+                                <div class="mole-pinyin text-xs font-bold text-sky-700 leading-none"></div>
+                                <div class="mole-char text-xl sm:text-2xl font-black text-slate-900 leading-tight"></div>
                             </div>
                         </div>
                     </div>
@@ -351,12 +351,12 @@
 
                 <div class="mole-hole relative aspect-square rounded-full overflow-hidden flex items-end justify-center" data-hole="6">
                     <div class="mole mole-down absolute bottom-0 w-4/5 h-4/5 z-10 flex flex-col items-center justify-center cursor-pointer transition-transform" onclick="whackMole(6)">
-                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-1.5">
-                            <div class="flex items-center space-x-2 mb-0.5"><div class="w-2 h-2 bg-slate-900 rounded-full"></div><div class="w-2 h-2 bg-slate-900 rounded-full"></div></div>
-                            <div class="w-3.5 h-1.5 bg-pink-400 rounded-full mb-0.5"></div>
-                            <div class="bg-white/95 px-1.5 py-0.5 rounded-lg shadow text-center w-11/12 border border-amber-200">
-                                <div class="mole-pinyin text-[10px] font-bold text-sky-700 leading-none"></div>
-                                <div class="mole-char text-base sm:text-lg font-black text-slate-900 leading-tight"></div>
+                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-2">
+                            <div class="flex items-center space-x-2.5 mb-1"><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div></div>
+                            <div class="w-4 h-1.5 bg-pink-400 rounded-full mb-1"></div>
+                            <div class="bg-white/95 px-2 py-1 rounded-xl shadow text-center w-11/12 border border-amber-200">
+                                <div class="mole-pinyin text-xs font-bold text-sky-700 leading-none"></div>
+                                <div class="mole-char text-xl sm:text-2xl font-black text-slate-900 leading-tight"></div>
                             </div>
                         </div>
                     </div>
@@ -364,12 +364,12 @@
 
                 <div class="mole-hole relative aspect-square rounded-full overflow-hidden flex items-end justify-center" data-hole="7">
                     <div class="mole mole-down absolute bottom-0 w-4/5 h-4/5 z-10 flex flex-col items-center justify-center cursor-pointer transition-transform" onclick="whackMole(7)">
-                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-1.5">
-                            <div class="flex items-center space-x-2 mb-0.5"><div class="w-2 h-2 bg-slate-900 rounded-full"></div><div class="w-2 h-2 bg-slate-900 rounded-full"></div></div>
-                            <div class="w-3.5 h-1.5 bg-pink-400 rounded-full mb-0.5"></div>
-                            <div class="bg-white/95 px-1.5 py-0.5 rounded-lg shadow text-center w-11/12 border border-amber-200">
-                                <div class="mole-pinyin text-[10px] font-bold text-sky-700 leading-none"></div>
-                                <div class="mole-char text-base sm:text-lg font-black text-slate-900 leading-tight"></div>
+                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-2">
+                            <div class="flex items-center space-x-2.5 mb-1"><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div></div>
+                            <div class="w-4 h-1.5 bg-pink-400 rounded-full mb-1"></div>
+                            <div class="bg-white/95 px-2 py-1 rounded-xl shadow text-center w-11/12 border border-amber-200">
+                                <div class="mole-pinyin text-xs font-bold text-sky-700 leading-none"></div>
+                                <div class="mole-char text-xl sm:text-2xl font-black text-slate-900 leading-tight"></div>
                             </div>
                         </div>
                     </div>
@@ -377,12 +377,12 @@
 
                 <div class="mole-hole relative aspect-square rounded-full overflow-hidden flex items-end justify-center" data-hole="8">
                     <div class="mole mole-down absolute bottom-0 w-4/5 h-4/5 z-10 flex flex-col items-center justify-center cursor-pointer transition-transform" onclick="whackMole(8)">
-                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-1.5">
-                            <div class="flex items-center space-x-2 mb-0.5"><div class="w-2 h-2 bg-slate-900 rounded-full"></div><div class="w-2 h-2 bg-slate-900 rounded-full"></div></div>
-                            <div class="w-3.5 h-1.5 bg-pink-400 rounded-full mb-0.5"></div>
-                            <div class="bg-white/95 px-1.5 py-0.5 rounded-lg shadow text-center w-11/12 border border-amber-200">
-                                <div class="mole-pinyin text-[10px] font-bold text-sky-700 leading-none"></div>
-                                <div class="mole-char text-base sm:text-lg font-black text-slate-900 leading-tight"></div>
+                        <div class="relative w-full h-full bg-amber-600 rounded-t-full border-2 border-amber-700 shadow-sm flex flex-col items-center justify-start pt-2">
+                            <div class="flex items-center space-x-2.5 mb-1"><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div><div class="w-2.5 h-2.5 bg-slate-900 rounded-full"></div></div>
+                            <div class="w-4 h-1.5 bg-pink-400 rounded-full mb-1"></div>
+                            <div class="bg-white/95 px-2 py-1 rounded-xl shadow text-center w-11/12 border border-amber-200">
+                                <div class="mole-pinyin text-xs font-bold text-sky-700 leading-none"></div>
+                                <div class="mole-char text-xl sm:text-2xl font-black text-slate-900 leading-tight"></div>
                             </div>
                         </div>
                     </div>
@@ -391,11 +391,11 @@
             </div>
 
             <!-- Game Control Buttons -->
-            <div class="mt-2 flex items-center justify-between shrink-0">
-                <button onclick="quitGame()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-black px-4 py-1.5 rounded-lg transition flex items-center gap-1.5 text-xs">
+            <div class="mt-2.5 flex items-center justify-between shrink-0">
+                <button onclick="quitGame()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-black px-4 sm:px-5 py-2 rounded-xl transition flex items-center gap-2 text-xs sm:text-sm">
                     <i class="fas fa-arrow-left"></i> 結束並返回設定
                 </button>
-                <div class="text-[11px] text-slate-500 font-bold">
+                <div class="text-xs text-slate-500 font-bold">
                     💡 提示：點擊地鼠時可聽到國語正確發音喔！
                 </div>
             </div>
@@ -404,47 +404,47 @@
 
         <!-- ================= RESULT MODAL ================= -->
         <div id="result-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl p-5 sm:p-6 max-w-md w-full shadow-2xl border-4 border-amber-300 animate__animated animate__zoomIn">
-                <div class="text-center mb-4">
-                    <div class="text-4xl mb-1" id="result-badge">🏆</div>
-                    <h2 class="text-2xl font-black text-slate-900 mb-0.5" id="result-title">冒險完成！</h2>
-                    <p class="text-slate-500 font-bold text-xs" id="result-subtitle">拼音小高手實力大公開</p>
+            <div class="bg-white rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl border-4 border-amber-300 animate__animated animate__zoomIn">
+                <div class="text-center mb-5">
+                    <div class="text-5xl mb-1.5" id="result-badge">🏆</div>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mb-1" id="result-title">冒險完成！</h2>
+                    <p class="text-slate-500 font-bold text-xs sm:text-sm" id="result-subtitle">拼音小高手實力大公開</p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2 mb-4">
-                    <div class="bg-slate-50 p-2.5 rounded-xl text-center border border-slate-100">
-                        <div class="text-[10px] text-slate-400 font-bold">最終得分</div>
-                        <div class="text-xl font-black text-emerald-600" id="res-score">0</div>
+                <div class="grid grid-cols-2 gap-2.5 mb-5">
+                    <div class="bg-slate-50 p-3 rounded-2xl text-center border border-slate-100">
+                        <div class="text-xs text-slate-400 font-bold">最終得分</div>
+                        <div class="text-2xl font-black text-emerald-600" id="res-score">0</div>
                     </div>
-                    <div class="bg-slate-50 p-2.5 rounded-xl text-center border border-slate-100">
-                        <div class="text-[10px] text-slate-400 font-bold">最高連擊</div>
-                        <div class="text-xl font-black text-amber-600" id="res-max-combo">0</div>
+                    <div class="bg-slate-50 p-3 rounded-2xl text-center border border-slate-100">
+                        <div class="text-xs text-slate-400 font-bold">最高連擊</div>
+                        <div class="text-2xl font-black text-amber-600" id="res-max-combo">0</div>
                     </div>
-                    <div class="bg-slate-50 p-2.5 rounded-xl text-center border border-slate-100">
-                        <div class="text-[10px] text-slate-400 font-bold">打中目標/錯誤</div>
-                        <div class="text-lg font-black text-slate-800" id="res-hits-misses">0 / 0</div>
+                    <div class="bg-slate-50 p-3 rounded-2xl text-center border border-slate-100">
+                        <div class="text-xs text-slate-400 font-bold">打中目標/錯誤</div>
+                        <div class="text-xl font-black text-slate-800" id="res-hits-misses">0 / 0</div>
                     </div>
-                    <div class="bg-slate-50 p-2.5 rounded-xl text-center border border-slate-100">
-                        <div class="text-[10px] text-slate-400 font-bold">正確率</div>
-                        <div class="text-lg font-black text-purple-600" id="res-accuracy">100%</div>
+                    <div class="bg-slate-50 p-3 rounded-2xl text-center border border-slate-100">
+                        <div class="text-xs text-slate-400 font-bold">正確率</div>
+                        <div class="text-xl font-black text-purple-600" id="res-accuracy">100%</div>
                     </div>
                 </div>
 
                 <!-- Review Section for Mistakes -->
-                <div id="mistake-review-container" class="mb-4 hidden">
-                    <h4 class="text-[11px] font-black text-slate-500 mb-1.5 flex items-center gap-1">
+                <div id="mistake-review-container" class="mb-5 hidden">
+                    <h4 class="text-xs font-black text-slate-500 mb-2 flex items-center gap-1">
                         <i class="fas fa-book-open text-amber-500"></i> 需要再加強的漢字 (誤擊/錯過)：
                     </h4>
-                    <div id="mistake-list" class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto p-1.5 bg-amber-50/60 rounded-lg border border-amber-100">
+                    <div id="mistake-list" class="flex flex-wrap gap-2 max-h-28 overflow-y-auto p-2 bg-amber-50/60 rounded-xl border border-amber-100">
                         <!-- Filled dynamically -->
                     </div>
                 </div>
 
-                <div class="flex gap-2">
-                    <button onclick="restartGame()" class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black py-2.5 rounded-xl shadow transition text-center text-sm">
+                <div class="flex gap-2.5">
+                    <button onclick="restartGame()" class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black py-3 rounded-xl shadow transition text-center text-sm sm:text-base">
                         <i class="fas fa-rotate-right"></i> 再玩一次
                     </button>
-                    <button onclick="closeResultModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-black px-4 py-2.5 rounded-xl transition text-sm">
+                    <button onclick="closeResultModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-black px-5 py-3 rounded-xl transition text-sm sm:text-base">
                         返回設定
                     </button>
                 </div>
@@ -831,7 +831,7 @@
         }
 
         /* ----------------------------------------------------
-         5. INITIALS GRID RENDERING & SELECTION (Compact Size)
+         5. INITIALS GRID RENDERING & SELECTION (90% Sized Buttons)
         ---------------------------------------------------- */
         function renderInitialsGrid() {
             const grid = document.getElementById('initials-grid');
@@ -842,7 +842,7 @@
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.onclick = () => toggleInitial(init);
-                btn.className = `p-1 sm:p-1.5 rounded-lg border transition text-center flex flex-col items-center justify-center font-black ${
+                btn.className = `p-1.5 sm:p-2 rounded-xl border transition text-center flex flex-col items-center justify-center font-black ${
                     isSelected 
                         ? 'bg-amber-400 border-amber-500 text-amber-950 shadow-sm scale-105' 
                         : 'bg-slate-50 border-slate-200 text-slate-400 hover:border-slate-300'
@@ -852,8 +852,8 @@
                 const shortPron = labelPron.split(' ')[0] || '';
 
                 btn.innerHTML = `
-                    <span class="text-xs sm:text-sm leading-tight">${init}</span>
-                    <span class="text-[9px] font-bold opacity-80">${shortPron}</span>
+                    <span class="text-sm sm:text-base leading-tight">${init}</span>
+                    <span class="text-[10px] sm:text-[11px] font-bold opacity-80">${shortPron}</span>
                 `;
                 grid.appendChild(btn);
             });
@@ -1118,13 +1118,13 @@
             const parentRect = container.getBoundingClientRect();
 
             const floatEl = document.createElement('div');
-            floatEl.className = `absolute font-black text-xl ${colorClass} float-text pointer-events-none z-40`;
+            floatEl.className = `absolute font-black text-2xl ${colorClass} float-text pointer-events-none z-40`;
             floatEl.style.left = `${rect.left - parentRect.left + rect.width / 4}px`;
             floatEl.style.top = `${rect.top - parentRect.top + 5}px`;
             floatEl.innerText = text;
 
             container.appendChild(floatEl);
-            setTimeout(() => floatEl.remove(), 700);
+            setTimeout(() => floatEl.remove(), 750);
         }
 
         function updateStatsUI() {
@@ -1178,8 +1178,8 @@
             if (mistakeList.length > 0) {
                 mistakeContainer.classList.remove('hidden');
                 mistakeListEl.innerHTML = mistakeList.map(m => `
-                    <div class="bg-white px-2 py-0.5 rounded-md shadow-sm border border-amber-200 text-[11px] flex items-center gap-1 font-bold">
-                        <span class="text-slate-800 text-xs">${m.char}</span>
+                    <div class="bg-white px-2.5 py-1 rounded-md shadow-sm border border-amber-200 text-xs flex items-center gap-1 font-bold">
+                        <span class="text-slate-800 text-sm">${m.char}</span>
                         <span class="text-sky-600">${m.pinyin}</span>
                         <span class="text-amber-600 font-black">(${m.initial})</span>
                     </div>
