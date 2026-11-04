@@ -147,11 +147,46 @@
                 </div>
             </div>
 
+            <!-- Speed Level Selector -->
+            <div class="mb-3">
+                <h3 class="text-sm font-black text-slate-800 mb-2 flex items-center gap-1.5">
+                    <i class="fas fa-tachometer-alt text-amber-500"></i> 2. 選擇地鼠速度 (速度分級)
+                </h3>
+                <div class="grid grid-cols-3 gap-2">
+                    <button type="button" onclick="selectSpeed('slow')" id="speed-btn-slow" 
+                        class="speed-btn border-2 border-slate-200 bg-white text-slate-700 p-2 rounded-xl text-center hover:border-amber-300 transition shadow-sm">
+                        <div class="font-black text-xs sm:text-sm mb-0.5 flex items-center justify-center gap-1">
+                            <span>🐢 慢速</span>
+                            <i class="fas fa-check-circle text-amber-500 speed-check hidden"></i>
+                        </div>
+                        <p class="text-[10px] text-slate-500 leading-tight">停留 2.5 秒<br>(適合初學者)</p>
+                    </button>
+
+                    <button type="button" onclick="selectSpeed('medium')" id="speed-btn-medium" 
+                        class="speed-btn active border-2 border-amber-400 bg-amber-50 text-amber-950 p-2 rounded-xl text-center hover:border-amber-500 transition shadow-sm">
+                        <div class="font-black text-xs sm:text-sm mb-0.5 flex items-center justify-center gap-1">
+                            <span>🏃 中速</span>
+                            <i class="fas fa-check-circle text-amber-500 speed-check"></i>
+                        </div>
+                        <p class="text-[10px] text-slate-500 leading-tight">停留 1.8 秒<br>(標準練習)</p>
+                    </button>
+
+                    <button type="button" onclick="selectSpeed('fast')" id="speed-btn-fast" 
+                        class="speed-btn border-2 border-slate-200 bg-white text-slate-700 p-2 rounded-xl text-center hover:border-amber-300 transition shadow-sm">
+                        <div class="font-black text-xs sm:text-sm mb-0.5 flex items-center justify-center gap-1">
+                            <span>⚡ 快速</span>
+                            <i class="fas fa-check-circle text-amber-500 speed-check hidden"></i>
+                        </div>
+                        <p class="text-[10px] text-slate-500 leading-tight">停留 1.1 秒<br>(極速高手)</p>
+                    </button>
+                </div>
+            </div>
+
             <!-- Initials Selection Grid -->
             <div class="mb-3">
                 <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2">
                     <h3 class="text-sm font-black text-slate-800 flex items-center gap-1.5">
-                        <i class="fas fa-spell-check text-emerald-500"></i> 2. 選擇訓練聲母範圍 (共23個)
+                        <i class="fas fa-spell-check text-emerald-500"></i> 3. 選擇訓練聲母範圍 (共23個)
                     </h3>
                     <div class="flex flex-wrap gap-1 text-[11px] font-bold">
                         <button onclick="selectAllInitials()" class="bg-sky-100 text-sky-700 hover:bg-sky-200 px-2 py-1 rounded transition">全選 23 聲母</button>
@@ -196,8 +231,13 @@
                     <span id="target-initial-display" class="text-2xl sm:text-3xl font-black text-amber-600 tracking-wider">zh</span>
                     <span id="target-pronunciation-display" class="text-slate-600 font-bold text-xs bg-amber-50 px-2 py-0.5 rounded border border-amber-200">讀音對應：知 (zhī)</span>
                 </div>
-                <div id="mode-badge" class="bg-sky-100 text-sky-800 font-extrabold px-2.5 py-0.5 rounded-lg text-xs">
-                    自由練習模式
+                <div class="flex items-center gap-1.5">
+                    <div id="speed-badge" class="bg-amber-100 text-amber-900 font-extrabold px-2.5 py-0.5 rounded-lg text-xs border border-amber-300">
+                        🏃 中速
+                    </div>
+                    <div id="mode-badge" class="bg-sky-100 text-sky-800 font-extrabold px-2.5 py-0.5 rounded-lg text-xs">
+                        自由練習模式
+                    </div>
                 </div>
             </div>
 
@@ -688,8 +728,27 @@
         ---------------------------------------------------- */
         let selectedInitials = new Set(ALL_INITIALS);
         let currentGameMode = 'practice'; // 'practice', 'timed', 'stage'
+        let currentSpeed = 'medium'; // 'slow', 'medium', 'fast'
         let targetInitial = 'zh';
-        
+
+        const SPEED_CONFIG = {
+            slow: {
+                duration: 2500,
+                interval: 1400,
+                label: '🐢 慢速'
+            },
+            medium: {
+                duration: 1800,
+                interval: 1000,
+                label: '🏃 中速'
+            },
+            fast: {
+                duration: 1100,
+                interval: 700,
+                label: '⚡ 快速'
+            }
+        };
+
         let score = 0;
         let combo = 0;
         let maxCombo = 0;
@@ -846,6 +905,20 @@
             activeBtn.querySelector('.check-icon').classList.remove('hidden');
         }
 
+        function selectSpeed(speed) {
+            currentSpeed = speed;
+            document.querySelectorAll('.speed-btn').forEach(btn => {
+                btn.classList.remove('active', 'border-amber-400', 'bg-amber-50', 'text-amber-950');
+                btn.classList.add('border-slate-200', 'bg-white', 'text-slate-700');
+                btn.querySelector('.speed-check').classList.add('hidden');
+            });
+
+            const activeBtn = document.getElementById(`speed-btn-${speed}`);
+            activeBtn.classList.add('active', 'border-amber-400', 'bg-amber-50', 'text-amber-950');
+            activeBtn.classList.remove('border-slate-200', 'bg-white', 'text-slate-700');
+            activeBtn.querySelector('.speed-check').classList.remove('hidden');
+        }
+
         /* ----------------------------------------------------
          6. GAMEPLAY ENGINE & WHACK-A-MOLE MECHANICS
         ---------------------------------------------------- */
@@ -871,8 +944,11 @@
             // Pick Target Initial
             pickNextTargetInitial();
 
-            // Mode setup
+            // Mode & Speed setup
             const modeBadge = document.getElementById('mode-badge');
+            const speedBadge = document.getElementById('speed-badge');
+            speedBadge.innerText = SPEED_CONFIG[currentSpeed].label;
+
             if (currentGameMode === 'practice') {
                 modeBadge.innerText = '🌱 自由練習模式';
                 document.getElementById('time-val').innerText = '∞';
@@ -918,12 +994,15 @@
 
         function startMoleLoop() {
             clearInterval(moleInterval);
-            let speed = 1100;
-            if (currentGameMode === 'stage') speed = 900;
+            let config = SPEED_CONFIG[currentSpeed];
+            let interval = config.interval;
+            if (currentGameMode === 'stage') {
+                interval = Math.round(interval * 0.85); // Slightly faster for stage mode
+            }
 
             moleInterval = setInterval(() => {
                 popRandomMole();
-            }, speed);
+            }, interval);
         }
 
         function popRandomMole() {
@@ -964,8 +1043,12 @@
             moleEl.classList.remove('mole-down');
             moleEl.classList.add('mole-up');
 
-            // Auto retreat timeout
-            const duration = currentGameMode === 'stage' ? 1800 : 2200;
+            // Auto retreat timeout based on currentSpeed
+            let duration = SPEED_CONFIG[currentSpeed].duration;
+            if (currentGameMode === 'stage') {
+                duration = Math.round(duration * 0.85);
+            }
+
             const timeoutId = setTimeout(() => {
                 retreatMole(holeIdx);
             }, duration);
