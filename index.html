@@ -138,7 +138,7 @@
 
     <!-- Top Navigation Header -->
     <header class="relative z-10 w-full px-6 py-3 bg-white/90 backdrop-blur-md shadow-md flex justify-between items-center border-b-2 border-white/60">
-        <!-- Logo Area (Student Info Pill Removed as requested) -->
+        <!-- Logo Area -->
         <div class="flex items-center space-x-3">
             <div class="w-10 h-10 bg-gradient-to-tr from-red-500 to-orange-400 rounded-full flex items-center justify-center shadow-md border-2 border-white">
                 <span class="text-xl">🎒</span>
@@ -158,10 +158,10 @@
     </header>
 
     <!-- Main Content Body -->
-    <main class="relative z-10 container mx-auto px-4 py-4 md:py-6 flex-1 flex flex-col justify-center items-center max-w-6xl">
+    <main class="relative z-10 container mx-auto px-4 py-4 md:py-6 flex-1 flex flex-col justify-center items-center max-w-7xl">
         
         <!-- Hero Mascot & Welcome Banner -->
-        <div class="w-full bg-white/95 backdrop-blur-md rounded-3xl p-5 md:p-6 mb-6 shadow-xl border-4 border-white flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="w-full max-w-6xl bg-white/95 backdrop-blur-md rounded-3xl p-5 md:p-6 mb-6 shadow-xl border-4 border-white flex flex-col md:flex-row items-center justify-between gap-6">
             
             <!-- Mole Mascot Avatar -->
             <div class="flex flex-col items-center">
@@ -226,7 +226,7 @@
                         <span>👋 歡迎來到拼音遊戲大本營！</span>
                     </h2>
                     <p id="mascotText" class="text-xs md:text-sm font-bold text-gray-700 leading-relaxed">
-                        「我是地鼠小哥！今天想玩籃球投籃、打地鼠還是接水果？完全自由選，快開始挑戰吧！」
+                        「我是地鼠小哥！今天想玩籃球投籃、打地鼠、接水果還是開拼音列車？完全自由選，快開始挑戰吧！」
                     </p>
                 </div>
 
@@ -248,13 +248,13 @@
 
         </div>
 
-        <!-- Game Cards Grid (3 Columns) -->
-        <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 my-2">
+        <!-- Game Cards Grid (4 Columns on Large Screens) -->
+        <div class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 my-2">
             
             <!-- GAME CARD 1: 籃球投籃 (game1.html) -->
             <div class="card-depth bg-white rounded-3xl p-5 border-4 border-sky-300 shadow-lg flex flex-col justify-between relative overflow-hidden group">
                 <div class="absolute top-3 right-3 bg-sky-500 text-white font-black text-[11px] px-2.5 py-0.5 rounded-full border border-white shadow">
-                    🏀 聽力特訓 / 籃球投籃辨聲
+                    🏀 聽力特訓 / 籃球辨聲
                 </div>
 
                 <div class="mt-4">
@@ -284,7 +284,7 @@
             <!-- GAME CARD 2: 聲母打地鼠 (game2.html) -->
             <div class="card-depth bg-white rounded-3xl p-5 border-4 border-amber-300 shadow-lg flex flex-col justify-between relative overflow-hidden group">
                 <div class="absolute top-3 right-3 bg-red-500 text-white font-black text-[11px] px-2.5 py-0.5 rounded-full border border-white shadow">
-                    🔨 熱門推薦 / 聲母快速反應
+                    🔨 熱門推薦 / 快速反應
                 </div>
 
                 <div class="mt-4">
@@ -306,15 +306,6 @@
                         <span class="bg-amber-100 text-amber-900 font-bold text-xs px-1.5 py-0.5 rounded">j</span>
                         <span class="bg-amber-100 text-amber-900 font-bold text-xs px-1.5 py-0.5 rounded">q</span>
                         <span class="bg-amber-100 text-amber-900 font-bold text-xs px-1.5 py-0.5 rounded">x</span>
-                        <span class="bg-amber-100 text-amber-900 font-bold text-xs px-1.5 py-0.5 rounded">zh</span>
-                        <span class="bg-amber-100 text-amber-900 font-bold text-xs px-1.5 py-0.5 rounded">ch</span>
-                        <span class="bg-amber-100 text-amber-900 font-bold text-xs px-1.5 py-0.5 rounded">sh</span>
-                        <span class="bg-amber-100 text-amber-900 font-bold text-xs px-1.5 py-0.5 rounded">r</span>
-                        <span class="bg-amber-100 text-amber-900 font-bold text-xs px-1.5 py-0.5 rounded">z</span>
-                        <span class="bg-amber-100 text-amber-900 font-bold text-xs px-1.5 py-0.5 rounded">c</span>
-                        <span class="bg-amber-100 text-amber-900 font-bold text-xs px-1.5 py-0.5 rounded">s</span>
-                        <span class="bg-amber-100 text-amber-900 font-bold text-xs px-1.5 py-0.5 rounded">y</span>
-                        <span class="bg-amber-100 text-amber-900 font-bold text-xs px-1.5 py-0.5 rounded">w</span>
                     </div>
                     <p class="text-xs font-bold text-gray-600 mb-4 leading-relaxed">
                         聽清目標聲母發音，快速反應敲擊正確的地鼠，訓練耳快手快！
@@ -335,7 +326,7 @@
             <!-- GAME CARD 3: 四聲接水果 (game3.html) -->
             <div class="card-depth bg-white rounded-3xl p-5 border-4 border-purple-300 shadow-lg flex flex-col justify-between relative overflow-hidden group">
                 <div class="absolute top-3 right-3 bg-purple-500 text-white font-black text-[11px] px-2.5 py-0.5 rounded-full border border-white shadow">
-                    🧺 四聲考驗 / 聲調接水果
+                    🧺 四聲考驗 / 聲調水果
                 </div>
 
                 <div class="mt-4">
@@ -364,6 +355,36 @@
                 </div>
             </div>
 
+            <!-- GAME CARD 4: 拼音列車 (game4.html) -->
+            <div class="card-depth bg-white rounded-3xl p-5 border-4 border-emerald-300 shadow-lg flex flex-col justify-between relative overflow-hidden group">
+                <div class="absolute top-3 right-3 bg-emerald-500 text-white font-black text-[11px] px-2.5 py-0.5 rounded-full border border-white shadow">
+                    🚂 拼讀組裝 / 單韻母列車
+                </div>
+
+                <div class="mt-4">
+                    <div class="text-5xl mb-2 transform group-hover:scale-110 transition-transform">🚂</div>
+                    <h3 class="text-2xl font-black text-emerald-900 mb-0.5">拼音列車</h3>
+                    <div class="text-xs font-black text-teal-700 mb-2">【單韻母拼讀與組裝】</div>
+                    <div class="flex flex-wrap gap-1 mb-3">
+                        <span class="bg-emerald-100 text-emerald-900 font-bold text-xs px-2 py-0.5 rounded">單韻母 (a/o/e/i/u/ü)</span>
+                        <span class="bg-emerald-100 text-emerald-900 font-bold text-xs px-2 py-0.5 rounded">聲韻調拼合</span>
+                    </div>
+                    <p class="text-xs font-bold text-gray-600 mb-4 leading-relaxed">
+                        把正確的單韻母音節裝載上車廂，滿分晉級更能親自拼合聲母、韻母與聲調！
+                    </p>
+                </div>
+
+                <div>
+                    <div class="bg-gray-50 rounded-xl p-2 mb-3 text-xs font-bold text-gray-600 flex justify-between items-center">
+                        <span>最高紀錄:</span>
+                        <span id="card4HighScore" class="text-sm text-emerald-600 font-black">0 分</span>
+                    </div>
+                    <a href="game4.html" onclick="playClickSound()" class="w-full btn-bounce bg-emerald-500 hover:bg-emerald-600 text-white font-black text-base py-2.5 rounded-xl shadow border border-emerald-200 flex justify-center items-center gap-1.5">
+                        <span>🚂 開始開火車 🎫</span>
+                    </a>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -384,7 +405,7 @@
 
             <p class="text-xs font-bold text-purple-600 mb-3">📍 個人最高得分與成績記錄</p>
 
-            <div class="bg-purple-50 rounded-2xl p-4 max-h-72 overflow-y-auto space-y-3" id="leaderboardList">
+            <div class="bg-purple-50 rounded-2xl p-4 max-h-80 overflow-y-auto space-y-3" id="leaderboardList">
                 <!-- Dynamically populated -->
             </div>
 
@@ -397,13 +418,26 @@
     <script>
         let audioCtx = null;
 
+        function getTrainHighScore() {
+            const directScore = parseInt(localStorage.getItem('pinyin_train_highscore') || localStorage.getItem('pinyin_game4_score') || '0', 10);
+            let boardTop = 0;
+            try {
+                const ranks = JSON.parse(localStorage.getItem('pinyin_train_leaderboard') || '[]');
+                if (ranks.length > 0 && ranks[0].score) {
+                    boardTop = parseInt(ranks[0].score, 10) || 0;
+                }
+            } catch (e) {}
+            return Math.max(directScore, boardTop);
+        }
+
         // Load persistent data from localStorage
         let userData = {
             stars: parseInt(localStorage.getItem('pinyin_student_stars') || '6', 10),
             checkedInDate: localStorage.getItem('pinyin_checkin_date') || '',
             highScoreBasket: parseInt(localStorage.getItem('pinyin_basket_highscore') || '0', 10),
             highScoreWhack: parseInt(localStorage.getItem('pinyin_whack_highscore') || '0', 10),
-            highScoreFruit: parseInt(localStorage.getItem('pinyin_fruit_highscore') || '0', 10)
+            highScoreFruit: parseInt(localStorage.getItem('pinyin_fruit_highscore') || '0', 10),
+            highScoreTrain: getTrainHighScore()
         };
 
         window.onload = function() {
@@ -455,8 +489,9 @@
         function mascotSpeak() {
             playClickSound();
             const greetings = [
-                "我是地鼠小哥！今天想玩籃球投籃、打地鼠還是接水果？完全自由選，快開始挑戰吧！",
-                "三個拼音遊戲都很好玩，練習漢語拼音好簡單！",
+                "我是地鼠小哥！今天想玩籃球投籃、打地鼠、接水果還是開拼音列車？完全自由選，快開始挑戰吧！",
+                "四個拼音遊戲都很好玩，練習漢語拼音好簡單！",
+                "新登場的「拼音列車」可以挑戰單韻母拼讀與組裝喔，快去試試看！",
                 "記得天天來打卡領取星星獎勵喔！加油！"
             ];
             const randomMsg = greetings[Math.floor(Math.random() * greetings.length)];
@@ -473,10 +508,12 @@
         }
 
         function updateUI() {
+            userData.highScoreTrain = getTrainHighScore();
             document.getElementById('starCounter').innerText = `已累積 ${userData.stars} 顆星星`;
             document.getElementById('card1HighScore').innerText = `${userData.highScoreBasket} 分`;
             document.getElementById('card2HighScore').innerText = `${userData.highScoreWhack} 分`;
             document.getElementById('card3HighScore').innerText = `${userData.highScoreFruit} 分`;
+            document.getElementById('card4HighScore').innerText = `${userData.highScoreTrain} 分`;
         }
 
         function checkTodayCheckIn() {
@@ -518,6 +555,7 @@
 
         function openLeaderboard() {
             playClickSound();
+            userData.highScoreTrain = getTrainHighScore();
             const listContainer = document.getElementById('leaderboardList');
             
             listContainer.innerHTML = `
@@ -543,6 +581,14 @@
                         <div class="text-xs text-gray-500">四個聲調辨別特訓</div>
                     </div>
                     <div class="font-black text-purple-600 text-base">${userData.highScoreFruit} 分</div>
+                </div>
+
+                <div class="p-3 bg-white rounded-xl shadow-sm border border-purple-100 flex items-center justify-between">
+                    <div>
+                        <div class="font-extrabold text-emerald-800 text-sm">🚂 拼音列車 (game4.html)</div>
+                        <div class="text-xs text-gray-500">單韻母音節配對與聲韻調組裝</div>
+                    </div>
+                    <div class="font-black text-emerald-600 text-base">${userData.highScoreTrain} 分</div>
                 </div>
             `;
 
