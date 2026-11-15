@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>拼音小高手 - 拼音列車大連線 (單韻母特輯)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css for smooth transitions -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap');
+        
+        html, body {
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+            touch-action: manipulation;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Train Track & Carriage styling */
+        .train-track {
+            background: repeating-linear-gradient(90deg, #78350f 0px, #78350f 8px, #d97706 8px, #d97706 28px);
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
+        }
+
+        .rail-line {
+            background: #475569;
+            height: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Floating Score Text */
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-36px) scale(1.25); }
+        }
+        .float-text {
+            animation: floatUp 0.75s ease-out forwards;
+        }
+
+        /* Shake animation */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .shake-alert {
+            animation: shake 0.35s ease-in-out;
+        }
+    </style>
+</head>
+<body class="p-2">
+
+    <!-- Container Locked to Viewport Height -->
+    <div class="w-full max-w-5xl max-h-[98vh] h-full flex flex-col justify-between mx-auto px-3 py-1.5">
+        
+        <!-- Top Navigation & Header Bar -->
+        <header class="flex items-center justify-between gap-2 shrink-0 mb-1">
+            <a href="index.html" class="bg-rose-500 hover:bg-rose-600 text-white font-black text-xs sm:text-sm px-3.5 py-1.5 rounded-full border-2 border-rose-700 shadow-md flex items-center gap-1.5 active:scale-95 transition">
+                <i class="fas fa-house"></i> 🏠 返回主選單
+            </a>
+
+            <div class="inline-flex items-center gap-1.5 bg-amber-400 text-amber-950 px-3 py-1 rounded-full font-black text-xs sm:text-sm shadow-sm">
+                <i class="fas fa-train text-rose-700"></i> 拼音列車大連線 (單韻母篇)
+            </div>
+
+            <div id="player-badge" class="bg-white/90 text-slate-800 font-extrabold px-3 py-1 rounded-full text-xs sm:text-sm border-2 border-sky-300 shadow-sm">
+                未設定學生
+            </div>
+        </header>
+
+        <!-- Dynamic Warning Alert Banner -->
+        <div id="warning-alert" class="hidden mb-1.5 bg-rose-50 border-2 border-rose-400 text-rose-800 p-2.5 rounded-xl shadow-md flex items-center justify-between transition-all duration-300 shrink-0">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-triangle-exclamation text-rose-500 text-base"></i>
+                <span id="warning-text" class="text-xs sm:text-sm font-black text-rose-700">請輸入學生班別與學號！</span>
+            </div>
+            <button onclick="hideWarning()" class="text-rose-400 hover:text-rose-700 p-0.5 text-base focus:outline-none">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- ================= MAIN SETUP SCREEN ================= -->
+        <div id="setup-screen" class="bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow-xl border-2 border-white flex flex-col justify-between overflow-y-auto max-h-[85vh] my-auto">
+            
+            <div class="text-center mb-3">
+                <h2 class="text-2xl sm:text-3xl font-black text-sky-900 mb-1 flex items-center justify-center gap-2">
+                    <span>🚂</span> 拼音列車大連線 <span>✨</span>
+                </h2>
+                <p class="text-slate-600 font-bold text-xs sm:text-sm">
+                    單韻母 (a, o, e, i, u, ü) 專題訓練 | 90秒限時挑戰 | 滿100分晉級第二關！
+                </p>
+            </div>
+
+            <!-- Student Profile Form -->
+            <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-4 mb-4">
+                <h3 class="text-sm font-black text-sky-900 mb-2 flex items-center gap-1.5">
+                    <i class="fas fa-id-card text-sky-600"></i> 請輸入學生基本資料 (登錄龍虎榜)
+                </h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">班別 Class</label>
+                        <input type="text" id="input-class" placeholder="例如: 2A" class="w-full px-3 py-2 rounded-xl border-2 border-sky-300 font-black text-slate-800 text-center text-sm focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">學號 Student ID</label>
+                        <input type="text" id="input-id" placeholder="例如: 08" class="w-full px-3 py-2 rounded-xl border-2 border-sky-300 font-black text-slate-800 text-center text-sm focus:outline-none focus:border-sky-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Rules Explanation -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-3">
+                    <div class="font-black text-amber-900 text-sm mb-1 flex items-center gap-1.5">
+                        <span class="bg-amber-400 text-amber-950 px-2 py-0.5 rounded text-xs">第一關</span> 單韻母音節配對
+                    </div>
+                    <p class="text-xs text-amber-800 leading-relaxed font-semibold">
+                        車廂顯示漢字，點擊月台上對應的單韻母拼音音節裝載，每題 10 分，滿 100 分升級！
+                    </p>
+                </div>
+                <div class="bg-purple-50 border-2 border-purple-300 rounded-2xl p-3">
+                    <div class="font-black text-purple-900 text-sm mb-1 flex items-center gap-1.5">
+                        <span class="bg-purple-400 text-purple-950 px-2 py-0.5 rounded text-xs">第二關</span> 聲韻調放大按鈕拼合
+                    </div>
+                    <p class="text-xs text-purple-800 leading-relaxed font-semibold">
+                        聽音睇字，點擊特大號【聲母】+【單韻母 (a,o,e,i,u,ü)】+【聲調】拼合音節！
+                    </p>
+                </div>
+            </div>
+
+            <!-- Options & Start -->
+            <div class="flex items-center justify-between border-t border-slate-100 pt-3 gap-3">
+                <label class="flex items-center cursor-pointer space-x-2 font-bold text-slate-700 text-xs sm:text-sm">
+                    <input type="checkbox" id="sound-toggle" checked class="w-4 h-4 text-sky-600 rounded focus:ring-sky-500">
+                    <span>開啟背景音效與北京普通話發音</span>
+                </label>
+
+                <button onclick="startGame()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-lg px-8 py-2.5 rounded-2xl shadow-lg hover:shadow-emerald-200 transform active:scale-95 transition flex items-center gap-2">
+                    <i class="fas fa-play text-xl"></i> 出發冒險！
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= GAMEPLAY SCREEN ================= -->
+        <div id="game-screen" class="hidden flex flex-col justify-between max-h-[86vh] my-auto">
+            
+            <!-- Game Level Indicator Banner -->
+            <div class="bg-white/95 rounded-xl p-2.5 shadow-md border-2 border-sky-300 flex items-center justify-between mb-2 gap-2 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <span id="level-badge" class="bg-sky-500 text-white font-black px-3 py-1 rounded-lg text-xs sm:text-sm shadow-sm">
+                        第一關：單韻母音節配對
+                    </span>
+                    <span id="level-task-desc" class="text-slate-700 font-bold text-xs sm:text-sm">
+                        請將正確的拼音音節裝載到車廂！
+                    </span>
+                </div>
+                <button onclick="playCurrentWordsAudio()" class="bg-emerald-100 text-emerald-800 border border-emerald-300 font-black px-3 py-1 rounded-lg text-xs hover:bg-emerald-200 transition flex items-center gap-1">
+                    <i class="fas fa-volume-high"></i> 聽讀音
+                </button>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-3 gap-2 mb-2 text-center shrink-0">
+                <div class="bg-white/90 rounded-xl p-1.5 shadow border-b-2 border-emerald-500">
+                    <div class="text-slate-400 font-bold text-xs">得分 Score</div>
+                    <div id="score-val" class="text-lg font-black text-emerald-600 leading-tight">0</div>
+                </div>
+                <div class="bg-white/90 rounded-xl p-1.5 shadow border-b-2 border-rose-500">
+                    <div class="text-slate-400 font-bold text-xs">剩餘時間 Time</div>
+                    <div id="time-val" class="text-lg font-black text-rose-600 leading-tight">90s</div>
+                </div>
+                <div class="bg-white/90 rounded-xl p-1.5 shadow border-b-2 border-amber-500">
+                    <div class="text-slate-400 font-bold text-xs">晉級進度 Progress</div>
+                    <div id="progress-val" class="text-lg font-black text-amber-600 leading-tight">0 / 100分</div>
+                </div>
+            </div>
+
+            <!-- TRAIN FIELD AREA -->
+            <div class="bg-sky-100/90 rounded-2xl p-3 border-4 border-sky-300 shadow-inner relative overflow-hidden my-auto flex flex-col justify-center min-h-[220px]">
+                <!-- Floating score effects container -->
+                <div id="effects-container" class="absolute inset-0 pointer-events-none z-30"></div>
+
+                <!-- Train Track & Carriage Container -->
+                <div id="train-area" class="w-full relative py-2">
+                    <div class="flex items-center justify-center gap-2 sm:gap-3 transition-all duration-500 transform" id="train-cars-wrapper">
+                        <!-- Dynamically filled with Train Head & Cars -->
+                    </div>
+
+                    <!-- Rail track below train -->
+                    <div class="w-full mt-2 relative">
+                        <div class="rail-line mb-1"></div>
+                        <div class="train-track h-4 w-full rounded"></div>
+                        <div class="rail-line mt-1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INTERACTION / SELECTION CONTROLS AREA (ENLARGED BUTTONS) -->
+            <div class="bg-white/95 rounded-2xl p-3 shadow-lg border-2 border-sky-200 mt-2 shrink-0">
+                
+                <!-- LEVEL 1 CONTROL: Complete Pinyin Cards -->
+                <div id="level1-controls">
+                    <div class="text-xs font-black text-slate-500 mb-2 text-center">
+                        👇 請點擊拼音卡片，再點擊對應的車廂進行裝載：
+                    </div>
+                    <div id="pinyin-cards-grid" class="flex flex-wrap justify-center gap-2.5">
+                        <!-- Pinyin Cards -->
+                    </div>
+                </div>
+
+                <!-- LEVEL 2 CONTROL: Assembly Initial + Final + Tone (ENLARGED BY >40%) -->
+                <div id="level2-controls" class="hidden">
+                    
+                    <!-- Selected Assembly Preview -->
+                    <div class="flex items-center justify-center gap-2 mb-2 bg-purple-50 p-2 rounded-xl border border-purple-200">
+                        <span class="text-xs font-bold text-purple-900">當前組裝拼音：</span>
+                        <span id="asm-initial" class="bg-amber-300 text-amber-950 font-black px-3 py-1 rounded border border-amber-500 text-base sm:text-lg">?</span>
+                        <span class="text-slate-400 font-bold text-lg">+</span>
+                        <span id="asm-final" class="bg-teal-300 text-teal-950 font-black px-3.5 py-1 rounded border border-teal-500 text-base sm:text-lg">?</span>
+                        <span class="text-slate-400 font-bold text-lg">+</span>
+                        <span id="asm-tone" class="bg-purple-300 text-purple-950 font-black px-3 py-1 rounded border border-purple-500 text-base sm:text-lg">?</span>
+                        <span class="text-slate-400 font-bold text-lg">=</span>
+                        <span id="asm-result" class="bg-rose-500 text-white font-black px-4 py-1 rounded-xl text-lg sm:text-xl shadow">未完成</span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <!-- Initial Selector (Enlarged Buttons) -->
+                        <div class="flex items-center gap-2 overflow-x-auto pb-1">
+                            <span class="font-black text-amber-900 bg-amber-200 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm shrink-0">聲母:</span>
+                            <div id="initial-buttons" class="flex gap-1.5"></div>
+                        </div>
+
+                        <!-- Single Final Selector (6 Big Buttons - 50% Enlarged) -->
+                        <div class="flex items-center gap-2 overflow-x-auto pb-1">
+                            <span class="font-black text-teal-900 bg-teal-200 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm shrink-0">單韻母:</span>
+                            <div id="final-buttons" class="flex gap-2"></div>
+                        </div>
+
+                        <!-- Tone Selector (5 Big Buttons - 40% Enlarged) -->
+                        <div class="flex items-center gap-2 justify-center">
+                            <span class="font-black text-purple-900 bg-purple-200 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm shrink-0">聲調:</span>
+                            <div id="tone-buttons" class="flex gap-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ================= RESULT MODAL ================= -->
+        <div id="result-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl border-4 border-amber-300 animate__animated animate__zoomIn">
+                <div class="text-center mb-4">
+                    <div class="text-5xl mb-1" id="result-badge">🏆</div>
+                    <h2 class="text-2xl font-black text-slate-900 mb-1" id="result-title">冒險完成！</h2>
+                    <p class="text-slate-500 font-bold text-xs sm:text-sm" id="result-subtitle">拼音列車大連線成績單</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5 mb-4">
+                    <div class="bg-slate-50 p-3 rounded-2xl text-center border border-slate-100">
+                        <div class="text-xs text-slate-400 font-bold">最終得分</div>
+                        <div class="text-2xl font-black text-emerald-600" id="res-score">0</div>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-2xl text-center border border-slate-100">
+                        <div class="text-xs text-slate-400 font-bold">完成答題</div>
+                        <div class="text-2xl font-black text-sky-600" id="res-count">0 題</div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard Section -->
+                <div class="mb-4">
+                    <h4 class="text-xs font-black text-slate-700 mb-2 flex items-center gap-1">
+                        <i class="fas fa-trophy text-amber-500"></i> 拼音列車英雄榜 (Top 5)：
+                    </h4>
+                    <div id="leaderboard-list" class="bg-amber-50/60 rounded-xl p-2.5 border border-amber-200 text-xs font-bold leading-relaxed space-y-1">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+
+                <div class="flex gap-2.5">
+                    <button onclick="restartGame()" class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black py-2.5 rounded-xl shadow transition text-center text-sm">
+                        <i class="fas fa-rotate-right"></i> 再玩一次
+                    </button>
+                    <button onclick="closeResultModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-black px-4 py-2.5 rounded-xl transition text-sm">
+                        返回設定
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= JAVASCRIPT GAME LOGIC ================= -->
+    <script>
+        /* ----------------------------------------------------
+         1. EXACT 200 SINGLE-FINAL VOCABULARY DATABASE (單韻母 a, o, e, i, u, ü)
+        ---------------------------------------------------- */
+        const VOCAB_DATABASE = [
+            // a (35)
+            { char: '爸', initial: 'b', final: 'a', tone: 4, pinyin: 'bà' },
+            { char: '八', initial: 'b', final: 'a', tone: 1, pinyin: 'bā' },
+            { char: '爬', initial: 'p', final: 'a', tone: 2, pinyin: 'pá' },
+            { char: '怕', initial: 'p', final: 'a', tone: 4, pinyin: 'pà' },
+            { char: '媽', initial: 'm', final: 'a', tone: 1, pinyin: 'mā' },
+            { char: '馬', initial: 'm', final: 'a', tone: 3, pinyin: 'mǎ' },
+            { char: '發', initial: 'f', final: 'a', tone: 1, pinyin: 'fā' },
+            { char: '法', initial: 'f', final: 'a', tone: 3, pinyin: 'fǎ' },
+            { char: '大', initial: 'd', final: 'a', tone: 4, pinyin: 'dà' },
+            { char: '打', initial: 'd', final: 'a', tone: 3, pinyin: 'dǎ' },
+            { char: '他', initial: 't', final: 'a', tone: 1, pinyin: 'tā' },
+            { char: '踏', initial: 't', final: 'a', tone: 4, pinyin: 'tà' },
+            { char: '拿', initial: 'n', final: 'a', tone: 2, pinyin: 'ná' },
+            { char: '納', initial: 'n', final: 'a', tone: 4, pinyin: 'nà' },
+            { char: '拉', initial: 'l', final: 'a', tone: 1, pinyin: 'lā' },
+            { char: '喇', initial: 'l', final: 'a', tone: 3, pinyin: 'lǎ' },
+            { char: '嘎', initial: 'g', final: 'a', tone: 1, pinyin: 'gā' },
+            { char: '尬', initial: 'g', final: 'a', tone: 4, pinyin: 'gà' },
+            { char: '卡', initial: 'k', final: 'a', tone: 3, pinyin: 'kǎ' },
+            { char: '咖', initial: 'k', final: 'a', tone: 1, pinyin: 'kā' },
+            { char: '哈', initial: 'h', final: 'a', tone: 1, pinyin: 'hā' },
+            { char: '扎', initial: 'zh', final: 'a', tone: 1, pinyin: 'zhā' },
+            { char: '查', initial: 'ch', final: 'a', tone: 2, pinyin: 'chá' },
+            { char: '茶', initial: 'ch', final: 'a', tone: 2, pinyin: 'chá' },
+            { char: '沙', initial: 'sh', final: 'a', tone: 1, pinyin: 'shā' },
+            { char: '傻', initial: 'sh', final: 'a', tone: 3, pinyin: 'shǎ' },
+            { char: '雜', initial: 'z', final: 'a', tone: 2, pinyin: 'zá' },
+            { char: '擦', initial: 'c', final: 'a', tone: 1, pinyin: 'cā' },
+            { char: '撒', initial: 's', final: 'a', tone: 1, pinyin: 'sā' },
+            { char: '鴨', initial: 'y', final: 'a', tone: 1, pinyin: 'yā' },
+            { char: '牙', initial: 'y', final: 'a', tone: 2, pinyin: 'yá' },
+            { char: '蛙', initial: 'w', final: 'a', tone: 1, pinyin: 'wā' },
+            { char: '挖', initial: 'w', final: 'a', tone: 1, pinyin: 'wā' },
+            { char: '塌', initial: 't', final: 'a', tone: 1, pinyin: 'tā' },
+            { char: '臘', initial: 'l', final: 'a', tone: 4, pinyin: 'là' },
+
+            // o (15)
+            { char: '波', initial: 'b', final: 'o', tone: 1, pinyin: 'bō' },
+            { char: '播', initial: 'b', final: 'o', tone: 1, pinyin: 'bō' },
+            { char: '伯', initial: 'b', final: 'o', tone: 2, pinyin: 'bó' },
+            { char: '破', initial: 'p', final: 'o', tone: 4, pinyin: 'pò' },
+            { char: '婆', initial: 'p', final: 'o', tone: 2, pinyin: 'pó' },
+            { char: '摸', initial: 'm', final: 'o', tone: 1, pinyin: 'mō' },
+            { char: '摩', initial: 'm', final: 'o', tone: 2, pinyin: 'mó' },
+            { char: '莫', initial: 'm', final: 'o', tone: 4, pinyin: 'mò' },
+            { char: '佛', initial: 'f', final: 'o', tone: 2, pinyin: 'fó' },
+            { char: '窩', initial: 'w', final: 'o', tone: 1, pinyin: 'wō' },
+            { char: '我', initial: 'w', final: 'o', tone: 3, pinyin: 'wǒ' },
+            { char: '默', initial: 'm', final: 'o', tone: 4, pinyin: 'mò' },
+            { char: '缽', initial: 'b', final: 'o', tone: 1, pinyin: 'bō' },
+            { char: '魄', initial: 'p', final: 'o', tone: 4, pinyin: 'pò' },
+            { char: '抹', initial: 'm', final: 'o', tone: 3, pinyin: 'mǒ' },
+
+            // e (30)
+            { char: '麼', initial: 'm', final: 'e', tone: 0, pinyin: 'me' },
+            { char: '德', initial: 'd', final: 'e', tone: 2, pinyin: 'dé' },
+            { char: '特', initial: 't', final: 'e', tone: 4, pinyin: 'tè' },
+            { char: '訥', initial: 'n', final: 'e', tone: 4, pinyin: 'nè' },
+            { char: '樂', initial: 'l', final: 'e', tone: 4, pinyin: 'lè' },
+            { char: '哥', initial: 'g', final: 'e', tone: 1, pinyin: 'gē' },
+            { char: '個', initial: 'g', final: 'e', tone: 4, pinyin: 'gè' },
+            { char: '歌', initial: 'g', final: 'e', tone: 1, pinyin: 'gē' },
+            { char: '科', initial: 'k', final: 'e', tone: 1, pinyin: 'kē' },
+            { char: '可', initial: 'k', final: 'e', tone: 3, pinyin: 'kě' },
+            { char: '課', initial: 'k', final: 'e', tone: 4, pinyin: 'kè' },
+            { char: '喝', initial: 'h', final: 'e', tone: 1, pinyin: 'hē' },
+            { char: '和', initial: 'h', final: 'e', tone: 2, pinyin: 'hé' },
+            { char: '盒', initial: 'h', final: 'e', tone: 2, pinyin: 'hé' },
+            { char: '哲', initial: 'zh', final: 'e', tone: 2, pinyin: 'zhé' },
+            { char: '者', initial: 'zh', final: 'e', tone: 3, pinyin: 'zhě' },
+            { char: '車', initial: 'ch', final: 'e', tone: 1, pinyin: 'chē' },
+            { char: '蛇', initial: 'sh', final: 'e', tone: 2, pinyin: 'shé' },
+            { char: '社', initial: 'sh', final: 'e', tone: 4, pinyin: 'shè' },
+            { char: '熱', initial: 'r', final: 'e', tone: 4, pinyin: 'rè' },
+            { char: '則', initial: 'z', final: 'e', tone: 2, pinyin: 'zé' },
+            { char: '冊', initial: 'c', final: 'e', tone: 4, pinyin: 'cè' },
+            { char: '色', initial: 's', final: 'e', tone: 4, pinyin: 'sè' },
+            { char: '惹', initial: 'r', final: 'e', tone: 3, pinyin: 'rě' },
+            { char: '各', initial: 'g', final: 'e', tone: 4, pinyin: 'gè' },
+            { char: '渴', initial: 'k', final: 'e', tone: 3, pinyin: 'kě' },
+            { char: '河', initial: 'h', final: 'e', tone: 2, pinyin: 'hé' },
+            { char: '折', initial: 'zh', final: 'e', tone: 2, pinyin: 'zhé' },
+            { char: '澈', initial: 'ch', final: 'e', tone: 4, pinyin: 'chè' },
+            { char: '舌', initial: 'sh', final: 'e', tone: 2, pinyin: 'shé' },
+
+            // i (50)
+            { char: '比', initial: 'b', final: 'i', tone: 3, pinyin: 'bǐ' },
+            { char: '筆', initial: 'b', final: 'i', tone: 3, pinyin: 'bǐ' },
+            { char: '披', initial: 'p', final: 'i', tone: 1, pinyin: 'pī' },
+            { char: '皮', initial: 'p', final: 'i', tone: 2, pinyin: 'pí' },
+            { char: '米', initial: 'm', final: 'i', tone: 3, pinyin: 'mǐ' },
+            { char: '咪', initial: 'm', final: 'i', tone: 1, pinyin: 'mī' },
+            { char: '地', initial: 'd', final: 'i', tone: 4, pinyin: 'dì' },
+            { char: '弟', initial: 'd', final: 'i', tone: 4, pinyin: 'dì' },
+            { char: '體', initial: 't', final: 'i', tone: 3, pinyin: 'tǐ' },
+            { char: '題', initial: 't', final: 'i', tone: 2, pinyin: 'tí' },
+            { char: '你', initial: 'n', final: 'i', tone: 3, pinyin: 'nǐ' },
+            { char: '泥', initial: 'n', final: 'i', tone: 2, pinyin: 'ní' },
+            { char: '黎', initial: 'l', final: 'i', tone: 2, pinyin: 'lí' },
+            { char: '鯉', initial: 'l', final: 'i', tone: 3, pinyin: 'lǐ' },
+            { char: '雞', initial: 'j', final: 'i', tone: 1, pinyin: 'jī' },
+            { char: '集', initial: 'j', final: 'i', tone: 2, pinyin: 'jí' },
+            { char: '七', initial: 'q', final: 'i', tone: 1, pinyin: 'qī' },
+            { char: '氣', initial: 'q', final: 'i', tone: 4, pinyin: 'qì' },
+            { char: '西', initial: 'x', final: 'i', tone: 1, pinyin: 'xī' },
+            { char: '喜', initial: 'x', final: 'i', tone: 3, pinyin: 'xǐ' },
+            { char: '知', initial: 'zh', final: 'i', tone: 1, pinyin: 'zhī' },
+            { char: '紙', initial: 'zh', final: 'i', tone: 3, pinyin: 'zhǐ' },
+            { char: '隻', initial: 'zh', final: 'i', tone: 1, pinyin: 'zhī' },
+            { char: '尺', initial: 'ch', final: 'i', tone: 3, pinyin: 'chǐ' },
+            { char: '吃', initial: 'ch', final: 'i', tone: 1, pinyin: 'chī' },
+            { char: '詩', initial: 'sh', final: 'i', tone: 1, pinyin: 'shī' },
+            { char: '師', initial: 'sh', final: 'i', tone: 1, pinyin: 'shī' },
+            { char: '日', initial: 'r', final: 'i', tone: 4, pinyin: 'rì' },
+            { char: '子', initial: 'z', final: 'i', tone: 3, pinyin: 'zǐ' },
+            { char: '字', initial: 'z', final: 'i', tone: 4, pinyin: 'zì' },
+            { char: '此', initial: 'c', final: 'i', tone: 3, pinyin: 'cǐ' },
+            { char: '詞', initial: 'c', final: 'i', tone: 2, pinyin: 'cí' },
+            { char: '四', initial: 's', final: 'i', tone: 4, pinyin: 'sì' },
+            { char: '絲', initial: 's', final: 'i', tone: 1, pinyin: 'sī' },
+            { char: '衣', initial: 'y', final: 'i', tone: 1, pinyin: 'yī' },
+            { char: '醫', initial: 'y', final: 'i', tone: 1, pinyin: 'yī' },
+            { char: '閉', initial: 'b', final: 'i', tone: 4, pinyin: 'bì' },
+            { char: '匹', initial: 'p', final: 'i', tone: 3, pinyin: 'pǐ' },
+            { char: '低', initial: 'd', final: 'i', tone: 1, pinyin: 'dī' },
+            { char: '梯', initial: 't', final: 'i', tone: 1, pinyin: 'tī' },
+            { char: '擬', initial: 'n', final: 'i', tone: 3, pinyin: 'nǐ' },
+            { char: '禮', initial: 'l', final: 'i', tone: 3, pinyin: 'lǐ' },
+            { char: '急', initial: 'j', final: 'i', tone: 2, pinyin: 'jí' },
+            { char: '期', initial: 'q', final: 'i', tone: 1, pinyin: 'qī' },
+            { char: '細', initial: 'x', final: 'i', tone: 4, pinyin: 'xì' },
+            { char: '直', initial: 'zh', final: 'i', tone: 2, pinyin: 'zhí' },
+            { char: '翅', initial: 'ch', final: 'i', tone: 4, pinyin: 'chì' },
+            { char: '是', initial: 'sh', final: 'i', tone: 4, pinyin: 'shì' },
+            { char: '自', initial: 'z', final: 'i', tone: 4, pinyin: 'zì' },
+            { char: '次', initial: 'c', final: 'i', tone: 4, pinyin: 'cì' },
+
+            // u (50)
+            { char: '布', initial: 'b', final: 'u', tone: 4, pinyin: 'bù' },
+            { char: '不', initial: 'b', final: 'u', tone: 4, pinyin: 'bù' },
+            { char: '補', initial: 'b', final: 'u', tone: 3, pinyin: 'bǔ' },
+            { char: '普', initial: 'p', final: 'u', tone: 3, pinyin: 'pǔ' },
+            { char: '葡', initial: 'p', final: 'u', tone: 2, pinyin: 'pú' },
+            { char: '木', initial: 'm', final: 'u', tone: 4, pinyin: 'mù' },
+            { char: '目', initial: 'm', final: 'u', tone: 4, pinyin: 'mù' },
+            { char: '府', initial: 'f', final: 'u', tone: 3, pinyin: 'fǔ' },
+            { char: '富', initial: 'f', final: 'u', tone: 4, pinyin: 'fù' },
+            { char: '讀', initial: 'd', final: 'u', tone: 2, pinyin: 'dú' },
+            { char: '嘟', initial: 'd', final: 'u', tone: 1, pinyin: 'dū' },
+            { char: '兔', initial: 't', final: 'u', tone: 4, pinyin: 'tù' },
+            { char: '圖', initial: 't', final: 'u', tone: 2, pinyin: 'tú' },
+            { char: '奴', initial: 'n', final: 'u', tone: 2, pinyin: 'nú' },
+            { char: '努', initial: 'n', final: 'u', tone: 3, pinyin: 'nǔ' },
+            { char: '路', initial: 'l', final: 'u', tone: 4, pinyin: 'lù' },
+            { char: '陸', initial: 'l', final: 'u', tone: 4, pinyin: 'lù' },
+            { char: '咕', initial: 'g', final: 'u', tone: 1, pinyin: 'gū' },
+            { char: '鼓', initial: 'g', final: 'u', tone: 3, pinyin: 'gǔ' },
+            { char: '古', initial: 'g', final: 'u', tone: 3, pinyin: 'gǔ' },
+            { char: '苦', initial: 'k', final: 'u', tone: 3, pinyin: 'kǔ' },
+            { char: '哭', initial: 'k', final: 'u', tone: 1, pinyin: 'kū' },
+            { char: '褲', initial: 'k', final: 'u', tone: 4, pinyin: 'kù' },
+            { char: '湖', initial: 'h', final: 'u', tone: 2, pinyin: 'hú' },
+            { char: '虎', initial: 'h', final: 'u', tone: 3, pinyin: 'hǔ' },
+            { char: '蛛', initial: 'zh', final: 'u', tone: 1, pinyin: 'zhū' },
+            { char: '竹', initial: 'zh', final: 'u', tone: 2, pinyin: 'zhú' },
+            { char: '主', initial: 'zh', final: 'u', tone: 3, pinyin: 'zhǔ' },
+            { char: '出', initial: 'ch', final: 'u', tone: 1, pinyin: 'chū' },
+            { char: '初', initial: 'ch', final: 'u', tone: 1, pinyin: 'chū' },
+            { char: '書', initial: 'sh', final: 'u', tone: 1, pinyin: 'shū' },
+            { char: '樹', initial: 'sh', final: 'u', tone: 4, pinyin: 'shù' },
+            { char: '入', initial: 'r', final: 'u', tone: 4, pinyin: 'rù' },
+            { char: '如', initial: 'r', final: 'u', tone: 2, pinyin: 'rú' },
+            { char: '租', initial: 'z', final: 'u', tone: 1, pinyin: 'zū' },
+            { char: '祖', initial: 'z', final: 'u', tone: 3, pinyin: 'zǔ' },
+            { char: '粗', initial: 'c', final: 'u', tone: 1, pinyin: 'cū' },
+            { char: '促', initial: 'c', final: 'u', tone: 4, pinyin: 'cù' },
+            { char: '蘇', initial: 's', final: 'u', tone: 1, pinyin: 'sū' },
+            { char: '訴', initial: 's', final: 'u', tone: 4, pinyin: 'sù' },
+            { char: '屋', initial: 'w', final: 'u', tone: 1, pinyin: 'wū' },
+            { char: '五', initial: 'w', final: 'u', tone: 3, pinyin: 'wǔ' },
+            { char: '部', initial: 'b', final: 'u', tone: 4, pinyin: 'bù' },
+            { char: '鋪', initial: 'p', final: 'u', tone: 1, pinyin: 'pū' },
+            { char: '毒', initial: 'd', final: 'u', tone: 2, pinyin: 'dú' },
+            { char: '突', initial: 't', final: 'u', tone: 1, pinyin: 'tū' },
+            { char: '谷', initial: 'g', final: 'u', tone: 3, pinyin: 'gǔ' },
+            { char: '戶', initial: 'h', final: 'u', tone: 4, pinyin: 'hù' },
+            { char: '豬', initial: 'zh', final: 'u', tone: 1, pinyin: 'zhū' },
+            { char: '數', initial: 'sh', final: 'u', tone: 4, pinyin: 'shù' },
+
+            // ü (20)
+            { char: '居', initial: 'j', final: 'ü', tone: 1, pinyin: 'jū' },
+            { char: '局', initial: 'j', final: 'ü', tone: 2, pinyin: 'jú' },
+            { char: '句', initial: 'j', final: 'ü', tone: 4, pinyin: 'jù' },
+            { char: '去', initial: 'q', final: 'ü', tone: 4, pinyin: 'qù' },
+            { char: '曲', initial: 'q', final: 'ü', tone: 1, pinyin: 'qū' },
+            { char: '虛', initial: 'x', final: 'ü', tone: 1, pinyin: 'xū' },
+            { char: '許', initial: 'x', final: 'ü', tone: 3, pinyin: 'xǔ' },
+            { char: '序', initial: 'x', final: 'ü', tone: 4, pinyin: 'xù' },
+            { char: '女', initial: 'n', final: 'ü', tone: 3, pinyin: 'nǚ' },
+            { char: '綠', initial: 'l', final: 'ü', tone: 4, pinyin: 'lǜ' },
+            { char: '驢', initial: 'l', final: 'ü', tone: 2, pinyin: 'lǘ' },
+            { char: '魚', initial: 'y', final: 'ü', tone: 2, pinyin: 'yú' },
+            { char: '雨', initial: 'y', final: 'ü', tone: 3, pinyin: 'yǔ' },
+            { char: '玉', initial: 'y', final: 'ü', tone: 4, pinyin: 'yù' },
+            { char: '預', initial: 'y', final: 'ü', tone: 4, pinyin: 'yù' },
+            { char: '劇', initial: 'j', final: 'ü', tone: 4, pinyin: 'jù' },
+            { char: '取', initial: 'q', final: 'ü', tone: 3, pinyin: 'qǔ' },
+            { char: '須', initial: 'x', final: 'ü', tone: 1, pinyin: 'xū' },
+            { char: '律', initial: 'l', final: 'ü', tone: 4, pinyin: 'lǜ' },
+            { char: '旅', initial: 'l', final: 'ü', tone: 3, pinyin: 'lǚ' }
+        ];
+
+        /* ----------------------------------------------------
+         2. SINGLE FINALS & SELECTOR DICTIONARIES
+        ---------------------------------------------------- */
+        const ALL_INITIALS_LIST = ['b','p','m','f','d','t','n','l','g','k','h','j','q','x','zh','ch','sh','r','z','c','s','y','w'];
+        const SINGLE_FINALS_LIST = ['a', 'o', 'e', 'i', 'u', 'ü'];
+        
+        const TONE_SYMBOLS = {
+            1: '1聲 (ˉ)',
+            2: '2聲 (ˊ)',
+            3: '3聲 (ˇ)',
+            4: '4聲 (ˋ)',
+            0: '輕聲'
+        };
+
+        const TONE_MARKS = {
+            'a': ['a', 'ā', 'á', 'ǎ', 'à'],
+            'o': ['o', 'ō', 'ó', 'ǒ', 'ò'],
+            'e': ['e', 'ē', 'é', 'ě', 'è'],
+            'i': ['i', 'ī', 'í', 'ǐ', 'ì'],
+            'u': ['u', 'ū', 'ú', 'ǔ', 'ù'],
+            'ü': ['ü', 'ǖ', 'ǘ', 'ǚ', 'ǜ']
+        };
+
+        function applyToneToSingleFinal(init, final, tone) {
+            let marked = TONE_MARKS[final] ? TONE_MARKS[final][tone] : final;
+            return (init + marked).toLowerCase();
+        }
+
+        /* ----------------------------------------------------
+         3. GAME STATE & AUDIO ENGINE
+        ---------------------------------------------------- */
+        let currentLevel = 1; // 1 or 2
+        let score = 0;
+        let answeredCount = 0;
+        let timeLeft = 90;
+        let timerInterval = null;
+
+        let studentClass = "";
+        let studentId = "";
+
+        // Level 1 Round State
+        let l1CurrentCarsData = []; // 3 items
+        let l1UserSlots = ["", "", ""];
+        let l1SelectedPinyin = null;
+
+        // Level 2 Round State
+        let l2CurrentItem = null;
+        let l2SelectedInitial = null;
+        let l2SelectedFinal = null;
+        let l2SelectedTone = null;
+
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (!document.getElementById('sound-toggle').checked) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'hit') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.linearRampToValueAtTime(110, now + 0.2);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            } else if (type === 'levelUp') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.2);
+                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.4);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            }
+        }
+
+        // Standard Beijing Mandarin Speech Output
+        function speakWord(text) {
+            if (!document.getElementById('sound-toggle').checked) return;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'zh-CN'; // Beijing Mandarin
+                u.rate = 0.85;
+                window.speechSynthesis.speak(u);
+            }
+        }
+
+        function showWarning(msg) {
+            const alertEl = document.getElementById('warning-alert');
+            document.getElementById('warning-text').innerText = msg;
+            alertEl.classList.remove('hidden');
+            alertEl.classList.remove('shake-alert');
+            void alertEl.offsetWidth;
+            alertEl.classList.add('shake-alert');
+        }
+
+        function hideWarning() {
+            document.getElementById('warning-alert').classList.add('hidden');
+        }
+
+        /* ----------------------------------------------------
+         4. GAME INITIALIZATION & SETUP
+        ---------------------------------------------------- */
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedClass = localStorage.getItem('pinyin_class');
+            const savedId = localStorage.getItem('pinyin_id');
+            if (savedClass) document.getElementById('input-class').value = savedClass;
+            if (savedId) document.getElementById('input-id').value = savedId;
+        });
+
+        function startGame() {
+            const c = document.getElementById('input-class').value.trim();
+            const id = document.getElementById('input-id').value.trim();
+
+            if (!c || !id) {
+                showWarning('⚠️ 請輸入學生班別與學號！');
+                return;
+            }
+
+            hideWarning();
+            initAudio();
+
+            studentClass = c;
+            studentId = id;
+            localStorage.setItem('pinyin_class', studentClass);
+            localStorage.setItem('pinyin_id', studentId);
+
+            document.getElementById('player-badge').innerText = `${studentClass}班 ${studentId}號`;
+
+            // Reset Stats
+            score = 0;
+            answeredCount = 0;
+            currentLevel = 1;
+            timeLeft = 90;
+
+            updateStatsUI();
+
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+
+            startTimer();
+            loadLevel1Round();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('time-val').innerText = `${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function updateStatsUI() {
+            document.getElementById('score-val').innerText = score;
+            document.getElementById('progress-val').innerText = `${score} / 100分`;
+        }
+
+        /* ----------------------------------------------------
+         5. LEVEL 1 GAME MECHANICS (單韻母音節配對)
+        ---------------------------------------------------- */
+        function loadLevel1Round() {
+            document.getElementById('level-badge').innerText = '第一關：單韻母音節配對';
+            document.getElementById('level-badge').className = 'bg-sky-500 text-white font-black px-3 py-1 rounded-lg text-xs sm:text-sm shadow-sm';
+            document.getElementById('level-task-desc').innerText = '請將正確的單韻母音節裝載到車廂！';
+            document.getElementById('level1-controls').classList.remove('hidden');
+            document.getElementById('level2-controls').classList.add('hidden');
+
+            l1UserSlots = ["", "", ""];
+            l1SelectedPinyin = null;
+
+            // Pick 3 random words
+            const shuffled = [...VOCAB_DATABASE].sort(() => 0.5 - Math.random());
+            l1CurrentCarsData = shuffled.slice(0, 3);
+
+            renderLevel1Cars();
+            renderLevel1PinyinCards();
+            playCurrentWordsAudio();
+        }
+
+        function renderLevel1Cars() {
+            const wrapper = document.getElementById('train-cars-wrapper');
+            wrapper.className = "flex items-center justify-center gap-2 sm:gap-3 transition-all duration-500 transform animate__animated animate__fadeInRight";
+            
+            let html = `
+                <!-- Locomotive Head -->
+                <div class="bg-rose-500 border-3 border-slate-800 rounded-l-2xl p-2 w-20 h-24 flex flex-col items-center justify-center text-white shadow-lg shrink-0">
+                    <i class="fas fa-train text-3xl"></i>
+                    <span class="font-black text-xs mt-1">100分解鎖</span>
+                </div>
+            `;
+
+            l1CurrentCarsData.forEach((item, carIdx) => {
+                const pinyinVal = l1UserSlots[carIdx];
+                const isFilled = pinyinVal !== "";
+                html += `
+                    <div onclick="handleLevel1CarClick(${carIdx})" class="bg-sky-400 border-3 border-slate-800 rounded-xl p-1.5 w-24 h-24 flex flex-col items-center justify-between shadow-md cursor-pointer hover:scale-105 transition shrink-0">
+                        <div class="bg-white border-2 border-slate-800 rounded-lg w-full text-center py-1 text-2xl font-black text-slate-800 shadow-inner">
+                            ${item.char}
+                        </div>
+                        <div class="w-full text-center py-1 rounded-lg text-xs font-black border-2 ${isFilled ? 'bg-amber-300 text-amber-950 border-amber-500' : 'bg-white/70 text-slate-500 border-dashed border-slate-400'}">
+                            ${pinyinVal || '裝載音節'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            wrapper.innerHTML = html;
+        }
+
+        function renderLevel1PinyinCards() {
+            const grid = document.getElementById('pinyin-cards-grid');
+            grid.innerHTML = '';
+
+            // Shuffle pinyin cards for current 3 items
+            if (!window.l1PinyinPool || window.l1PinyinPoolRound !== l1CurrentCarsData[0].char) {
+                window.l1PinyinPoolRound = l1CurrentCarsData[0].char;
+                window.l1PinyinPool = l1CurrentCarsData.map(d => d.pinyin).sort(() => 0.5 - Math.random());
+            }
+
+            window.l1PinyinPool.forEach(pinyin => {
+                const isUsed = l1UserSlots.includes(pinyin);
+                const isSelected = l1SelectedPinyin === pinyin;
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = () => selectLevel1Pinyin(pinyin);
+                btn.className = `px-4 py-2.5 rounded-xl border-2 font-black text-lg shadow transition ${
+                    isUsed ? 'opacity-30 pointer-events-none bg-slate-200 border-slate-300 text-slate-400' :
+                    isSelected ? 'bg-amber-400 border-amber-600 text-amber-950 scale-110 ring-2 ring-amber-300' :
+                    'bg-purple-500 border-purple-800 text-white hover:bg-purple-600 active:scale-95'
+                }`;
+                btn.innerText = pinyin;
+                grid.appendChild(btn);
+            });
+        }
+
+        function selectLevel1Pinyin(pinyin) {
+            if (l1UserSlots.includes(pinyin)) return;
+            l1SelectedPinyin = (l1SelectedPinyin === pinyin) ? null : pinyin;
+            renderLevel1PinyinCards();
+        }
+
+        function handleLevel1CarClick(carIdx) {
+            if (l1UserSlots[carIdx] !== "") {
+                l1UserSlots[carIdx] = "";
+                l1SelectedPinyin = null;
+                renderLevel1Cars();
+                renderLevel1PinyinCards();
+                return;
+            }
+
+            if (l1SelectedPinyin) {
+                l1UserSlots[carIdx] = l1SelectedPinyin;
+                l1SelectedPinyin = null;
+                renderLevel1Cars();
+                renderLevel1PinyinCards();
+
+                if (!l1UserSlots.includes("")) {
+                    setTimeout(checkLevel1Answers, 250);
+                }
+            }
+        }
+
+        function checkLevel1Answers() {
+            let correctCount = 0;
+            l1CurrentCarsData.forEach((item, idx) => {
+                if (l1UserSlots[idx] === item.pinyin) {
+                    correctCount++;
+                }
+            });
+
+            if (correctCount === 3) {
+                score += 30;
+                answeredCount += 3;
+                playSound('hit');
+                updateStatsUI();
+
+                showFloatingEffect(`+30 完美連配！`, 'text-emerald-600');
+
+                const wrapper = document.getElementById('train-cars-wrapper');
+                wrapper.className = "flex items-center justify-center gap-2 sm:gap-3 transition-all duration-500 transform animate__animated animate__slideOutRight";
+
+                setTimeout(() => {
+                    if (score >= 100) {
+                        playSound('levelUp');
+                        currentLevel = 2;
+                        alert('🎉 恭喜滿 100 分！解鎖進入第二關：【單韻母聲韻調拼合列車】！');
+                        loadLevel2Round();
+                    } else {
+                        loadLevel1Round();
+                    }
+                }, 500);
+
+            } else {
+                playSound('wrong');
+                showFloatingEffect(`有填錯喔，請重試！`, 'text-rose-600');
+            }
+        }
+
+        /* ----------------------------------------------------
+         6. LEVEL 2 GAME MECHANICS (單韻母聲韻調放大組裝)
+        ---------------------------------------------------- */
+        function loadLevel2Round() {
+            document.getElementById('level-badge').innerText = '第二關：聲韻調放大拼合';
+            document.getElementById('level-badge').className = 'bg-purple-600 text-white font-black px-3 py-1 rounded-lg text-xs sm:text-sm shadow-sm';
+            document.getElementById('level-task-desc').innerText = '點擊【聲母】+【單韻母】+【聲調】組裝拼音！';
+            document.getElementById('level1-controls').classList.add('hidden');
+            document.getElementById('level2-controls').classList.remove('hidden');
+
+            l2SelectedInitial = null;
+            l2SelectedFinal = null;
+            l2SelectedTone = null;
+
+            const randomIndex = Math.floor(Math.random() * VOCAB_DATABASE.length);
+            l2CurrentItem = VOCAB_DATABASE[randomIndex];
+
+            renderLevel2Car();
+            renderLevel2Selectors();
+            updateLevel2Preview();
+            speakWord(l2CurrentItem.char);
+        }
+
+        function renderLevel2Car() {
+            const wrapper = document.getElementById('train-cars-wrapper');
+            wrapper.className = "flex items-center justify-center gap-2 sm:gap-3 transition-all duration-500 transform animate__animated animate__fadeInRight";
+
+            wrapper.innerHTML = `
+                <!-- Locomotive Head -->
+                <div class="bg-purple-600 border-3 border-slate-800 rounded-l-2xl p-2 w-20 h-24 flex flex-col items-center justify-center text-white shadow-lg shrink-0">
+                    <i class="fas fa-cogs text-3xl"></i>
+                    <span class="font-black text-xs mt-1">組裝列車</span>
+                </div>
+
+                <!-- Target Carriage -->
+                <div class="bg-amber-400 border-3 border-slate-800 rounded-xl p-2 w-48 h-24 flex flex-col items-center justify-between shadow-md shrink-0">
+                    <div class="bg-white border-2 border-slate-800 rounded-lg w-full text-center py-0.5 text-3xl font-black text-slate-800 shadow-inner">
+                        ${l2CurrentItem.char}
+                    </div>
+                    <button onclick="submitLevel2Assembly()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white border-2 border-slate-800 py-1.5 rounded-lg text-sm font-black shadow active:scale-95 transition">
+                        🚀 裝載組裝拼音
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderLevel2Selectors() {
+            // Initials (Large touch target)
+            const initContainer = document.getElementById('initial-buttons');
+            initContainer.innerHTML = ALL_INITIALS_LIST.map(init => `
+                <button type="button" onclick="selectLevel2Initial('${init}')" class="px-3 py-1.5 rounded-xl border-2 font-black text-sm sm:text-base transition shrink-0 ${l2SelectedInitial === init ? 'bg-amber-400 text-amber-950 border-amber-600 scale-110 shadow' : 'bg-white text-slate-700 border-slate-300 hover:border-amber-300'}">
+                    ${init}
+                </button>
+            `).join('');
+
+            // Single Finals (Huge touch target - 50% Enlarged)
+            const finalContainer = document.getElementById('final-buttons');
+            finalContainer.innerHTML = SINGLE_FINALS_LIST.map(fin => `
+                <button type="button" onclick="selectLevel2Final('${fin}')" class="px-5 py-2.5 rounded-xl border-2 font-black text-xl sm:text-2xl transition shrink-0 ${l2SelectedFinal === fin ? 'bg-teal-400 text-teal-950 border-teal-600 scale-110 shadow-md ring-2 ring-teal-300' : 'bg-white text-slate-800 border-slate-300 hover:border-teal-400'}">
+                    ${fin}
+                </button>
+            `).join('');
+
+            // Tones (Huge touch target - 40% Enlarged)
+            const toneContainer = document.getElementById('tone-buttons');
+            toneContainer.innerHTML = [1, 2, 3, 4, 0].map(t => `
+                <button type="button" onclick="selectLevel2Tone(${t})" class="px-3.5 py-2 rounded-xl border-2 font-black text-sm sm:text-base transition ${l2SelectedTone === t ? 'bg-purple-600 text-white border-purple-800 scale-110 shadow-md' : 'bg-white text-slate-700 border-slate-300 hover:border-purple-300'}">
+                    ${TONE_SYMBOLS[t]}
+                </button>
+            `).join('');
+        }
+
+        function selectLevel2Initial(init) {
+            l2SelectedInitial = init;
+            renderLevel2Selectors();
+            updateLevel2Preview();
+        }
+
+        function selectLevel2Final(fin) {
+            l2SelectedFinal = fin;
+            renderLevel2Selectors();
+            updateLevel2Preview();
+        }
+
+        function selectLevel2Tone(tone) {
+            l2SelectedTone = tone;
+            renderLevel2Selectors();
+            updateLevel2Preview();
+        }
+
+        function updateLevel2Preview() {
+            document.getElementById('asm-initial').innerText = l2SelectedInitial || '?';
+            document.getElementById('asm-final').innerText = l2SelectedFinal || '?';
+            document.getElementById('asm-tone').innerText = l2SelectedTone !== null ? TONE_SYMBOLS[l2SelectedTone] : '?';
+
+            if (l2SelectedInitial && l2SelectedFinal && l2SelectedTone !== null) {
+                const assembled = applyToneToSingleFinal(l2SelectedInitial, l2SelectedFinal, l2SelectedTone);
+                document.getElementById('asm-result').innerText = assembled;
+            } else {
+                document.getElementById('asm-result').innerText = '未完成';
+            }
+        }
+
+        function submitLevel2Assembly() {
+            if (!l2SelectedInitial || !l2SelectedFinal || l2SelectedTone === null) {
+                playSound('wrong');
+                showFloatingEffect('請完整選擇聲母、單韻母與聲調！', 'text-rose-600');
+                return;
+            }
+
+            const isInitCorrect = (l2SelectedInitial === l2CurrentItem.initial);
+            const isFinalCorrect = (l2SelectedFinal === l2CurrentItem.final);
+            const isToneCorrect = (l2SelectedTone === l2CurrentItem.tone);
+
+            if (isInitCorrect && isFinalCorrect && isToneCorrect) {
+                score += 10;
+                answeredCount++;
+                playSound('hit');
+                updateStatsUI();
+
+                showFloatingEffect(`+10 組裝正確！`, 'text-emerald-600');
+
+                const wrapper = document.getElementById('train-cars-wrapper');
+                wrapper.className = "flex items-center justify-center gap-2 sm:gap-3 transition-all duration-500 transform animate__animated animate__slideOutRight";
+
+                setTimeout(() => {
+                    loadLevel2Round();
+                }, 400);
+
+            } else {
+                playSound('wrong');
+                showFloatingEffect(`組裝有誤！(正確：${l2CurrentItem.pinyin})`, 'text-rose-600');
+            }
+        }
+
+        /* ----------------------------------------------------
+         7. UTILITIES & RESULT MODAL
+        ---------------------------------------------------- */
+        function playCurrentWordsAudio() {
+            if (currentLevel === 1) {
+                const text = l1CurrentCarsData.map(d => d.char).join("、");
+                speakWord(`請配對：${text}`);
+            } else if (currentLevel === 2 && l2CurrentItem) {
+                speakWord(`請組裝：${l2CurrentItem.char}`);
+            }
+        }
+
+        function showFloatingEffect(text, colorClass) {
+            const container = document.getElementById('effects-container');
+            const floatEl = document.createElement('div');
+            floatEl.className = `absolute font-black text-xl ${colorClass} float-text pointer-events-none z-40 text-center w-full top-1/3`;
+            floatEl.innerText = text;
+            container.appendChild(floatEl);
+            setTimeout(() => floatEl.remove(), 750);
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+
+            saveToLeaderboard(studentClass, studentId, score);
+
+            document.getElementById('res-score').innerText = score;
+            document.getElementById('res-count').innerText = `${answeredCount} 題`;
+
+            const badgeEl = document.getElementById('result-badge');
+            const titleEl = document.getElementById('result-title');
+
+            if (score >= 150) {
+                badgeEl.innerText = '🏆';
+                titleEl.innerText = '單韻母列車大師！';
+            } else if (score >= 100) {
+                badgeEl.innerText = '🥇';
+                titleEl.innerText = '拼音小高手！';
+            } else {
+                badgeEl.innerText = '🌟';
+                titleEl.innerText = '繼續加油，熟能生巧！';
+            }
+
+            renderLeaderboard();
+            document.getElementById('result-modal').classList.remove('hidden');
+        }
+
+        function saveToLeaderboard(c, id, sc) {
+            let ranks = [];
+            try {
+                ranks = JSON.parse(localStorage.getItem('pinyin_train_leaderboard') || '[]');
+            } catch (e) { ranks = []; }
+
+            ranks.push({ className: c, studentId: id, score: sc, date: new Date().toLocaleDateString() });
+            ranks.sort((a, b) => b.score - a.score);
+            ranks = ranks.slice(0, 5);
+
+            localStorage.setItem('pinyin_train_leaderboard', JSON.stringify(ranks));
+        }
+
+        function renderLeaderboard() {
+            let ranks = [];
+            try {
+                ranks = JSON.parse(localStorage.getItem('pinyin_train_leaderboard') || '[]');
+            } catch (e) { ranks = []; }
+
+            const container = document.getElementById('leaderboard-list');
+            if (ranks.length === 0) {
+                container.innerHTML = '<div class="text-slate-400">尚無紀錄</div>';
+                return;
+            }
+
+            container.innerHTML = ranks.map((r, i) => {
+                const badge = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '👤';
+                return `
+                    <div class="flex items-center justify-between text-slate-800">
+                        <span>${badge} ${r.className}班 ${r.studentId}號</span>
+                        <span class="text-amber-700 font-black">${r.score} 分</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function closeResultModal() {
+            document.getElementById('result-modal').classList.add('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('setup-screen').classList.remove('hidden');
+        }
+
+        function restartGame() {
+            document.getElementById('result-modal').classList.add('hidden');
+            startGame();
+        }
+    </script>
+</body>
+</html>
