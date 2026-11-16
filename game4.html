@@ -154,10 +154,10 @@
         </div>
 
         <!-- ================= GAMEPLAY SCREEN ================= -->
-        <div id="game-screen" class="hidden flex flex-col justify-between max-h-[86vh] my-auto">
+        <div id="game-screen" class="hidden flex flex-col justify-between max-h-[88vh] my-auto">
             
             <!-- Game Level Indicator Banner -->
-            <div class="bg-white/95 rounded-xl p-2.5 shadow-md border-2 border-sky-300 flex items-center justify-between mb-2 gap-2 shrink-0">
+            <div class="bg-white/95 rounded-xl p-2 shadow-md border-2 border-sky-300 flex items-center justify-between mb-1.5 gap-2 shrink-0">
                 <div class="flex items-center space-x-2">
                     <span id="level-badge" class="bg-sky-500 text-white font-black px-3 py-1 rounded-lg text-xs sm:text-sm shadow-sm">
                         第一關：單韻母音節配對
@@ -172,7 +172,7 @@
             </div>
 
             <!-- Stats Bar -->
-            <div class="grid grid-cols-3 gap-2 mb-2 text-center shrink-0">
+            <div class="grid grid-cols-3 gap-2 mb-1.5 text-center shrink-0">
                 <div class="bg-white/90 rounded-xl p-1.5 shadow border-b-2 border-emerald-500">
                     <div class="text-slate-400 font-bold text-xs">得分 Score</div>
                     <div id="score-val" class="text-lg font-black text-emerald-600 leading-tight">0</div>
@@ -188,12 +188,12 @@
             </div>
 
             <!-- TRAIN FIELD AREA -->
-            <div class="bg-sky-100/90 rounded-2xl p-3 border-4 border-sky-300 shadow-inner relative overflow-hidden my-auto flex flex-col justify-center min-h-[220px]">
+            <div class="bg-sky-100/90 rounded-2xl p-2.5 border-4 border-sky-300 shadow-inner relative overflow-hidden my-auto flex flex-col justify-center min-h-[175px] sm:min-h-[190px]">
                 <!-- Floating score effects container -->
                 <div id="effects-container" class="absolute inset-0 pointer-events-none z-30"></div>
 
                 <!-- Train Track & Carriage Container -->
-                <div id="train-area" class="w-full relative py-2">
+                <div id="train-area" class="w-full relative py-1">
                     <div class="flex items-center justify-center gap-2 sm:gap-3 transition-all duration-500 transform" id="train-cars-wrapper">
                         <!-- Dynamically filled with Train Head & Cars -->
                     </div>
@@ -208,7 +208,7 @@
             </div>
 
             <!-- INTERACTION / SELECTION CONTROLS AREA (ENLARGED BUTTONS) -->
-            <div class="bg-white/95 rounded-2xl p-3 shadow-lg border-2 border-sky-200 mt-2 shrink-0">
+            <div class="bg-white/95 rounded-2xl p-3 shadow-lg border-2 border-sky-200 mt-1.5 shrink-0">
                 
                 <!-- LEVEL 1 CONTROL: Complete Pinyin Cards -->
                 <div id="level1-controls">
@@ -220,38 +220,38 @@
                     </div>
                 </div>
 
-                <!-- LEVEL 2 CONTROL: Assembly Initial + Final + Tone (ENLARGED BY >40%) -->
+                <!-- LEVEL 2 CONTROL: Assembly Initial + Final + Tone (ENLARGED & WRAPPED SO y, w ARE FULLY VISIBLE) -->
                 <div id="level2-controls" class="hidden">
                     
                     <!-- Selected Assembly Preview -->
-                    <div class="flex items-center justify-center gap-2 mb-2 bg-purple-50 p-2 rounded-xl border border-purple-200">
+                    <div class="flex items-center justify-center gap-2 mb-2 bg-purple-50 p-1.5 rounded-xl border border-purple-200">
                         <span class="text-xs font-bold text-purple-900">當前組裝拼音：</span>
-                        <span id="asm-initial" class="bg-amber-300 text-amber-950 font-black px-3 py-1 rounded border border-amber-500 text-base sm:text-lg">?</span>
+                        <span id="asm-initial" class="bg-amber-300 text-amber-950 font-black px-3 py-0.5 rounded border border-amber-500 text-base sm:text-lg">?</span>
                         <span class="text-slate-400 font-bold text-lg">+</span>
-                        <span id="asm-final" class="bg-teal-300 text-teal-950 font-black px-3.5 py-1 rounded border border-teal-500 text-base sm:text-lg">?</span>
+                        <span id="asm-final" class="bg-teal-300 text-teal-950 font-black px-3.5 py-0.5 rounded border border-teal-500 text-base sm:text-lg">?</span>
                         <span class="text-slate-400 font-bold text-lg">+</span>
-                        <span id="asm-tone" class="bg-purple-300 text-purple-950 font-black px-3 py-1 rounded border border-purple-500 text-base sm:text-lg">?</span>
+                        <span id="asm-tone" class="bg-purple-300 text-purple-950 font-black px-3 py-0.5 rounded border border-purple-500 text-base sm:text-lg">?</span>
                         <span class="text-slate-400 font-bold text-lg">=</span>
-                        <span id="asm-result" class="bg-rose-500 text-white font-black px-4 py-1 rounded-xl text-lg sm:text-xl shadow">未完成</span>
+                        <span id="asm-result" class="bg-rose-500 text-white font-black px-4 py-0.5 rounded-xl text-lg sm:text-xl shadow">未完成</span>
                     </div>
 
                     <div class="space-y-2">
-                        <!-- Initial Selector (Enlarged Buttons) -->
-                        <div class="flex items-center gap-2 overflow-x-auto pb-1">
-                            <span class="font-black text-amber-900 bg-amber-200 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm shrink-0">聲母:</span>
-                            <div id="initial-buttons" class="flex gap-1.5"></div>
+                        <!-- Initial Selector (Enlarged & Flex-Wrap so y and w are always visible) -->
+                        <div class="flex items-start gap-2">
+                            <span class="font-black text-amber-900 bg-amber-200 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm shrink-0 mt-0.5">聲母:</span>
+                            <div id="initial-buttons" class="flex flex-wrap gap-1.5"></div>
                         </div>
 
                         <!-- Single Final Selector (6 Big Buttons - 50% Enlarged) -->
-                        <div class="flex items-center gap-2 overflow-x-auto pb-1">
+                        <div class="flex items-center gap-2 flex-wrap">
                             <span class="font-black text-teal-900 bg-teal-200 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm shrink-0">單韻母:</span>
-                            <div id="final-buttons" class="flex gap-2"></div>
+                            <div id="final-buttons" class="flex flex-wrap gap-2"></div>
                         </div>
 
                         <!-- Tone Selector (5 Big Buttons - 40% Enlarged) -->
-                        <div class="flex items-center gap-2 justify-center">
+                        <div class="flex items-center gap-2 justify-center flex-wrap">
                             <span class="font-black text-purple-900 bg-purple-200 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm shrink-0">聲調:</span>
-                            <div id="tone-buttons" class="flex gap-2"></div>
+                            <div id="tone-buttons" class="flex flex-wrap gap-2 justify-center"></div>
                         </div>
                     </div>
                 </div>
@@ -894,7 +894,7 @@
         }
 
         function renderLevel2Selectors() {
-            // Initials (Large touch target)
+            // Initials (Large touch target, all 23 initials including y and w)
             const initContainer = document.getElementById('initial-buttons');
             initContainer.innerHTML = ALL_INITIALS_LIST.map(init => `
                 <button type="button" onclick="selectLevel2Initial('${init}')" class="px-3 py-1.5 rounded-xl border-2 font-black text-sm sm:text-base transition shrink-0 ${l2SelectedInitial === init ? 'bg-amber-400 text-amber-950 border-amber-600 scale-110 shadow' : 'bg-white text-slate-700 border-slate-300 hover:border-amber-300'}">
